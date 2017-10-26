@@ -44,7 +44,12 @@ public class Principal extends javax.swing.JFrame {
         jMenuBar1 = new javax.swing.JMenuBar();
         reservacionMenu = new javax.swing.JMenu();
         NewReserMenuItem = new javax.swing.JMenuItem();
-        jMenu2 = new javax.swing.JMenu();
+        nuevoReserMenuItem = new javax.swing.JMenuItem();
+        CheckInMenu = new javax.swing.JMenu();
+        conReservacionMenuItem = new javax.swing.JMenuItem();
+        sinReservacionMenuItem = new javax.swing.JMenuItem();
+        modReserMenuItem = new javax.swing.JMenuItem();
+        RestauranteMenu = new javax.swing.JMenu();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Hotel \"El Buen Descanso\"");
@@ -176,10 +181,26 @@ public class Principal extends javax.swing.JFrame {
         NewReserMenuItem.setText("Nueva Reservacion");
         reservacionMenu.add(NewReserMenuItem);
 
+        nuevoReserMenuItem.setText("Modificar / Eliminar");
+        reservacionMenu.add(nuevoReserMenuItem);
+
         jMenuBar1.add(reservacionMenu);
 
-        jMenu2.setText("Edit");
-        jMenuBar1.add(jMenu2);
+        CheckInMenu.setText("Check-In ");
+
+        conReservacionMenuItem.setText("Con Resercacion");
+        CheckInMenu.add(conReservacionMenuItem);
+
+        sinReservacionMenuItem.setText("Sin Reservacion");
+        CheckInMenu.add(sinReservacionMenuItem);
+
+        modReserMenuItem.setText("Modificar Reservacion");
+        CheckInMenu.add(modReserMenuItem);
+
+        jMenuBar1.add(CheckInMenu);
+
+        RestauranteMenu.setText("Restaurante");
+        jMenuBar1.add(RestauranteMenu);
 
         setJMenuBar(jMenuBar1);
 
@@ -201,13 +222,15 @@ public class Principal extends javax.swing.JFrame {
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JMenu CheckInMenu;
     private javax.swing.JMenuItem NewReserMenuItem;
+    private javax.swing.JMenu RestauranteMenu;
+    private javax.swing.JMenuItem conReservacionMenuItem;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
-    private javax.swing.JMenu jMenu2;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
@@ -218,6 +241,9 @@ public class Principal extends javax.swing.JFrame {
     private javax.swing.JTable jTable2;
     private javax.swing.JTable jTable3;
     private javax.swing.JTable jTable4;
+    private javax.swing.JMenuItem modReserMenuItem;
+    private javax.swing.JMenuItem nuevoReserMenuItem;
     private javax.swing.JMenu reservacionMenu;
+    private javax.swing.JMenuItem sinReservacionMenuItem;
     // End of variables declaration//GEN-END:variables
 }
