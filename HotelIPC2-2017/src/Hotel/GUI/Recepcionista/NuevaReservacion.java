@@ -9,12 +9,12 @@ package Hotel.GUI.Recepcionista;
  *
  * @author angelrg
  */
-public class NuevaResrvacion extends javax.swing.JFrame {
+public class NuevaReservacion extends javax.swing.JInternalFrame {
 
     /**
-     * Creates new form NuevaResrvacion
+     * Creates new form NuevaReservacion
      */
-    public NuevaResrvacion() {
+    public NuevaReservacion() {
         initComponents();
     }
 
@@ -27,17 +27,20 @@ public class NuevaResrvacion extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setClosable(true);
+        setMaximizable(true);
+        setResizable(true);
+        setTitle("Nueva Reservacion");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 776, Short.MAX_VALUE)
+            .addGap(0, 697, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 553, Short.MAX_VALUE)
+            .addGap(0, 570, Short.MAX_VALUE)
         );
 
         pack();
