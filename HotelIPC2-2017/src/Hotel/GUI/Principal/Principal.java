@@ -27,6 +27,7 @@ public class Principal extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jMenuItem1 = new javax.swing.JMenuItem();
         jPanel1 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
@@ -50,6 +51,10 @@ public class Principal extends javax.swing.JFrame {
         sinReservacionMenuItem = new javax.swing.JMenuItem();
         modReserMenuItem = new javax.swing.JMenuItem();
         RestauranteMenu = new javax.swing.JMenu();
+        preciosMenu = new javax.swing.JMenu();
+        modHabitacionesMenuItem = new javax.swing.JMenuItem();
+
+        jMenuItem1.setText("jMenuItem1");
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Hotel \"El Buen Descanso\"");
@@ -202,6 +207,13 @@ public class Principal extends javax.swing.JFrame {
         RestauranteMenu.setText("Restaurante");
         jMenuBar1.add(RestauranteMenu);
 
+        preciosMenu.setText("Precios");
+
+        modHabitacionesMenuItem.setText("Habitaciones");
+        preciosMenu.add(modHabitacionesMenuItem);
+
+        jMenuBar1.add(preciosMenu);
+
         setJMenuBar(jMenuBar1);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -232,6 +244,7 @@ public class Principal extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JMenuBar jMenuBar1;
+    private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
@@ -241,8 +254,10 @@ public class Principal extends javax.swing.JFrame {
     private javax.swing.JTable jTable2;
     private javax.swing.JTable jTable3;
     private javax.swing.JTable jTable4;
+    private javax.swing.JMenuItem modHabitacionesMenuItem;
     private javax.swing.JMenuItem modReserMenuItem;
     private javax.swing.JMenuItem nuevoReserMenuItem;
+    private javax.swing.JMenu preciosMenu;
     private javax.swing.JMenu reservacionMenu;
     private javax.swing.JMenuItem sinReservacionMenuItem;
     // End of variables declaration//GEN-END:variables

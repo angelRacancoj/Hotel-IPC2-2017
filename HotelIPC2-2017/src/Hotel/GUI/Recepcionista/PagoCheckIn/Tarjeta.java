@@ -3,18 +3,18 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package Hotel.GUI.Recepcionista.Pago;
+package Hotel.GUI.Recepcionista.PagoCheckIn;
 
 /**
  *
  * @author angelrg
  */
-public class TarjetaDeCredito extends javax.swing.JInternalFrame {
+public class Tarjeta extends javax.swing.JInternalFrame {
 
     /**
      * Creates new form TarjetaDeCredito
      */
-    public TarjetaDeCredito() {
+    public Tarjeta() {
         initComponents();
     }
 
