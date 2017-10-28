@@ -53,6 +53,7 @@ public class Principal extends javax.swing.JFrame {
         RestauranteMenu = new javax.swing.JMenu();
         preciosMenu = new javax.swing.JMenu();
         modHabitacionesMenuItem = new javax.swing.JMenuItem();
+        alimentosMenuItem = new javax.swing.JMenuItem();
 
         jMenuItem1.setText("jMenuItem1");
 
@@ -212,6 +213,9 @@ public class Principal extends javax.swing.JFrame {
         modHabitacionesMenuItem.setText("Habitaciones");
         preciosMenu.add(modHabitacionesMenuItem);
 
+        alimentosMenuItem.setText("Alimentos");
+        preciosMenu.add(alimentosMenuItem);
+
         jMenuBar1.add(preciosMenu);
 
         setJMenuBar(jMenuBar1);
@@ -237,6 +241,7 @@ public class Principal extends javax.swing.JFrame {
     private javax.swing.JMenu CheckInMenu;
     private javax.swing.JMenuItem NewReserMenuItem;
     private javax.swing.JMenu RestauranteMenu;
+    private javax.swing.JMenuItem alimentosMenuItem;
     private javax.swing.JMenuItem conReservacionMenuItem;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
