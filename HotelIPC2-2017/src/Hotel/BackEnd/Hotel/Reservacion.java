@@ -23,20 +23,26 @@ public class Reservacion implements Serializable {
     private String fechaInicial;
     private String fechaFinal;
     private boolean pagado;
+    private String pago;
 
     public static final String PROP_NO_HAB = "NoHabitacion";
     public static final String PROP_ID_CLIENTE = "IDCliente";
     public static final String PROP_NIT_CLIENTE = "NITCliente";
     public static final String PROP_FECHA_INICIAL = "fechaInicial";
     public static final String PROP_FECHA_FINAL = "fechaFinal";
+    public static final String PROP_PAGO = "pago";
 
-    public Reservacion(String NoHabitacion, String IDCliente, String NITCliente, String fechaInicial, String fechaFinal, boolean pagado) {
+    public Reservacion(String NoHabitacion, String IDCliente, String NITCliente, String fechaInicial, String fechaFinal, boolean pagado, String pago) {
         this.NoHabitacion = NoHabitacion;
         this.IDCliente = IDCliente;
         this.NITCliente = NITCliente;
         this.fechaInicial = fechaInicial;
         this.fechaFinal = fechaFinal;
         this.pagado = pagado;
+        this.pago = pago;
+    }
+
+    public Reservacion() {
     }
 
     public String getNoHabitacion() {
@@ -95,8 +101,16 @@ public class Reservacion implements Serializable {
         this.pagado = pagado;
     }
 
+    public String getPago() {
+        return pago;
+    }
+
+    public void setPago(String pago) {
+        this.pago = pago;
+    }
+
     public Reservacion clone() {
-        return new Reservacion(this.NoHabitacion, this.IDCliente, this.NITCliente, this.fechaInicial, this.fechaFinal, this.pagado);
+        return new Reservacion(this.NoHabitacion, this.IDCliente, this.NITCliente, this.fechaInicial, this.fechaFinal, this.pagado, this.pago);
     }
 
     public void addPropertyChangeListener(PropertyChangeListener listener) {

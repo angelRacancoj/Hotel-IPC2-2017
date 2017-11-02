@@ -23,4 +23,7 @@ public class DefaultValues {
     public static final String TIPO_JUNIOR_ID = "1";
     public static final String TIPO_MASTER_ID = "2";
     public static final String TIPO_DELUXE_ID = "3";
+    public static final String TIPO_JUNIOR_NOMBRE = "Junior";
+    public static final String TIPO_MASTER_NOMBRE = "Master";
+    public static final String TIPO_DELUXE_NOMBRE = "Deluxe";
 }
