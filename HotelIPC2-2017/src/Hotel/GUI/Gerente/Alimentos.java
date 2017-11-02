@@ -39,6 +39,8 @@ public class Alimentos extends javax.swing.JInternalFrame {
         eliminarButton = new javax.swing.JButton();
         actualizarButton = new javax.swing.JButton();
 
+        setTitle("Alimentos");
+
         jLabel1.setText("Nombre:");
 
         jLabel2.setText("Precio:");
@@ -118,7 +120,7 @@ public class Alimentos extends javax.swing.JInternalFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(eliminarButton)
                     .addComponent(actualizarButton))
-                .addContainerGap(145, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pack();
