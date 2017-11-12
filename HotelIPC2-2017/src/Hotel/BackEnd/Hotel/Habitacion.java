@@ -15,13 +15,16 @@ public class Habitacion implements Serializable {
 
     private String nombre;
     private String precio;
+    private String estado;
 
     public static final String PROP_NOMBRE = "nombre";
     public static final String PROP_PRECIO = "precio";
+    public static final String PROP_ESTADO = "estado";
 
-    public Habitacion(String nombre, String precio) {
+    public Habitacion(String nombre, String precio, String estado) {
         this.nombre = nombre;
         this.precio = precio;
+        this.estado = estado;
     }
 
     public Habitacion() {
@@ -59,9 +62,19 @@ public class Habitacion implements Serializable {
         propertySupport.firePropertyChange(PROP_PRECIO, oldPrecio, precio);
     }
 
+    public String getEstado() {
+        return estado;
+    }
+
+    public void setEstado(String estado) {
+        String oldEstado = this.estado;
+        this.estado = estado;
+        propertySupport.firePropertyChange(PROP_ESTADO, oldEstado, estado);
+    }
+
     @Override
     public Habitacion clone() {
-        return new Habitacion(this.nombre, this.precio);
+        return new Habitacion(this.nombre, this.precio, this.estado);
     }
 
     public void addPropertyChangeListener(PropertyChangeListener listener) {
