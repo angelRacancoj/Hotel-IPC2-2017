@@ -88,7 +88,7 @@ public class UsuariosM {
     }
 
     /**
-     *Elimiina al usuario utilizando el nombre de este
+     *Elimina al usuario utilizando el nombre de este
      * @param nombreUser
      * @return
      * @throws SQLException
