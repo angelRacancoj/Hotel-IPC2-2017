@@ -22,25 +22,31 @@ public class Reservacion implements Serializable {
     private String NITCliente;
     private String fechaInicial;
     private String fechaFinal;
-    private boolean pagado;
-    private String pago;
+    private String estado;
+    private String pagoHabitacion;
+    private String pagoRestaurante;
 
     public static final String PROP_NO_HAB = "NoHabitacion";
     public static final String PROP_ID_CLIENTE = "IDCliente";
     public static final String PROP_NIT_CLIENTE = "NITCliente";
     public static final String PROP_FECHA_INICIAL = "fechaInicial";
     public static final String PROP_FECHA_FINAL = "fechaFinal";
-    public static final String PROP_PAGO = "pago";
+    public static final String PROP_ESTADO = "estado";
+    public static final String PROP_PAGO_HABITACION = "pagoHabitacion";
+    public static final String PROP_PAGO_RESTAURANTE = "pagoRestaurante";
 
-    public Reservacion(String NoHabitacion, String IDCliente, String NITCliente, String fechaInicial, String fechaFinal, boolean pagado, String pago) {
+    public Reservacion(String NoHabitacion, String IDCliente, String NITCliente, String fechaInicial, String fechaFinal, String estado, String pagoHabitacion, String pagoRestaurante) {
         this.NoHabitacion = NoHabitacion;
         this.IDCliente = IDCliente;
         this.NITCliente = NITCliente;
         this.fechaInicial = fechaInicial;
         this.fechaFinal = fechaFinal;
-        this.pagado = pagado;
-        this.pago = pago;
+        this.estado = estado;
+        this.pagoHabitacion = pagoHabitacion;
+        this.pagoRestaurante = pagoRestaurante;
     }
+
+
 
     public Reservacion() {
     }
@@ -90,27 +96,43 @@ public class Reservacion implements Serializable {
     }
 
     public void setFechaFinal(String fechaFinal) {
+        String oldFechaFinal = this.fechaFinal;
         this.fechaFinal = fechaFinal;
+        propertySupport.firePropertyChange(PROP_FECHA_FINAL, oldFechaFinal, fechaFinal);
     }
 
-    public boolean isPagado() {
-        return pagado;
+    public String getEstado() {
+        return estado;
     }
 
-    public void setPagado(boolean pagado) {
-        this.pagado = pagado;
+    public void setEstado(String estado) {
+        String oldEstado = this.estado;
+        this.estado = estado;
+        propertySupport.firePropertyChange(PROP_ESTADO, oldEstado, estado);
     }
 
-    public String getPago() {
-        return pago;
+    public String getPagoHabitacion() {
+        return pagoHabitacion;
     }
 
-    public void setPago(String pago) {
-        this.pago = pago;
+    public void setPagoHabitacion(String pagoHabitacion) {
+        String oldPago = this.pagoHabitacion;
+        this.pagoHabitacion = pagoHabitacion;
+        propertySupport.firePropertyChange(PROP_PAGO_HABITACION, oldPago, pagoHabitacion);
+    }
+
+    public String getPagoRestaurante() {
+        return pagoRestaurante;
+    }
+
+    public void setPagoRestaurante(String pagoRestaurante) {
+        String oldPago = this.pagoRestaurante;
+        this.pagoRestaurante = pagoRestaurante;
+        propertySupport.firePropertyChange(PROP_PAGO_RESTAURANTE, oldPago, pagoRestaurante);
     }
 
     public Reservacion clone() {
-        return new Reservacion(this.NoHabitacion, this.IDCliente, this.NITCliente, this.fechaInicial, this.fechaFinal, this.pagado, this.pago);
+        return new Reservacion(this.NoHabitacion, this.IDCliente, this.NITCliente, this.fechaInicial, this.fechaFinal, this.estado,this.pagoHabitacion,this.pagoRestaurante);
     }
 
     public void addPropertyChangeListener(PropertyChangeListener listener) {

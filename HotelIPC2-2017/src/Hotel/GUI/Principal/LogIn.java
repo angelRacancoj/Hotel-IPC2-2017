@@ -1,9 +1,7 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package Hotel.GUI.Principal;
+
+import Hotel.BackEnd.Manejador.UsuariosM;
+import java.sql.Connection;
 
 /**
  *
@@ -11,10 +9,16 @@ package Hotel.GUI.Principal;
  */
 public class LogIn extends javax.swing.JFrame {
 
-    /**
-     * Creates new form LogIn
-     */
-    public LogIn() {
+    private UsuariosM usuario;
+    
+    private Principal principalFrame;
+    
+    public LogIn(Connection conexion) {
+        this.usuario = new UsuariosM(conexion);
+        
+        //Frame principal
+        this.principalFrame = new Principal(conexion);
+        
         initComponents();
     }
 
@@ -31,19 +35,35 @@ public class LogIn extends javax.swing.JFrame {
         usuarioTextField = new javax.swing.JTextField();
         ContrasenaPasswordField = new javax.swing.JPasswordField();
         jLabel2 = new javax.swing.JLabel();
-        jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
+        ingresarButton = new javax.swing.JButton();
+        cancelarButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Log-In");
 
         jLabel1.setText("Usuario:");
 
+        usuarioTextField.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                usuarioTextFieldFocusLost(evt);
+            }
+        });
+
         jLabel2.setText("Contraseña:");
 
-        jButton1.setText("Ingresar");
+        ingresarButton.setText("Ingresar");
+        ingresarButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                ingresarButtonActionPerformed(evt);
+            }
+        });
 
-        jButton2.setText("Cancelar");
+        cancelarButton.setText("Cancelar");
+        cancelarButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cancelarButtonActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -62,9 +82,9 @@ public class LogIn extends javax.swing.JFrame {
                             .addComponent(ContrasenaPasswordField)))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(75, 75, 75)
-                        .addComponent(jButton1)
+                        .addComponent(ingresarButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 85, Short.MAX_VALUE)
-                        .addComponent(jButton2)))
+                        .addComponent(cancelarButton)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
@@ -80,18 +100,30 @@ public class LogIn extends javax.swing.JFrame {
                     .addComponent(jLabel2))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton1)
-                    .addComponent(jButton2))
+                    .addComponent(ingresarButton)
+                    .addComponent(cancelarButton))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void ingresarButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ingresarButtonActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_ingresarButtonActionPerformed
+
+    private void usuarioTextFieldFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_usuarioTextFieldFocusLost
+        // TODO add your handling code here:
+    }//GEN-LAST:event_usuarioTextFieldFocusLost
+
+    private void cancelarButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelarButtonActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_cancelarButtonActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPasswordField ContrasenaPasswordField;
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
+    private javax.swing.JButton cancelarButton;
+    private javax.swing.JButton ingresarButton;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JTextField usuarioTextField;

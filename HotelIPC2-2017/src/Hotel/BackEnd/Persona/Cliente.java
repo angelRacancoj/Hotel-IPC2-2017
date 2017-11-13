@@ -16,18 +16,22 @@ public class Cliente extends Persona implements Serializable {
     private String NIT;
     private String direccion;
     private String phone;
+    private String cumpleanios;
 
     public static final String PROP_ID = "ID";
     public static final String PROP_NIT = "NIT";
+    public static final String PROP_NOMBRE = "nombre";
     public static final String PROP_DIRECCION = "direccion";
     public static final String PROP_PHONE = "phone";
+    public static final String PROP_CUMPLEANIOS = "compleanios";
 
-    public Cliente(String ID, String NIT, String nombre, String direccion, String phone) {
+    public Cliente(String nombre, String ID, String NIT, String direccion, String phone, String cumpleanios) {
         super(nombre);
         this.ID = ID;
         this.NIT = NIT;
         this.direccion = direccion;
         this.phone = phone;
+        this.cumpleanios = cumpleanios;
     }
 
     public Cliente() {
@@ -73,8 +77,17 @@ public class Cliente extends Persona implements Serializable {
         propertySupport.firePropertyChange(PROP_PHONE, oldPhone, phone);
     }
 
+    public String getCumpleanios() {
+        return cumpleanios;
+    }
+
+    public void setCumpleanios(String cumpleanios) {
+        this.cumpleanios = cumpleanios;
+    }
+
+    
     public Cliente clone() {
-        return new Cliente(this.ID, this.NIT, this.nombre, this.direccion, this.phone);
+        return new Cliente(this.ID, this.NIT, this.nombre, this.direccion, this.phone,this.cumpleanios);
     }
 
     public void addPropertyChangeListener(PropertyChangeListener listener) {

@@ -12,9 +12,13 @@ import java.sql.Connection;
  *
  * @author angelrg
  */
-public class ReservarHabitacion {
+public class AlimentoM {
+    private DefaultValues valoresPre;
+    private Connection conexion;
+
+    public AlimentoM(Connection conexion) {
+        this.conexion = conexion;
+    }
     
-    DefaultValues valoresPre;
-    private Connection coneccion;
     
 }

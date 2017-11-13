@@ -15,15 +15,17 @@ public class Alimento implements Serializable {
     private String nombre;
     private String descripcion;
     private String precio;
+    private boolean disponible;
 
     public static final String PROP_NOMBRE = "nombre";
     public static final String PROP_DESCRIPCION = "descripcion";
     public static final String PROP_PRECIO = "precio";
 
-    public Alimento(String nombre, String descripcion, String precio) {
+    public Alimento(String nombre, String descripcion, String precio, boolean disponible) {
         this.nombre = nombre;
         this.descripcion = descripcion;
         this.precio = precio;
+        this.disponible = disponible;
     }
 
     public Alimento() {
@@ -61,7 +63,7 @@ public class Alimento implements Serializable {
 
     @Override
     public Alimento clone() {
-        return new Alimento(this.nombre, this.descripcion, this.precio);
+        return new Alimento(this.nombre, this.descripcion, this.precio, this.disponible);
     }
 
     public void addPropertyChangeListener(PropertyChangeListener listener) {

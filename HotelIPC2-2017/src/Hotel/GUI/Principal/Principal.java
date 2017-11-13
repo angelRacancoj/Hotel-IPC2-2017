@@ -5,16 +5,17 @@
  */
 package Hotel.GUI.Principal;
 
+import java.sql.Connection;
+
 /**
  *
  * @author angelrg
  */
 public class Principal extends javax.swing.JFrame {
 
-    /**
-     * Creates new form Principal
-     */
-    public Principal() {
+   
+    
+    public Principal(Connection conexion) {
         initComponents();
     }
 
