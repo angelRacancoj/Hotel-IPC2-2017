@@ -35,11 +35,44 @@ public class AlimentoM {
                 throw new InputsVaciosException("Debe llenar todos los campos");
             } else {
                 if (busqueda(nombre, DefaultValues.DISPONIBLE_TODO_COMBO_BOX).isEmpty()) {
-                    PreparedStatement sentencia = conexion.prepareStatement("");
+                    PreparedStatement sentencia = conexion.prepareStatement("INSETR INTO ALIMENTOS (Nombre,Precio,Disponible,Descripcion) VALUES (?,?,?,?)");
+                    sentencia.setString(1, nombre);
+                    sentencia.setString(2, precio);
+                    sentencia.setString(3, disponible);
+                    sentencia.setString(4, descripcion);
+                    if (sentencia.executeUpdate() == 1) {
+                        return true;
+                    } else {
+                        return false;
+                    }
                 }
             }
 
-        } catch (Exception e) {
+        } catch (InputsVaciosException | SQLException e) {
+            throw new InputsVaciosException("Error en la Base de Datos");
+        }
+        return false;
+    }
+    
+    public boolean actualizar(String nombreOld, String nombreNew, String precio, String disponible, String descripcion)throws SQLException, InputsVaciosException{
+        try {
+            if (busqueda(nombreOld, DefaultValues.DISPONIBLE_TODO_COMBO_BOX).isEmpty()) {
+                throw new InputsVaciosException("No existe el Alimento que se desea Actualizar");
+            }else{
+                PreparedStatement sentencia = conexion.prepareStatement("UPDATE ALIMENTO SET Nombre=? ,Precio=? ,Disponible=? ,Descripcion=? WHERE Nombre=?");
+                sentencia.setString(1, nombreNew);
+                sentencia.setString(2, precio);
+                sentencia.setString(3, disponible);
+                sentencia.setString(4, descripcion);
+                sentencia.setString(5, nombreOld);
+                if (sentencia.executeUpdate() == 1) {
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+        } catch (InputsVaciosException | SQLException e) {
+            throw new InputsVaciosException("Error en la Base de Datos");
         }
     }
 
