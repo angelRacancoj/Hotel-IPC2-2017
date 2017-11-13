@@ -18,7 +18,6 @@ public class UsuariosM {
 
     private DefaultValues valoresPre;
     private Connection conexion;
-    private User usuario;
 
     List<User> busquedaUsuarios = new ArrayList<>();
 
@@ -27,14 +26,17 @@ public class UsuariosM {
     }
 
     /**
-     *Valida las credenciales de los usuarios, para que estos puedan trabajar dentro del programa
-     * User=nombre del usuario y contrasena=es el password del usuario
+     * Valida las credenciales de los usuarios, para que estos puedan trabajar
+     * dentro del programa User=nombre del usuario y contrasena=es el password
+     * del usuario
+     *
      * @param user
      * @param contrasena
      * @return
      * @throws InputsVaciosException
      */
-    public boolean iniciar(String user, String contrasena) throws InputsVaciosException {
+    public String iniciar(String user, String contrasena) throws InputsVaciosException, SQLException {
+        busquedaUsuarios.clear();
         boolean userTry = user.replace(" ", "").isEmpty();
         boolean contraseniaTry = contrasena.replace(" ", "").isEmpty();
 
@@ -49,21 +51,31 @@ public class UsuariosM {
                 PreparedStatement sentencia = conexion.prepareStatement("SELECT * FROM USER WHERE Nombre=? AND Contrasenia=?");
                 sentencia.setString(1, user);
                 sentencia.setString(2, contrasena);
-                List users = consultaUsuarios(sentencia);
-                if (!users.isEmpty()) {
-                    return true;
+
+                ResultSet resultado = sentencia.executeQuery();
+                while (resultado.next()) {
+                    String nombre = resultado.getString("Nombre");
+                    String contra = resultado.getString("Contrasenia");
+                    String rango = resultado.getString("Rango");
+                    System.out.println("Datos: " + nombre + "," + contra + "," + rango);
+                    busquedaUsuarios.add(new User(nombre, contra, rango));
+
+                    if (!busquedaUsuarios.isEmpty()) {
+                        return rango;
+                    }else{
+                       throw new InputsVaciosException("No existe el usuario"); 
+                    }
                 }
             }
-
         } catch (SQLException e) {
             throw new InputsVaciosException("Error en la Base de Datos");
         }
-        return false;
+        return null;
     }
 
     /**
-     *Agrega al usuario con los datos de entrada
-     * 
+     * Agrega al usuario con los datos de entrada
+     *
      * @param nombreUser
      * @param constra
      * @param rango
@@ -71,16 +83,20 @@ public class UsuariosM {
      * @throws SQLException
      * @throws InputsVaciosException
      */
-    public String agregarUsuario(String nombreUser, String constra, String rango) throws SQLException, InputsVaciosException {
+    public boolean agregarUsuario(String nombreUser, String constra, String rango) throws SQLException, InputsVaciosException {
         try {
-            PreparedStatement sentencia = conexion.prepareStatement("INSERTE INTO USER (Nombre,Contrasenia,Rango) VALUES (?,?,?)");
-            sentencia.setString(1, nombreUser);
-            sentencia.setString(2, constra);
-            sentencia.setString(3, rango);
-            if (sentencia.executeUpdate() == 1) {
-                return "Agregado exitosamente";
+            if (busqueda(nombreUser, "").isEmpty()) {
+                PreparedStatement sentencia = conexion.prepareStatement("INSERTE INTO USER (Nombre,Contrasenia,Rango) VALUES (?,?,?)");
+                sentencia.setString(1, nombreUser);
+                sentencia.setString(2, constra);
+                sentencia.setString(3, rango);
+                if (sentencia.executeUpdate() == 1) {
+                    return true;
+                } else {
+                    return false;
+                }
             } else {
-                return "No se han agregado el usuario";
+                throw new InputsVaciosException("Ya existe el Usuario");
             }
         } catch (SQLException e) {
             throw new InputsVaciosException("Error en la Base de Datos");
@@ -88,20 +104,21 @@ public class UsuariosM {
     }
 
     /**
-     *Elimina al usuario utilizando el nombre de este
+     * Elimina al usuario utilizando el nombre de este
+     *
      * @param nombreUser
      * @return
      * @throws SQLException
      * @throws InputsVaciosException
      */
-    public String eliminarUsuario(String nombreUser) throws SQLException, InputsVaciosException {
+    public boolean eliminarUsuario(String nombreUser) throws SQLException, InputsVaciosException {
         try {
             PreparedStatement sentencia = conexion.prepareStatement("DELETE FROM USER WHERE Nombre=? LIMIT 1");
             sentencia.setString(1, nombreUser);
             if (sentencia.executeUpdate() == 1) {
-                return "Eliminado exitosamente";
+                return true;
             } else {
-                return "No se han eliminado usuario";
+                return false;
             }
         } catch (SQLException e) {
             throw new InputsVaciosException("Error en la Base de Datos");
@@ -109,8 +126,9 @@ public class UsuariosM {
     }
 
     /**
-     *permite buscar similitudes en los nombre, tambien en base al rango
-     * y ambos, si no hay datos de entrada lanza todos los usuarios
+     * permite buscar similitudes en los nombre, tambien en base al rango y
+     * ambos, si no hay datos de entrada lanza todos los usuarios
+     *
      * @param nombre
      * @param rango
      * @return
@@ -149,7 +167,8 @@ public class UsuariosM {
     }
 
     /**
-     *Se encarga de cargar todos los elementos en el listado
+     * Se encarga de cargar todos los elementos en el listado
+     *
      * @param sentencia
      * @return
      * @throws InputsVaciosException
@@ -175,4 +194,11 @@ public class UsuariosM {
         return busquedaUsuarios;
     }
 
+    public List<User> getBusquedaUsuarios() {
+        return busquedaUsuarios;
+    }
+
+    public void setBusquedaUsuarios(List<User> busquedaUsuarios) {
+        this.busquedaUsuarios = busquedaUsuarios;
+    }
 }

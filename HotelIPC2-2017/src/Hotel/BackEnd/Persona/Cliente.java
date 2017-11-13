@@ -25,7 +25,7 @@ public class Cliente extends Persona implements Serializable {
     public static final String PROP_PHONE = "phone";
     public static final String PROP_CUMPLEANIOS = "compleanios";
 
-    public Cliente(String nombre, String ID, String NIT, String direccion, String phone, String cumpleanios) {
+    public Cliente( String ID, String NIT,String nombre, String direccion, String phone, String cumpleanios) {
         super(nombre);
         this.ID = ID;
         this.NIT = NIT;

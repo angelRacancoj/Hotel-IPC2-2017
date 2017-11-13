@@ -61,6 +61,14 @@ public class Alimento implements Serializable {
         propertySupport.firePropertyChange(PROP_PRECIO, precioAnt, precio);
     }
 
+    public boolean isDisponible() {
+        return disponible;
+    }
+
+    public void setDisponible(boolean disponible) {
+        this.disponible = disponible;
+    }
+
     @Override
     public Alimento clone() {
         return new Alimento(this.nombre, this.descripcion, this.precio, this.disponible);
