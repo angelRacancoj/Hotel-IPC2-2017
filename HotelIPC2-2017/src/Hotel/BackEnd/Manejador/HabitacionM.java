@@ -29,7 +29,53 @@ public class HabitacionM {
         this.conexion = conexion;
     }
     
-    public boolean modificarHabitacion(String categoria, String precio)throws SQLException, InputsVaciosException{
+    public List<Habitacion> busquedaPorEstadoHabiacion(String numero, String estado, String fechainicial, String fechaFinal)throws SQLException, InputsVaciosException{
+        boolean tryNumero = numero.replace(" ","").isEmpty();
+        
+        try {
+            if (tryNumero) {
+                PreparedStatement sentencia = conexion.prepareStatement("SELECT Numero, Precio, Estado FROM "
+                        + "RESERVACION,TIPO_HABITACION,HABITACION WHERE Categoria=CategoriaTipoHabitacion AND"
+                        + "Numero = Numero_Haibtacion AND Estado=? AND Fecha_Inicial >= ? AND Fecha_Final <= ?");
+                sentencia.setString(1, estado);
+                sentencia.setString(2, fechainicial);
+                sentencia.setString(3, fechaFinal);
+                return consultaEstadoHabitacion(sentencia);
+            }else{
+               PreparedStatement sentencia = conexion.prepareStatement("SELECT Numero, Precio, Estado FROM "
+                        + "RESERVACION,TIPO_HABITACION,HABITACION WHERE Categoria=CategoriaTipoHabitacion AND"
+                        + "Numero = Numero_Haibtacion AND Estado=? AND Fecha_Inicial >= ? AND Fecha_Final <= ?"
+                       + "AND Numero LIKE ?");
+                sentencia.setString(1, estado);
+                sentencia.setString(2, fechainicial);
+                sentencia.setString(3, fechaFinal);
+                sentencia.setString(4, numero);
+                return consultaEstadoHabitacion(sentencia); 
+            }
+        } catch (InputsVaciosException | SQLException e) {
+            throw new InputsVaciosException("Error en la Base de Datos");
+        }
+    }
+    
+    public List<Habitacion> consultaEstadoHabitacion(PreparedStatement sentencia)throws SQLException, InputsVaciosException{
+        busquedaHabitacion.clear();
+        
+        try {
+            ResultSet resultado = sentencia.executeQuery();
+            while(resultado.next()){
+                String nombre= resultado.getString("Nombre");
+                String precio= resultado.getString("Precio");
+                String estado= resultado.getString("Estado");
+                System.out.println("Habitacion: "+nombre+","+precio+","+estado);
+                busquedaHabitacion.add(new Habitacion(nombre, precio, estado));
+            }
+        } catch (SQLException e) {
+            throw new InputsVaciosException("Error en la Base de Datos");
+        }
+        return busquedaHabitacion;
+    }
+    
+    public boolean modificarPrecioHabitacion(String categoria, String precio)throws SQLException, InputsVaciosException{
         try {
             PreparedStatement sentencia = conexion.prepareStatement("UPDATE TIPO_HABITACION SET Precio=? WHERE Categoria=? LIMIT 1");
             sentencia.setString(1, precio);
@@ -45,17 +91,17 @@ public class HabitacionM {
     
     }
     
-    public List<Habitacion> busqueda(String categoria)throws SQLException, InputsVaciosException{
+    public List<Habitacion> busquedaPrecioHabitacion(String categoria)throws SQLException, InputsVaciosException{
         try {
             PreparedStatement sentencia = conexion.prepareStatement("SELECT *FROM TIPO_HABITACION WHERE Categoria=? ORDER BY Categoria ASC");
             sentencia.setString(1, categoria);
-            return consultaHabitacion(sentencia);
+            return consultaPrecioHabitacion(sentencia);
         } catch (InputsVaciosException | SQLException e) {
             throw new InputsVaciosException("Error en la Base de Datos");
         }
     }
     
-    public List<Habitacion> consultaHabitacion(PreparedStatement sentencia)throws SQLException, InputsVaciosException{
+    public List<Habitacion> consultaPrecioHabitacion(PreparedStatement sentencia)throws SQLException, InputsVaciosException{
         busquedaHabitacion.clear();
         
         try {

@@ -19,7 +19,6 @@ public class Reservacion implements Serializable {
 
     private String NoHabitacion;
     private String IDCliente;
-    private String NITCliente;
     private String fechaInicial;
     private String fechaFinal;
     private String estado;
@@ -28,25 +27,21 @@ public class Reservacion implements Serializable {
 
     public static final String PROP_NO_HAB = "NoHabitacion";
     public static final String PROP_ID_CLIENTE = "IDCliente";
-    public static final String PROP_NIT_CLIENTE = "NITCliente";
     public static final String PROP_FECHA_INICIAL = "fechaInicial";
     public static final String PROP_FECHA_FINAL = "fechaFinal";
     public static final String PROP_ESTADO = "estado";
     public static final String PROP_PAGO_HABITACION = "pagoHabitacion";
     public static final String PROP_PAGO_RESTAURANTE = "pagoRestaurante";
 
-    public Reservacion(String NoHabitacion, String IDCliente, String NITCliente, String fechaInicial, String fechaFinal, String estado, String pagoHabitacion, String pagoRestaurante) {
+    public Reservacion(String NoHabitacion, String IDCliente, String fechaInicial, String fechaFinal, String estado, String pagoHabitacion, String pagoRestaurante) {
         this.NoHabitacion = NoHabitacion;
         this.IDCliente = IDCliente;
-        this.NITCliente = NITCliente;
         this.fechaInicial = fechaInicial;
         this.fechaFinal = fechaFinal;
         this.estado = estado;
         this.pagoHabitacion = pagoHabitacion;
         this.pagoRestaurante = pagoRestaurante;
     }
-
-
 
     public Reservacion() {
     }
@@ -69,16 +64,6 @@ public class Reservacion implements Serializable {
         String oldID = this.IDCliente;
         this.IDCliente = IDCliente;
         propertySupport.firePropertyChange(PROP_ID_CLIENTE, oldID, IDCliente);
-    }
-
-    public String getNITCliente() {
-        return NITCliente;
-    }
-
-    public void setNITCliente(String NITCliente) {
-        String oldNIT = this.NITCliente;
-        this.NITCliente = NITCliente;
-        propertySupport.firePropertyChange(PROP_NIT_CLIENTE, oldNIT, NITCliente);
     }
 
     public String getFechaInicial() {
@@ -132,7 +117,7 @@ public class Reservacion implements Serializable {
     }
 
     public Reservacion clone() {
-        return new Reservacion(this.NoHabitacion, this.IDCliente, this.NITCliente, this.fechaInicial, this.fechaFinal, this.estado,this.pagoHabitacion,this.pagoRestaurante);
+        return new Reservacion(this.NoHabitacion, this.IDCliente, this.fechaInicial, this.fechaFinal, this.estado, this.pagoHabitacion, this.pagoRestaurante);
     }
 
     public void addPropertyChangeListener(PropertyChangeListener listener) {
