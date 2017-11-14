@@ -25,20 +25,35 @@ public class ReservarHabitacionM {
         this.coneccion = coneccion;
     }
     
-    public List<Reservacion> busquedaPorIDCliente (String IDCliente,String estado)throws SQLException, InputsVaciosException{
+    public void crearReservacion(String IDCliente, String fechaInicial, String fechaFinal, String estado, String numeroHabitacion)throws SQLException, InputsVaciosException{
+        
+    }
+    
+    public List<Reservacion> busquedaPorIDClienteYEstado (String IDCliente,String estado)throws SQLException, InputsVaciosException{
         boolean IDtry = IDCliente.replace(" ","").isEmpty();
         
         try {
             if (IDtry) {
-                PreparedStatement sentencia = coneccion.prepareStatement("SELECT * FROM RESERVACIONES WHERE Estado=? ORDER BY ");
+                PreparedStatement sentencia = coneccion.prepareStatement("SELECT * FROM RESERVACIONES WHERE Estado=? ORDER BY Numero_Haibtacion");
                 sentencia.setString(1, estado);
                 return consultaReservacion(sentencia);
             } else{
-                PreparedStatement sentencia = coneccion.prepareStatement("SELECT * FROM RESERVACIONES WHERE Estado=? AND ID_Cliente LIKE ? ORDER BY ");
+                PreparedStatement sentencia = coneccion.prepareStatement("SELECT * FROM RESERVACIONES WHERE Estado=? AND ID_Cliente LIKE ? ORDER BY Numero_Haibtacion");
                 sentencia.setString(1, estado);
                 sentencia.setString(1, estado);
                 return consultaReservacion(sentencia);
             }
+        } catch (InputsVaciosException | SQLException e) {
+            throw new InputsVaciosException("Error en la Base de Datos");
+        }
+    }
+    
+    public List<Reservacion> busquedaTodosLasReservaciones ()throws SQLException, InputsVaciosException{
+        
+        try {
+                PreparedStatement sentencia = coneccion.prepareStatement("SELECT * FROM RESERVACIONES ORDER BY Numero_Haibtacion");
+                return consultaReservacion(sentencia);
+             
         } catch (InputsVaciosException | SQLException e) {
             throw new InputsVaciosException("Error en la Base de Datos");
         }

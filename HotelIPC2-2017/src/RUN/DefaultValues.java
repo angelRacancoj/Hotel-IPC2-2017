@@ -45,5 +45,12 @@ public class DefaultValues {
     //la reservacion ya no sera util
     public static final String HAB_ELIMINADA_COD = "3";
     public static final String HAB_ELIMINADA = "Eliminada";
+    
+    public static final String HAB_TODO_COMBO_BOX = "0";
+    public static final String HAB_RESERVADA_COMBO_BOX = "1";
+    public static final String HAB_OCUPADA_COMBO_BOX = "2";
+    public static final String HAB_ELIMINADA_COMBO_BOX = "3";
+    
+    // numeracion habitaciones
 
 }
