@@ -5,6 +5,9 @@
  */
 package RUN;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+
 /**
  *
  * @author angelrg
@@ -53,4 +56,15 @@ public class DefaultValues {
     
     // numeracion habitaciones
 
+    
+    public boolean validarFecha(String fecha) {
+        try {
+            SimpleDateFormat formatoFecha = new SimpleDateFormat("yyyy-MM-dd");
+            formatoFecha.setLenient(false);
+            formatoFecha.parse(fecha);
+        } catch (ParseException e) {
+            return false;
+        }
+        return true;
+    }
 }

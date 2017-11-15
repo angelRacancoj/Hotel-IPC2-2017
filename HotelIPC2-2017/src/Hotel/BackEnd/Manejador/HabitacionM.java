@@ -26,7 +26,9 @@ public class HabitacionM {
     }
 
     /**
-     *Devuelve las habitaciones con la categoria, precio y numero, busca la habitaciones que tiene reservacion en el intervalo de tiempo
+     * Devuelve las habitaciones con la categoria, precio y numero, busca la
+     * habitaciones que tiene reservacion en el intervalo de tiempo
+     *
      * @param fechaIncial
      * @param fechaFinal
      * @return
@@ -51,8 +53,10 @@ public class HabitacionM {
     }
 
     /**
-     *Devuelve la habitacion con un criterio de cuales estan ocupadas segun los paramentros, permitiendo q no se coloque numero liberando el filtro
-     * para realizar la busqueda en base al estado y las fechas
+     * Devuelve la habitacion con un criterio de cuales estan ocupadas segun los
+     * paramentros, permitiendo q no se coloque numero liberando el filtro para
+     * realizar la busqueda en base al estado y las fechas
+     *
      * @param numero
      * @param estado
      * @param fechainicial
@@ -114,7 +118,8 @@ public class HabitacionM {
     }
 
     /**
-     *Devuelve el nombre, precio y estado
+     * Devuelve el nombre, precio y estado
+     *
      * @param sentencia
      * @return
      * @throws SQLException
@@ -140,6 +145,7 @@ public class HabitacionM {
 
     /**
      * Modifica el precio de las habitaciones en base a las categorias y precios
+     *
      * @param categoria
      * @param precio
      * @return
@@ -164,6 +170,7 @@ public class HabitacionM {
 
     /**
      * Funcion para la tabla con los precios segun la categoria de la habitacion
+     *
      * @return
      * @throws SQLException
      * @throws InputsVaciosException
@@ -178,7 +185,8 @@ public class HabitacionM {
     }
 
     /**
-     *Devuelve la categoria y el precio de las habitaciones
+     * Devuelve la categoria y el precio de las habitaciones
+     *
      * @param sentencia
      * @return
      * @throws SQLException
@@ -201,5 +209,21 @@ public class HabitacionM {
             throw new InputsVaciosException("Error en la Base de Datos");
         }
         return busquedaHabitacion;
+    }
+    
+    public double precioHabitacion(String noHabitacion)throws SQLException,InputsVaciosException{
+        double precio =0;
+        try {
+            PreparedStatement sentencia = conexion.prepareStatement("SELECT Precio FROM TIPO_HABITACION,HABITACION WHERE "
+                    + "Categoria=CategoriaTipoHabitacion AND Numero =?");
+            sentencia.setString(1, noHabitacion);
+            ResultSet resultado = sentencia.executeQuery();
+            while(resultado.next()){
+                precio = resultado.getDouble("Precio");
+            }
+            return precio;
+        } catch (Exception e) {
+            throw new InputsVaciosException("Error en la Base de Datos");
+        }
     }
 }
