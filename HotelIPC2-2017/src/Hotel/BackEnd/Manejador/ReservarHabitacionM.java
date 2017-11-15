@@ -19,11 +19,13 @@ public class ReservarHabitacionM {
     DefaultValues valoresPre;
     private Connection coneccion;
     private HabitacionM manejadorHabitacion;
+    private ConsumoM manejadorConsumo;
 
     List<Reservacion> busquedaReservacion = new ArrayList<>();
 
     public ReservarHabitacionM(Connection coneccion) {
         manejadorHabitacion = new HabitacionM(coneccion);
+        manejadorConsumo = new ConsumoM(coneccion);
         this.coneccion = coneccion;
     }
 
@@ -206,6 +208,48 @@ public class ReservarHabitacionM {
     }
 
     /**
+     * Modifica el estado de la reservacion para representar que ya se realizo
+     * el CkeckOut
+     *
+     * @param IDCliente
+     * @param fechaInicialAnterior
+     * @param FechaFinalAnterior
+     * @param noHabitacionAnterior
+     * @return
+     * @throws SQLException
+     * @throws InputsVaciosException
+     */
+    public boolean CheckOut(String IDCliente, String fechaInicialAnterior, String FechaFinalAnterior, String noHabitacionAnterior) throws SQLException, InputsVaciosException {
+        boolean IDClienteBoo = IDCliente.replace(" ", "").isEmpty();
+        boolean fechaInicialAntBoo = fechaInicialAnterior.replace(" ", "").isEmpty();
+        boolean fechaFinalAntBoo = FechaFinalAnterior.replace(" ", "").isEmpty();
+        boolean noHabitacionAntBoo = noHabitacionAnterior.replace(" ", "").isEmpty();
+
+        try {
+            if (IDClienteBoo || fechaInicialAntBoo || fechaFinalAntBoo || noHabitacionAntBoo
+                    || (cantidadDelDias(fechaInicialAnterior, FechaFinalAnterior) < 0)) {
+                throw new InputsVaciosException("Debe llenar todos los campos");
+            } else {
+                PreparedStatement sentencia = coneccion.prepareStatement("UPDATE RESERVACION SET Estado=? WHERE ID_Cliente=? AND Fecha_Inicial=? "
+                        + "AND Fecha_Final=? AND Estado=? AND Numero_Haibtacion=?");
+                sentencia.setString(1, DefaultValues.HAB_CHECK_OUT_COD);
+                sentencia.setString(4, IDCliente);
+                sentencia.setString(5, fechaInicialAnterior);
+                sentencia.setString(6, FechaFinalAnterior);
+                sentencia.setString(7, DefaultValues.HAB_RESERVADA_COD);
+                sentencia.setString(8, noHabitacionAnterior);
+                if (sentencia.executeUpdate() == 1) {
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+        } catch (Exception e) {
+            throw new InputsVaciosException("Error en la Base de Datos");
+        }
+    }
+
+    /**
      * Crea la Reservacion pero sin ser confirmado el ingreso, simplemente es
      * una reservacion sin compromiso
      *
@@ -245,10 +289,32 @@ public class ReservarHabitacionM {
         }
     }
 
-    public List<Reservacion> busquedaPorIDClienteYEstado(String IDCliente, String estado, String fechaInicial, String FechaFinal) throws SQLException, InputsVaciosException {
+    /**
+     * Se ingresan los valores, realiza los filtros en base a:
+     *
+     * Si el ID esta en blanco realiza la busqueda con los otros dos para
+     * mentros
+     *
+     * Si minimo una de las fechas esta en blanco realiza la busqueda como si no
+     * se hubiese ingresado fecha y realiza la busqueda con los otros dos
+     * paramentros
+     *
+     * Para el "estado" si el ComboBox esta en 0 realiza la busqueda total,
+     * mientras que si esta en otro estado realiza la busqueda segun el estado
+     * elegido
+     *
+     * @param IDCliente
+     * @param estado
+     * @param fechaInicial
+     * @param FechaFinal
+     * @return
+     * @throws SQLException
+     * @throws InputsVaciosException
+     */
+    public List<Reservacion> busquedaPorIDClienteEstadoYFechas(String IDCliente, String estado, String fechaInicial, String FechaFinal) throws SQLException, InputsVaciosException {
         boolean IDtry = IDCliente.replace(" ", "").isEmpty();
-        boolean fechaInicalTry = fechaInicial.replace(" ","").replace("-","").isEmpty();
-        boolean fechaFinalTry = FechaFinal.replace(" ","").replace("-","").isEmpty();
+        boolean fechaInicalTry = fechaInicial.replace(" ", "").replace("-", "").isEmpty();
+        boolean fechaFinalTry = FechaFinal.replace(" ", "").replace("-", "").isEmpty();
 
         try {
             if (IDtry && (fechaFinalTry || fechaInicalTry) && (estado.equalsIgnoreCase(DefaultValues.DISPONIBLE_TODO_COMBO_BOX))) {
@@ -293,10 +359,77 @@ public class ReservarHabitacionM {
                 sentencia.setString(4, FechaFinal);
                 return consultaReservacion(sentencia);
             } else {
-                PreparedStatement sentencia = coneccion.prepareStatement("SELECT * FROM RESERVACION WHERE Estado=? AND ID_Cliente LIKE ? ORDER BY Numero_Haibtacion");
-                sentencia.setString(1, estado);
-                sentencia.setString(1, IDCliente);
+                PreparedStatement sentencia = coneccion.prepareStatement("SELECT * FROM RESERVACION WHERE ((Fecha_Inicial BETWEEN ? AND ?) AND (Fecha_Final BETWEEN ? AND ?))"
+                        + "AND ID_Cliente=? AND Estado=? ORDER BY Numero_Haibtacion");
+                sentencia.setString(1, fechaInicial);
+                sentencia.setString(2, FechaFinal);
+                sentencia.setString(3, fechaInicial);
+                sentencia.setString(4, FechaFinal);
+                sentencia.setString(4, estado);
                 return consultaReservacion(sentencia);
+            }
+        } catch (InputsVaciosException | SQLException e) {
+            throw new InputsVaciosException("Error en la Base de Datos");
+        }
+    }
+
+    /**
+     * Suma todos los ingresos relacionados a los parametros, si los datos son
+     * nulos realiza la suma de todo desde "El inicio de los tiempos"
+     *
+     * Si nos se coloca el ID realiza la busqueda con la fechas
+     *
+     * Con las fechas deben estar ambas colocadas de manera correcta
+     *
+     * @param IDCliente
+     * @param fechaInicial
+     * @param FechaFinal
+     * @return
+     * @throws SQLException
+     * @throws InputsVaciosException
+     */
+    public String sumaIngresoPorReservaciones(String IDCliente, String fechaInicial, String FechaFinal) throws SQLException, InputsVaciosException {
+        boolean IDtry = IDCliente.replace(" ", "").isEmpty();
+        boolean fechaInicalTry = fechaInicial.replace(" ", "").replace("-", "").isEmpty();
+        boolean fechaFinalTry = FechaFinal.replace(" ", "").replace("-", "").isEmpty();
+
+        try {
+            if (IDtry && (fechaFinalTry || fechaInicalTry)) {
+                PreparedStatement sentencia = coneccion.prepareStatement("SELECT SUM(Pago_Habitacion) as total FROM RESERVACION"
+                        + "WHERE Estado=? OR Estado=?");
+                sentencia.setString(1, DefaultValues.HAB_OCUPADA_COD);
+                sentencia.setString(2, DefaultValues.HAB_CHECK_OUT_COD);
+                return totalSuma(sentencia);
+            } else if (IDtry && !(fechaFinalTry || fechaInicalTry)) {
+                PreparedStatement sentencia = coneccion.prepareStatement("SELECT SUM(Pago_Habitacion) as total FROM RESERVACION"
+                        + "WHERE (Estado=? OR Estado=?) AND ((Fecha_Inicial BETWEEN ? AND ?) AND (Fecha_Final BETWEEN ? AND ?))");
+                sentencia.setString(1, DefaultValues.HAB_OCUPADA_COD);
+                sentencia.setString(2, DefaultValues.HAB_CHECK_OUT_COD);
+                sentencia.setString(3, fechaInicial);
+                sentencia.setString(4, FechaFinal);
+                sentencia.setString(5, fechaInicial);
+                sentencia.setString(6, FechaFinal);
+                return totalSuma(sentencia);
+            } else if (!IDtry && (fechaFinalTry || fechaInicalTry)) {
+                PreparedStatement sentencia = coneccion.prepareStatement("SELECT SUM(Pago_Habitacion) as total FROM RESERVACION"
+                        + "WHERE (Estado=? OR Estado=?) AND ID_Cliente=?");
+                sentencia.setString(1, DefaultValues.HAB_OCUPADA_COD);
+                sentencia.setString(2, DefaultValues.HAB_CHECK_OUT_COD);
+                sentencia.setString(3, IDCliente);
+                return totalSuma(sentencia);
+            } else if (!IDtry && !(fechaFinalTry || fechaInicalTry)) {
+                PreparedStatement sentencia = coneccion.prepareStatement("SELECT SUM(Pago_Habitacion) as total FROM RESERVACION"
+                        + "WHERE (Estado=? OR Estado=?) AND ((Fecha_Inicial BETWEEN ? AND ?) AND (Fecha_Final BETWEEN ? AND ?)) AND ID_Cliente=?");
+                sentencia.setString(1, DefaultValues.HAB_OCUPADA_COD);
+                sentencia.setString(2, DefaultValues.HAB_CHECK_OUT_COD);
+                sentencia.setString(3, fechaInicial);
+                sentencia.setString(4, FechaFinal);
+                sentencia.setString(5, fechaInicial);
+                sentencia.setString(6, FechaFinal);
+                sentencia.setString(7, IDCliente);
+                return totalSuma(sentencia);
+            } else {
+                throw new InputsVaciosException("Error durante el calculo");
             }
         } catch (InputsVaciosException | SQLException e) {
             throw new InputsVaciosException("Error en la Base de Datos");
@@ -353,5 +486,20 @@ public class ReservarHabitacionM {
             System.out.println("Error al obtener la fecha");
         }
         return dias;
+    }
+
+    private String totalSuma(PreparedStatement sentencia) throws SQLException, InputsVaciosException {
+        String total = "";
+        try {
+            ResultSet resultado = sentencia.executeQuery();
+            while (resultado.next()) {
+                total = resultado.getString("total");
+                System.out.println("Total: " + total);
+            }
+            resultado.close();
+            return total;
+        } catch (SQLException e) {
+            throw new InputsVaciosException("Error en la base de datos");
+        }
     }
 }

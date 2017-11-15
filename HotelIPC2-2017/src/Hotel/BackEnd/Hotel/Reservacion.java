@@ -5,6 +5,7 @@
  */
 package Hotel.BackEnd.Hotel;
 
+import RUN.DefaultValues;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.io.Serializable;
@@ -88,6 +89,20 @@ public class Reservacion implements Serializable {
 
     public String getEstado() {
         return estado;
+    }
+
+    public String getEstadoLetra() {
+        switch (estado) {
+            case DefaultValues.HAB_CHECK_OUT_COD:
+                return DefaultValues.HAB_CHECK_OUT;
+            case DefaultValues.HAB_ELIMINADA_COD:
+                return DefaultValues.HAB_ELIMINADA;
+            case DefaultValues.HAB_OCUPADA_COD:
+                return DefaultValues.HAB_OCUPADA;
+            case DefaultValues.HAB_RESERVADA_COD:
+                return DefaultValues.HAB_RERSERVADA;
+        }
+        return null;
     }
 
     public void setEstado(String estado) {
