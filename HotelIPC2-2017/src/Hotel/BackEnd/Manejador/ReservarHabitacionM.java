@@ -245,13 +245,52 @@ public class ReservarHabitacionM {
         }
     }
 
-    public List<Reservacion> busquedaPorIDClienteYEstado(String IDCliente, String estado) throws SQLException, InputsVaciosException {
+    public List<Reservacion> busquedaPorIDClienteYEstado(String IDCliente, String estado, String fechaInicial, String FechaFinal) throws SQLException, InputsVaciosException {
         boolean IDtry = IDCliente.replace(" ", "").isEmpty();
+        boolean fechaInicalTry = fechaInicial.replace(" ","").replace("-","").isEmpty();
+        boolean fechaFinalTry = FechaFinal.replace(" ","").replace("-","").isEmpty();
 
         try {
-            if (IDtry) {
+            if (IDtry && (fechaFinalTry || fechaInicalTry) && (estado.equalsIgnoreCase(DefaultValues.DISPONIBLE_TODO_COMBO_BOX))) {
+                PreparedStatement sentencia = coneccion.prepareStatement("SELECT * FROM RESERVACION ORDER BY Numero_Haibtacion");
+                return consultaReservacion(sentencia);
+            } else if (IDtry && (fechaFinalTry || fechaInicalTry)) {
                 PreparedStatement sentencia = coneccion.prepareStatement("SELECT * FROM RESERVACION WHERE Estado=? ORDER BY Numero_Haibtacion");
                 sentencia.setString(1, estado);
+                return consultaReservacion(sentencia);
+            } else if (IDtry && (estado.equalsIgnoreCase(DefaultValues.DISPONIBLE_TODO_COMBO_BOX)) && !(fechaFinalTry || fechaInicalTry)) {
+                PreparedStatement sentencia = coneccion.prepareStatement("SELECT * FROM RESERVACION WHERE ((Fecha_Inicial BETWEEN ? AND ?) AND (Fecha_Final BETWEEN ? AND ?))"
+                        + " ORDER BY Numero_Haibtacion");
+                sentencia.setString(1, fechaInicial);
+                sentencia.setString(2, FechaFinal);
+                sentencia.setString(3, fechaInicial);
+                sentencia.setString(4, FechaFinal);
+                return consultaReservacion(sentencia);
+            } else if (IDtry && !(fechaFinalTry || fechaInicalTry)) {
+                PreparedStatement sentencia = coneccion.prepareStatement("SELECT * FROM RESERVACION WHERE ((Fecha_Inicial BETWEEN ? AND ?) AND (Fecha_Final BETWEEN ? AND ?))"
+                        + " AND Estado=? ORDER BY Numero_Haibtacion");
+                sentencia.setString(1, fechaInicial);
+                sentencia.setString(2, FechaFinal);
+                sentencia.setString(3, fechaInicial);
+                sentencia.setString(4, FechaFinal);
+                sentencia.setString(5, estado);
+                return consultaReservacion(sentencia);
+            } else if (!IDtry && (fechaFinalTry || fechaInicalTry) && (estado.equalsIgnoreCase(DefaultValues.DISPONIBLE_TODO_COMBO_BOX))) {
+                PreparedStatement sentencia = coneccion.prepareStatement("SELECT * FROM RESERVACION WHERE ID_Cliente=? ORDER BY Numero_Haibtacion");
+                sentencia.setString(1, IDCliente);
+                return consultaReservacion(sentencia);
+            } else if (!IDtry && (fechaFinalTry || fechaInicalTry)) {
+                PreparedStatement sentencia = coneccion.prepareStatement("SELECT * FROM RESERVACION WHERE ID_Cliente=? AND Estado=? ORDER BY Numero_Haibtacion");
+                sentencia.setString(1, IDCliente);
+                sentencia.setString(2, estado);
+                return consultaReservacion(sentencia);
+            } else if ((estado.equalsIgnoreCase(DefaultValues.DISPONIBLE_TODO_COMBO_BOX))) {
+                PreparedStatement sentencia = coneccion.prepareStatement("SELECT * FROM RESERVACION WHERE ((Fecha_Inicial BETWEEN ? AND ?) AND (Fecha_Final BETWEEN ? AND ?))"
+                        + "AND ID_Cliente=? ORDER BY Numero_Haibtacion");
+                sentencia.setString(1, fechaInicial);
+                sentencia.setString(2, FechaFinal);
+                sentencia.setString(3, fechaInicial);
+                sentencia.setString(4, FechaFinal);
                 return consultaReservacion(sentencia);
             } else {
                 PreparedStatement sentencia = coneccion.prepareStatement("SELECT * FROM RESERVACION WHERE Estado=? AND ID_Cliente LIKE ? ORDER BY Numero_Haibtacion");
@@ -259,17 +298,6 @@ public class ReservarHabitacionM {
                 sentencia.setString(1, IDCliente);
                 return consultaReservacion(sentencia);
             }
-        } catch (InputsVaciosException | SQLException e) {
-            throw new InputsVaciosException("Error en la Base de Datos");
-        }
-    }
-
-    public List<Reservacion> busquedaTodosLasReservaciones() throws SQLException, InputsVaciosException {
-
-        try {
-            PreparedStatement sentencia = coneccion.prepareStatement("SELECT * FROM RESERVACION ORDER BY Numero_Haibtacion");
-            return consultaReservacion(sentencia);
-
         } catch (InputsVaciosException | SQLException e) {
             throw new InputsVaciosException("Error en la Base de Datos");
         }

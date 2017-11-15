@@ -99,11 +99,11 @@ public class AlimentoM {
                     PreparedStatement sentencia = conexion.prepareStatement("SELECT * FROM ALIMENTOS WHERE Nombre LIKE ? ORDER BY Nombre ASC");
                     return ConsultaAlimentos(sentencia);
                 } else if (disponibleComboBox.equals(DefaultValues.DISPONIBLE_SI_COMBO_BOX)) {
-                    PreparedStatement sentencia = conexion.prepareStatement("SELECT * FROM ALIMENTOS WHERE Disponible=?, Nombre LIKE ? ORDER BY Nombre ASC");
+                    PreparedStatement sentencia = conexion.prepareStatement("SELECT * FROM ALIMENTOS WHERE Disponible=? AND Nombre LIKE ? ORDER BY Nombre ASC");
                     sentencia.setString(1, DefaultValues.DISPONIBLE_SI);
                     return ConsultaAlimentos(sentencia);
                 } else if (disponibleComboBox.equals(DefaultValues.DISPONIBLE_NO_COMBO_BOX)) {
-                    PreparedStatement sentencia = conexion.prepareStatement("SELECT * FROM ALIMENTOS WHERE Disponible=?, Nombre LIKE ? ORDER BY Nombre ASC");
+                    PreparedStatement sentencia = conexion.prepareStatement("SELECT * FROM ALIMENTOS WHERE Disponible=? AND Nombre LIKE ? ORDER BY Nombre ASC");
                     sentencia.setString(1, DefaultValues.DISPONIBLE_NO);
                     return ConsultaAlimentos(sentencia);
                 }

@@ -210,19 +210,45 @@ public class HabitacionM {
         }
         return busquedaHabitacion;
     }
-    
-    public double precioHabitacion(String noHabitacion)throws SQLException,InputsVaciosException{
-        double precio =0;
+
+    public double precioHabitacion(String noHabitacion) throws SQLException, InputsVaciosException {
+        double precio = 0;
         try {
             PreparedStatement sentencia = conexion.prepareStatement("SELECT Precio FROM TIPO_HABITACION,HABITACION WHERE "
                     + "Categoria=CategoriaTipoHabitacion AND Numero =?");
             sentencia.setString(1, noHabitacion);
             ResultSet resultado = sentencia.executeQuery();
-            while(resultado.next()){
+            while (resultado.next()) {
                 precio = resultado.getDouble("Precio");
             }
             return precio;
         } catch (Exception e) {
+            throw new InputsVaciosException("Error en la Base de Datos");
+        }
+    }
+
+    public List<Habitacion> habitacionEnOcupadaHoy(String noHabitacion) throws SQLException, InputsVaciosException {
+        try {
+            /**
+             * Lineas de prueba INSERT INTO RESERVACION
+             * 
+             * (Fecha_Inicial,Fecha_Final,Estado,Pago_Habitacion,Pago_Restaurante,Numero_Haibtacion,ID_Cliente)
+             * VALUES
+             * ('2017-11-13','2017-11-17','2','1002.75','0','201','2929292920901');
+             * 
+             * SELECT Categoria,Precio,Numero FROM
+             * RESERVACION,TIPO_HABITACION,HABITACION WHERE Numero =
+             * Numero_Haibtacion AND Categoria=CategoriaTipoHabitacion AND
+             * Estado=2 AND Numero_Haibtacion=201 AND ((SELECT CURDATE() FECHA)
+             * BETWEEN Fecha_Inicial AND Fecha_Final)
+             */
+            PreparedStatement sentencia = conexion.prepareStatement("SELECT Categoria,Precio,Numero FROM RESERVACION,TIPO_HABITACION,HABITACION WHERE "
+                    + "Categoria=CategoriaTipoHabitacion AND Numero = Numero_Haibtacion AND Estado=? AND Numero_Haibtacion=? AND "
+                    + "((SELECT CURDATE() FECHA) BETWEEN Fecha_Inicial AND Fecha_Final)");
+            sentencia.setString(1, DefaultValues.HAB_OCUPADA_COD);
+            sentencia.setString(2, noHabitacion);
+            return consultaPrecioHabitacion(sentencia);
+        } catch (InputsVaciosException | SQLException e) {
             throw new InputsVaciosException("Error en la Base de Datos");
         }
     }

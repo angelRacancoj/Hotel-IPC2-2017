@@ -48,6 +48,9 @@ public class DefaultValues {
     //la reservacion ya no sera util
     public static final String HAB_ELIMINADA_COD = "3";
     public static final String HAB_ELIMINADA = "Eliminada";
+    //el cliente ya se retiro, por lo tanto ya no genera consumos
+    public static final String HAB_CHECK_OUT_COD = "4";
+    public static final String HAB_CHECK_OUT = "CheckOut";
     
     public static final String HAB_TODO_COMBO_BOX = "0";
     public static final String HAB_RESERVADA_COMBO_BOX = "1";
