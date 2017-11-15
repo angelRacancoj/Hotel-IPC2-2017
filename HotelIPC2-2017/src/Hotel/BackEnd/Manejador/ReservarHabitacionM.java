@@ -28,7 +28,7 @@ public class ReservarHabitacionM {
     }
     
     /**
-     * Permite el
+     * Se realiza el checkIn sin necesidad de realizar la reservacion, ya que directamente guarda que ya se realizo en ingreso
      * @param IDCliente
      * @param fechaInicial
      * @param fechaFinal
@@ -37,7 +37,48 @@ public class ReservarHabitacionM {
      * @throws SQLException
      * @throws InputsVaciosException
      */
-    public boolean CheckInConReservacion(String IDCliente, String fechaInicial, String fechaFinal, String numeroHabitacion)throws SQLException, InputsVaciosException{
+    public boolean CheckInSinReservacion(String IDCliente, String fechaInicial, String fechaFinal, String numeroHabitacion) throws SQLException, InputsVaciosException {
+        boolean IDClienteTry = IDCliente.replace(" ", "").isEmpty();
+        boolean fechaInicialTry = fechaInicial.replace(" ", "").isEmpty();
+        boolean fechaFinalTry = fechaFinal.replace(" ", "").isEmpty();
+        boolean noHabtiacionTry = numeroHabitacion.replace(" ", "").isEmpty();
+
+        try {
+            if (IDClienteTry || fechaFinalTry || fechaInicialTry || noHabtiacionTry || (cantidadDelDias(fechaInicial, fechaFinal) < 0)) {
+                throw new InputsVaciosException("Debe llenar todos los campos");
+            } else {
+                PreparedStatement sentencia = coneccion.prepareStatement("INSERT INTO RESERVACION "
+                        + "(Fecha_Inicial, Fecha_Final, Estado, Numero_Haibtacion, ID_Cliente,Pago_Habitacion) VALUES (?,?,?,?,?,?)");
+                sentencia.setString(1, fechaInicial);
+                sentencia.setString(2, fechaFinal);
+                sentencia.setString(3, DefaultValues.HAB_OCUPADA_COD);
+                sentencia.setString(4, numeroHabitacion);
+                sentencia.setString(5, IDCliente);
+                sentencia.setString(6, String.valueOf(cantidadDelDias(fechaInicial, fechaFinal) * manejadorHabitacion.precioHabitacion(numeroHabitacion)));
+                if (sentencia.executeUpdate() == 1) {
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+        } catch (InputsVaciosException | SQLException e) {
+            throw new InputsVaciosException("Error en la Base de Datos");
+        }
+    }
+
+    /**
+     * Permite realizar el chech-in tomando en cuenta que la reservacion ya
+     * existe
+     *
+     * @param IDCliente
+     * @param fechaInicial
+     * @param fechaFinal
+     * @param numeroHabitacion
+     * @return
+     * @throws SQLException
+     * @throws InputsVaciosException
+     */
+    public boolean CheckInConReservacion(String IDCliente, String fechaInicial, String fechaFinal, String numeroHabitacion) throws SQLException, InputsVaciosException {
         boolean IDClienteTry = IDCliente.replace(" ", "").isEmpty();
         boolean fechaInicialTry = fechaInicial.replace(" ", "").isEmpty();
         boolean fechaFinalTry = fechaFinal.replace(" ", "").isEmpty();
