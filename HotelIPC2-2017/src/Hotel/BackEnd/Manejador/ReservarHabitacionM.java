@@ -26,9 +26,11 @@ public class ReservarHabitacionM {
         manejadorHabitacion = new HabitacionM(coneccion);
         this.coneccion = coneccion;
     }
-    
+
     /**
-     * Se realiza el checkIn sin necesidad de realizar la reservacion, ya que directamente guarda que ya se realizo en ingreso
+     * Se realiza el checkIn sin necesidad de realizar la reservacion, ya que
+     * directamente guarda que ya se realizo en ingreso
+     *
      * @param IDCliente
      * @param fechaInicial
      * @param fechaFinal
@@ -254,7 +256,7 @@ public class ReservarHabitacionM {
             } else {
                 PreparedStatement sentencia = coneccion.prepareStatement("SELECT * FROM RESERVACION WHERE Estado=? AND ID_Cliente LIKE ? ORDER BY Numero_Haibtacion");
                 sentencia.setString(1, estado);
-                sentencia.setString(1, estado);
+                sentencia.setString(1, IDCliente);
                 return consultaReservacion(sentencia);
             }
         } catch (InputsVaciosException | SQLException e) {
