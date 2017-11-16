@@ -65,6 +65,18 @@ public class Habitacion implements Serializable {
     public String getEstado() {
         return estado;
     }
+    
+    public String getEstadoTipo() {
+        switch (estado) {
+            case DefaultValues.TIPO_DELUXE_ID:
+                return DefaultValues.TIPO_DELUXE_NOMBRE;
+            case DefaultValues.TIPO_JUNIOR_ID:
+                return DefaultValues.TIPO_JUNIOR_NOMBRE;
+            case DefaultValues.TIPO_MASTER_ID:
+                return DefaultValues.TIPO_MASTER_NOMBRE;
+        }
+        return null;
+    }
 
     public void setEstado(String estado) {
         String oldEstado = this.estado;

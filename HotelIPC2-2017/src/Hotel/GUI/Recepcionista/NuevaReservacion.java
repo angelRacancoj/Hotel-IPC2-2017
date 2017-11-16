@@ -1,11 +1,12 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package Hotel.GUI.Recepcionista;
 
+import Hotel.BackEnd.Hotel.Habitacion;
+import Hotel.BackEnd.Manejador.HabitacionM;
+import Hotel.GUI.Principal.Principal;
+import RUN.DefaultValues;
 import java.sql.Connection;
+import java.util.List;
+import org.jdesktop.observablecollections.ObservableList;
 
 /**
  *
@@ -13,9 +14,17 @@ import java.sql.Connection;
  */
 public class NuevaReservacion extends javax.swing.JInternalFrame {
 
-    /**
-     * Creates new form NuevaReservacion
-     */
+    private List<Habitacion> listadoHabEntrada;
+    private List<Habitacion> listadoHabSalida;
+    private ObservableList<Habitacion> listaObservableHabEstrada;
+    private ObservableList<Habitacion> listaObservableHabSalida;
+    
+    private HabitacionM manejadorHabitacion;
+    private DefaultValues valoresDefinidos;
+    
+    private Principal pantallaPrincipal; 
+    
+    
     public NuevaReservacion(Connection conexion) {
         initComponents();
     }
@@ -44,8 +53,7 @@ public class NuevaReservacion extends javax.swing.JInternalFrame {
         habitacionesTable1 = new javax.swing.JTable();
         jLabel4 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
-        jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
+        guardarButton = new javax.swing.JButton();
 
         setResizable(true);
         setTitle("Nueva Reservacion");
@@ -53,15 +61,20 @@ public class NuevaReservacion extends javax.swing.JInternalFrame {
         jLabel1.setText("Fecha Inicial:");
 
         try {
-            fechaInicialFormattedTextField.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.MaskFormatter("####/##/##")));
+            fechaInicialFormattedTextField.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.MaskFormatter("####-##-##")));
         } catch (java.text.ParseException ex) {
             ex.printStackTrace();
         }
+        fechaInicialFormattedTextField.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                fechaInicialFormattedTextFieldFocusLost(evt);
+            }
+        });
 
         jLabel2.setText("Fecha Final:");
 
         try {
-            fechaFinalFormattedTextField.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.MaskFormatter("####/##/##")));
+            fechaFinalFormattedTextField.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.MaskFormatter("####-##-##")));
         } catch (java.text.ParseException ex) {
             ex.printStackTrace();
         }
@@ -80,15 +93,35 @@ public class NuevaReservacion extends javax.swing.JInternalFrame {
         jScrollPane1.setViewportView(habitacionesTable);
 
         limpiarButton.setText("Limpiar");
+        limpiarButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                limpiarButtonActionPerformed(evt);
+            }
+        });
 
         buscarButton.setText("Buscar");
+        buscarButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                buscarButtonActionPerformed(evt);
+            }
+        });
 
         seleccionarButton.setText("Agregar al Listado");
+        seleccionarButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                seleccionarButtonActionPerformed(evt);
+            }
+        });
 
         cancelarButton.setText("Cancelar");
+        cancelarButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cancelarButtonActionPerformed(evt);
+            }
+        });
 
         jLabel3.setFont(new java.awt.Font("Noto Sans UI", 0, 10)); // NOI18N
-        jLabel3.setText("Ej: 2017/02/30");
+        jLabel3.setText("Ej: 2017-02-30");
 
         habitacionesTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -107,9 +140,12 @@ public class NuevaReservacion extends javax.swing.JInternalFrame {
 
         jLabel5.setText("Habitaciones a reservar");
 
-        jButton1.setText("Guardar Reservacion");
-
-        jButton2.setText("Eliminar del Listado");
+        guardarButton.setText("Guardar Reservacion");
+        guardarButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                guardarButtonActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -146,12 +182,9 @@ public class NuevaReservacion extends javax.swing.JInternalFrame {
                                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 350, javax.swing.GroupLayout.PREFERRED_SIZE))
                                 .addComponent(limpiarButton))
                             .addGap(18, 18, 18)
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 350, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGroup(layout.createSequentialGroup()
-                                    .addComponent(jButton2)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(jButton1))))))
+                                .addComponent(guardarButton, javax.swing.GroupLayout.Alignment.TRAILING)))))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
@@ -175,17 +208,40 @@ public class NuevaReservacion extends javax.swing.JInternalFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 337, Short.MAX_VALUE)
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 17, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 20, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(limpiarButton)
                     .addComponent(seleccionarButton)
-                    .addComponent(jButton1)
-                    .addComponent(jButton2))
+                    .addComponent(guardarButton))
                 .addContainerGap())
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void buscarButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buscarButtonActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_buscarButtonActionPerformed
+
+    private void cancelarButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelarButtonActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_cancelarButtonActionPerformed
+
+    private void limpiarButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_limpiarButtonActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_limpiarButtonActionPerformed
+
+    private void seleccionarButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_seleccionarButtonActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_seleccionarButtonActionPerformed
+
+    private void guardarButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_guardarButtonActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_guardarButtonActionPerformed
+
+    private void fechaInicialFormattedTextFieldFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_fechaInicialFormattedTextFieldFocusLost
+        // TODO add your handling code here:
+    }//GEN-LAST:event_fechaInicialFormattedTextFieldFocusLost
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -193,10 +249,9 @@ public class NuevaReservacion extends javax.swing.JInternalFrame {
     private javax.swing.JButton cancelarButton;
     private javax.swing.JFormattedTextField fechaFinalFormattedTextField;
     private javax.swing.JFormattedTextField fechaInicialFormattedTextField;
+    private javax.swing.JButton guardarButton;
     private javax.swing.JTable habitacionesTable;
     private javax.swing.JTable habitacionesTable1;
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;

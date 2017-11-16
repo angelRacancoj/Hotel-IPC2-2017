@@ -51,15 +51,20 @@ public class DefaultValues {
     //el cliente ya se retiro, por lo tanto ya no genera consumos
     public static final String HAB_CHECK_OUT_COD = "4";
     public static final String HAB_CHECK_OUT = "CheckOut";
-    
+
     public static final String HAB_TODO_COMBO_BOX = "0";
     public static final String HAB_RESERVADA_COMBO_BOX = "1";
     public static final String HAB_OCUPADA_COMBO_BOX = "2";
     public static final String HAB_ELIMINADA_COMBO_BOX = "3";
-    
-    // numeracion habitaciones
 
-    
+    // numeracion habitaciones
+    /**
+     * Verifica que el texto de entrada como fecha sea valido, devuelve true al
+     * validarse
+     *
+     * @param fecha
+     * @return
+     */
     public boolean validarFecha(String fecha) {
         try {
             SimpleDateFormat formatoFecha = new SimpleDateFormat("yyyy-MM-dd");

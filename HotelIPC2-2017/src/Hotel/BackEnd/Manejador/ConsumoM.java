@@ -78,8 +78,10 @@ public class ConsumoM {
                 sentencia.setString(1, DefaultValues.HAB_OCUPADA_COD);
                 sentencia.setString(1, noHabitacion);
                 if (sentencia.executeUpdate() == 1) {
+                    sentencia.close();
                     return true;
                 } else {
+                    sentencia.close();
                     return false;
                 }
             }
@@ -211,6 +213,7 @@ public class ConsumoM {
             }
             System.out.println("/////////////////////////////////////");
             resultado.close();
+            sentencia.close();
         } catch (SQLException e) {
             throw new InputsVaciosException("Error en la base de datos");
         }
@@ -226,6 +229,7 @@ public class ConsumoM {
                 System.out.println("Total: " + total);
             }
             resultado.close();
+            sentencia.close();
             return total;
         } catch (SQLException e) {
             throw new InputsVaciosException("Error en la base de datos");

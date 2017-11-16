@@ -39,8 +39,10 @@ public class ClienteM {
                 sentencia.setString(6, cumpleanios);
                 sentencia.setString(7, IDOriginal);
                 if (sentencia.executeUpdate() == 1) {
+                    sentencia.close();
                     return true;
                 } else {
+                    sentencia.close();
                     return false;
                 }
             }
@@ -60,8 +62,10 @@ public class ClienteM {
                 sentencia.setString(5, phone);
                 sentencia.setString(6, cumpleanios);
                 if (sentencia.executeUpdate() == 1) {
+                    sentencia.close();
                     return true;
                 } else {
+                    sentencia.close();
                     return false;
                 }
             } else {
@@ -105,6 +109,7 @@ public class ClienteM {
             }
             System.out.println("++++++++++++++++++++++++++++++++++++++++++");
             resultado.close();
+            sentencia.close();
         } catch (SQLException e) {
             throw new InputsVaciosException("Error en la Base de Datos");
         }

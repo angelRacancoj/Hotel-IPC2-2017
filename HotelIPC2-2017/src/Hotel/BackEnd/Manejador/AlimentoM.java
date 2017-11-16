@@ -41,8 +41,10 @@ public class AlimentoM {
                     sentencia.setString(3, disponible);
                     sentencia.setString(4, descripcion);
                     if (sentencia.executeUpdate() == 1) {
+                        sentencia.close();
                         return true;
                     } else {
+                        sentencia.close();
                         return false;
                     }
                 }
@@ -66,8 +68,10 @@ public class AlimentoM {
                 sentencia.setString(4, descripcion);
                 sentencia.setString(5, nombreOld);
                 if (sentencia.executeUpdate() == 1) {
+                    sentencia.close();
                     return true;
                 } else {
+                    sentencia.close();
                     return false;
                 }
             }
@@ -123,10 +127,11 @@ public class AlimentoM {
                 String nombre = resultado.getString("Nombre");
                 String precio = resultado.getString("Precio");
                 String disponible = resultado.getString("Disponible");
-                String descripcion = resultado.getString("Descripcion");
+                String descripcion = resultado.getNString("Descripcion");
                 System.out.println("Alimento: " + nombre + ", Q. " + precio + "," + disponible + "\n" + descripcion);
                 busquedaAlimentos.add(new Alimento(nombre, descripcion, precio, Boolean.parseBoolean(disponible)));
             }
+            sentencia.close();
         } catch (SQLException e) {
             throw new InputsVaciosException("Error en la Base de Datos");
         }

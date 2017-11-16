@@ -63,8 +63,10 @@ public class ReservarHabitacionM {
                 sentencia.setString(5, IDCliente);
                 sentencia.setString(6, String.valueOf(cantidadDelDias(fechaInicial, fechaFinal) * manejadorHabitacion.precioHabitacion(numeroHabitacion)));
                 if (sentencia.executeUpdate() == 1) {
+                    sentencia.close();
                     return true;
                 } else {
+                    sentencia.close();
                     return false;
                 }
             }
@@ -105,8 +107,10 @@ public class ReservarHabitacionM {
                 sentencia.setString(5, DefaultValues.HAB_RESERVADA_COD);
                 sentencia.setString(6, numeroHabitacion);
                 if (sentencia.executeUpdate() == 1) {
+                    sentencia.close();
                     return true;
                 } else {
+                    sentencia.close();
                     return false;
                 }
             }
@@ -147,8 +151,10 @@ public class ReservarHabitacionM {
                 sentencia.setString(5, DefaultValues.HAB_RESERVADA_COD);
                 sentencia.setString(6, numeroHabitacion);
                 if (sentencia.executeUpdate() == 1) {
+                    sentencia.close();
                     return true;
                 } else {
+                    sentencia.close();
                     return false;
                 }
             }
@@ -200,8 +206,10 @@ public class ReservarHabitacionM {
                 sentencia.setString(7, DefaultValues.HAB_RESERVADA_COD);
                 sentencia.setString(8, noHabitacionAnterior);
                 if (sentencia.executeUpdate() == 1) {
+                    sentencia.close();
                     return true;
                 } else {
+                    sentencia.close();
                     return false;
                 }
             }
@@ -242,8 +250,10 @@ public class ReservarHabitacionM {
                 sentencia.setString(7, DefaultValues.HAB_RESERVADA_COD);
                 sentencia.setString(8, noHabitacionAnterior);
                 if (sentencia.executeUpdate() == 1) {
+                    sentencia.close();
                     return true;
                 } else {
+                    sentencia.close();
                     return false;
                 }
             }
@@ -282,8 +292,10 @@ public class ReservarHabitacionM {
                 sentencia.setString(4, numeroHabitacion);
                 sentencia.setString(5, IDCliente);
                 if (sentencia.executeUpdate() == 1) {
+                    sentencia.close();
                     return true;
                 } else {
+                    sentencia.close();
                     return false;
                 }
             }
@@ -457,6 +469,7 @@ public class ReservarHabitacionM {
             }
             System.out.println("``````````````````````````````````````````````````````");
             resultado.close();
+            sentencia.close();
         } catch (SQLException e) {
             throw new InputsVaciosException("Error en la Base de Datos");
         }
@@ -483,6 +496,8 @@ public class ReservarHabitacionM {
             while (resultado.next()) {
                 dias = resultado.getInt("CantDias");
             }
+            resultado.close();
+            objeto.close();
             return dias;
 
         } catch (SQLException e) {
@@ -500,6 +515,7 @@ public class ReservarHabitacionM {
                 System.out.println("Total: " + total);
             }
             resultado.close();
+            sentencia.close();
             return total;
         } catch (SQLException e) {
             throw new InputsVaciosException("Error en la base de datos");
@@ -527,6 +543,8 @@ public class ReservarHabitacionM {
             while (resultado.next()) {
                 fechaActual = resultado.getString("FECHA_ACTUAL");
             }
+            resultado.close();
+            objeto.close();
             return fechaActual;
         } catch (SQLException e) {
             throw new InputsVaciosException("Error en la base de datos");

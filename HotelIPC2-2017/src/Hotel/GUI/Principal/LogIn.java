@@ -108,9 +108,14 @@ public class LogIn extends javax.swing.JFrame {
 
     private void ingresarButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ingresarButtonActionPerformed
         try {
-            principalFrame.iniciar(manejadorUsuario.iniciar(usuarioTextField.getText(), new String(ContrasenaPasswordField.getPassword())));
+            if (manejadorUsuario.iniciar(usuarioTextField.getText(), new String(ContrasenaPasswordField.getPassword()))!=null) {
+                principalFrame.iniciar(manejadorUsuario.iniciar(usuarioTextField.getText(), new String(ContrasenaPasswordField.getPassword())));
             limpiar();
             principalFrame.setVisible(true);
+            }else{
+                JOptionPane.showMessageDialog(this, "Usuario o Contraseña incorrecta", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+            
         } catch (Exception e) {
         }
     }//GEN-LAST:event_ingresarButtonActionPerformed

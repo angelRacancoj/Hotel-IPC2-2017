@@ -45,6 +45,7 @@ public class HabitacionM {
             }
             System.out.println("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&");
             resultado.close();
+            sentencia.close();
         } catch (SQLException e) {
             throw new InputsVaciosException("Error en la Base de Datos");
         }
@@ -62,6 +63,7 @@ public class HabitacionM {
      * @throws InputsVaciosException
      */
     public List<Habitacion> habitacionesDisponibles(String fechaIncial, String fechaFinal) throws SQLException, InputsVaciosException {
+        busquedaHabitacion.clear();
         try {
             PreparedStatement sentencia = conexion.prepareStatement("SELECT Categoria,Precio,Numero FROM TIPO_HABITACION,HABITACION WHERE "
                     + "Categoria=CategoriaTipoHabitacion AND (Numero NOT IN (SELECT Numero_haibtacion FROM RESERVACION WHERE Estado=? AND "
@@ -72,10 +74,20 @@ public class HabitacionM {
             sentencia.setString(4, fechaFinal);
             sentencia.setString(5, fechaIncial);
             sentencia.setString(6, fechaFinal);
-            return consultaPrecioHabitacion(sentencia);
-        } catch (InputsVaciosException | SQLException e) {
-            throw new InputsVaciosException("Error en la Base de Datos");
+            ResultSet resultado = sentencia.executeQuery();
+            while(resultado.next()){
+                String numero = resultado.getString("Numero");
+                String categoria = resultado.getString("Categoria");
+                String precio = resultado.getString("Precio");
+                System.out.println("Habitacion Disponible: "+numero+","+categoria+","+precio);
+                busquedaHabitacion.add(new Habitacion(numero, precio, categoria));
+            }
+            resultado.close();
+            sentencia.close();
+        } catch (SQLException e) {
+            throw new InputsVaciosException("Error al obtener las habitaciones");
         }
+        return busquedaHabitacion;
     }
 
     /**
@@ -163,6 +175,8 @@ public class HabitacionM {
                 System.out.println("Habitacion: " + nombre + "," + precio + "," + estado);
                 busquedaHabitacion.add(new Habitacion(nombre, precio, estado));
             }
+            resultado.close();
+            sentencia.close();
         } catch (SQLException e) {
             throw new InputsVaciosException("Error en la Base de Datos");
         }
@@ -184,8 +198,10 @@ public class HabitacionM {
             sentencia.setString(1, precio);
             sentencia.setString(2, categoria);
             if (sentencia.executeUpdate() == 1) {
+                sentencia.close();
                 return true;
             } else {
+                sentencia.close();
                 return false;
             }
         } catch (SQLException e) {
@@ -203,10 +219,10 @@ public class HabitacionM {
      */
     public List<Habitacion> busquedaPrecioHabitacion() throws SQLException, InputsVaciosException {
         try {
-            PreparedStatement sentencia = conexion.prepareStatement("SELECT *FROM TIPO_HABITACION WHERE ORDER BY Categoria ASC");
+            PreparedStatement sentencia = conexion.prepareStatement("SELECT *FROM TIPO_HABITACION ORDER BY Categoria ASC");
             return consultaPrecioHabitacion(sentencia);
         } catch (InputsVaciosException | SQLException e) {
-            throw new InputsVaciosException("Error en la Base de Datos");
+            throw new InputsVaciosException("Error al obtener los precios");
         }
     }
 
@@ -231,6 +247,7 @@ public class HabitacionM {
             }
             System.out.println("*********************************");
             resultado.close();
+            sentencia.close();
         } catch (Exception e) {
             throw new InputsVaciosException("Error en la Base de Datos");
         }
@@ -247,6 +264,8 @@ public class HabitacionM {
             while (resultado.next()) {
                 precio = resultado.getDouble("Precio");
             }
+            resultado.close();
+            sentencia.close();
             return precio;
         } catch (Exception e) {
             throw new InputsVaciosException("Error en la Base de Datos");

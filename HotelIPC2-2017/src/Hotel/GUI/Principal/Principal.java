@@ -12,6 +12,7 @@ import Hotel.GUI.Gerente.ModificarPrecioHab;
 import Hotel.GUI.Recepcionista.CheckIn.CheckInConReservacion;
 import Hotel.GUI.Recepcionista.CheckIn.SinReservacion;
 import Hotel.GUI.Recepcionista.CheckOut.CheckOut;
+import Hotel.GUI.Recepcionista.DatosCliente;
 import Hotel.GUI.Recepcionista.ModificarReservacion;
 import Hotel.GUI.Recepcionista.NuevaReservacion;
 import Hotel.GUI.Restaurante.ServicioHabitacion;
@@ -50,6 +51,7 @@ public class Principal extends javax.swing.JFrame {
     private AlimentoFrame alimentoFrame;
     private EditarUsuarios editarUsuario;
     private ModificarPrecioHab modificarPrecioHab;
+    public DatosCliente datosCliente;
 
     public Principal(Connection conexion) {
         this.manejadorReservacion = new ReservarHabitacionM(conexion);
@@ -60,7 +62,7 @@ public class Principal extends javax.swing.JFrame {
         listaAlimento = new ArrayList<>();
         listaHabitacionObservable1 = ObservableCollections.observableList(listadoHabitacion1);
         listaHabitacionObservable2 = ObservableCollections.observableList(listadoHabitacion2);
-        listaAlimento = ObservableCollections.observableList(listaAlimento);
+        listaAlimentoObservable = ObservableCollections.observableList(listaAlimento);
 
         modificarReservacion = new ModificarReservacion(conexion);
         nuevaReservacion = new NuevaReservacion(conexion);
@@ -71,6 +73,7 @@ public class Principal extends javax.swing.JFrame {
         alimentoFrame = new AlimentoFrame(conexion);
         editarUsuario = new EditarUsuarios(conexion);
         modificarPrecioHab = new ModificarPrecioHab(conexion);
+        datosCliente = new DatosCliente(conexion);
 
         initComponents();
         this.DesktopPane.add(modificarReservacion);
@@ -82,6 +85,7 @@ public class Principal extends javax.swing.JFrame {
         this.DesktopPane.add(alimentoFrame);
         this.DesktopPane.add(editarUsuario);
         this.DesktopPane.add(modificarPrecioHab);
+        this.DesktopPane.add(datosCliente);
     }
 
     /**
@@ -92,6 +96,7 @@ public class Principal extends javax.swing.JFrame {
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
+        bindingGroup = new org.jdesktop.beansbinding.BindingGroup();
 
         jMenuItem1 = new javax.swing.JMenuItem();
         jLabel1 = new javax.swing.JLabel();
@@ -135,47 +140,54 @@ public class Principal extends javax.swing.JFrame {
 
         jLabel3.setText("Precios de las Habitaciones");
 
-        jTable3.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {},
-                {},
-                {},
-                {}
-            },
-            new String [] {
-
-            }
-        ));
+        org.jdesktop.beansbinding.ELProperty eLProperty = org.jdesktop.beansbinding.ELProperty.create("${listaHabitacionObservable1}");
+        org.jdesktop.swingbinding.JTableBinding jTableBinding = org.jdesktop.swingbinding.SwingBindings.createJTableBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ_WRITE, this, eLProperty, jTable3);
+        org.jdesktop.swingbinding.JTableBinding.ColumnBinding columnBinding = jTableBinding.addColumnBinding(org.jdesktop.beansbinding.ELProperty.create("${nombreTipo}"));
+        columnBinding.setColumnName("Nombre Tipo");
+        columnBinding.setColumnClass(String.class);
+        columnBinding.setEditable(false);
+        columnBinding = jTableBinding.addColumnBinding(org.jdesktop.beansbinding.ELProperty.create("${precio}"));
+        columnBinding.setColumnName("Precio");
+        columnBinding.setColumnClass(String.class);
+        columnBinding.setEditable(false);
+        bindingGroup.addBinding(jTableBinding);
+        jTableBinding.bind();
         jScrollPane3.setViewportView(jTable3);
 
         jLabel4.setText("Habitacion Libres Hoy");
 
-        jTable2.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {},
-                {},
-                {},
-                {}
-            },
-            new String [] {
-
-            }
-        ));
+        eLProperty = org.jdesktop.beansbinding.ELProperty.create("${listaHabitacionObservable2}");
+        jTableBinding = org.jdesktop.swingbinding.SwingBindings.createJTableBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ_WRITE, this, eLProperty, jTable2);
+        columnBinding = jTableBinding.addColumnBinding(org.jdesktop.beansbinding.ELProperty.create("${nombre}"));
+        columnBinding.setColumnName("Nombre");
+        columnBinding.setColumnClass(String.class);
+        columnBinding.setEditable(false);
+        columnBinding = jTableBinding.addColumnBinding(org.jdesktop.beansbinding.ELProperty.create("${precio}"));
+        columnBinding.setColumnName("Precio");
+        columnBinding.setColumnClass(String.class);
+        columnBinding.setEditable(false);
+        columnBinding = jTableBinding.addColumnBinding(org.jdesktop.beansbinding.ELProperty.create("${estadoTipo}"));
+        columnBinding.setColumnName("Estado Tipo");
+        columnBinding.setColumnClass(String.class);
+        columnBinding.setEditable(false);
+        bindingGroup.addBinding(jTableBinding);
+        jTableBinding.bind();
         jScrollPane2.setViewportView(jTable2);
 
         jLabel5.setText("Menu Restaurante");
 
-        jTable4.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {},
-                {},
-                {},
-                {}
-            },
-            new String [] {
-
-            }
-        ));
+        eLProperty = org.jdesktop.beansbinding.ELProperty.create("${listaAlimentoObservable}");
+        jTableBinding = org.jdesktop.swingbinding.SwingBindings.createJTableBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ_WRITE, this, eLProperty, jTable4);
+        columnBinding = jTableBinding.addColumnBinding(org.jdesktop.beansbinding.ELProperty.create("${nombre}"));
+        columnBinding.setColumnName("Nombre");
+        columnBinding.setColumnClass(String.class);
+        columnBinding.setEditable(false);
+        columnBinding = jTableBinding.addColumnBinding(org.jdesktop.beansbinding.ELProperty.create("${precio}"));
+        columnBinding.setColumnName("Precio");
+        columnBinding.setColumnClass(String.class);
+        columnBinding.setEditable(false);
+        bindingGroup.addBinding(jTableBinding);
+        jTableBinding.bind();
         jScrollPane4.setViewportView(jTable4);
 
         actualizarButton.setText("Actualizar");
@@ -297,30 +309,33 @@ public class Principal extends javax.swing.JFrame {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(DesktopPane, javax.swing.GroupLayout.DEFAULT_SIZE, 712, Short.MAX_VALUE)
-                .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
+                        .addGap(18, 18, 18)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 259, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 259, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 259, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 259, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 259, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 259, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                        .addComponent(jLabel1)
+                                        .addGap(58, 58, 58))
+                                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                        .addComponent(jLabel3)
+                                        .addGap(32, 32, 32)))
+                                .addGap(23, 23, 23))
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                .addComponent(jLabel1)
-                                .addGap(58, 58, 58))
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                .addComponent(jLabel3)
-                                .addGap(32, 32, 32))
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                .addComponent(jLabel4)
-                                .addGap(51, 51, 51))
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                .addComponent(jLabel5)
-                                .addGap(59, 59, 59)))
-                        .addGap(23, 23, 23))
+                                .addComponent(actualizarButton)
+                                .addGap(97, 97, 97))))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(72, 72, 72)
+                        .addComponent(jLabel4))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(actualizarButton)
-                        .addGap(97, 97, 97))))
+                        .addGap(68, 68, 68)
+                        .addComponent(jLabel5)
+                        .addGap(83, 83, 83))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -333,20 +348,22 @@ public class Principal extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jLabel3)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addComponent(jLabel4)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 190, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addComponent(jLabel5)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 151, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 197, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addComponent(actualizarButton)
                         .addGap(0, 5, Short.MAX_VALUE)))
                 .addContainerGap())
         );
+
+        bindingGroup.bind();
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -424,22 +441,6 @@ public class Principal extends javax.swing.JFrame {
         this.listaAlimentoObservable.addAll(listaAli);
     }
 
-    public List<Habitacion> getListadoHabitacion1() {
-        return listadoHabitacion1;
-    }
-
-    public void setListadoHabitacion1(List<Habitacion> listadoHabitacion1) {
-        this.listadoHabitacion1 = listadoHabitacion1;
-    }
-
-    public List<Habitacion> getListadoHabitacion2() {
-        return listadoHabitacion2;
-    }
-
-    public void setListadoHabitacion2(List<Habitacion> listadoHabitacion2) {
-        this.listadoHabitacion2 = listadoHabitacion2;
-    }
-
     public ObservableList<Habitacion> getListaHabitacionObservable1() {
         return listaHabitacionObservable1;
     }
@@ -454,14 +455,6 @@ public class Principal extends javax.swing.JFrame {
 
     public void setListaHabitacionObservable2(ObservableList<Habitacion> listaHabitacionObservable2) {
         this.listaHabitacionObservable2 = listaHabitacionObservable2;
-    }
-
-    public List<Alimento> getListaAlimento() {
-        return listaAlimento;
-    }
-
-    public void setListaAlimento(List<Alimento> listaAlimento) {
-        this.listaAlimento = listaAlimento;
     }
 
     public ObservableList<Alimento> getListaAlimentoObservable() {
@@ -505,6 +498,7 @@ public class Principal extends javax.swing.JFrame {
     private javax.swing.JMenu reservacionMenu;
     private javax.swing.JMenuItem servicioHabMenuItem;
     private javax.swing.JMenuItem sinReservacionMenuItem;
+    private org.jdesktop.beansbinding.BindingGroup bindingGroup;
     // End of variables declaration//GEN-END:variables
 
     private void validarBotones(boolean CheckIn, boolean checkOut, boolean reservacion, boolean restaurante, boolean gerencia) {
