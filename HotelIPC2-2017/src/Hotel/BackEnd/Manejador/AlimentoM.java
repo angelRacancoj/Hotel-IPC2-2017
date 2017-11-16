@@ -133,4 +133,11 @@ public class AlimentoM {
         return busquedaAlimentos;
     }
 
+    public List<Alimento> getBusquedaAlimentos() {
+        return busquedaAlimentos;
+    }
+
+    public void setBusquedaAlimentos(List<Alimento> busquedaAlimentos) {
+        this.busquedaAlimentos = busquedaAlimentos;
+    }
 }

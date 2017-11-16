@@ -5,6 +5,8 @@
  */
 package Hotel.GUI.Recepcionista.CheckIn;
 
+import java.sql.Connection;
+
 /**
  *
  * @author angelrg
@@ -14,7 +16,7 @@ public class SinReservacion extends javax.swing.JInternalFrame {
     /**
      * Creates new form SinReservacion
      */
-    public SinReservacion() {
+    public SinReservacion(Connection conexion) {
         initComponents();
     }
 

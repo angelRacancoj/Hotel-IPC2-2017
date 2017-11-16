@@ -5,6 +5,8 @@
  */
 package Hotel.GUI.Recepcionista;
 
+import java.sql.Connection;
+
 /**
  *
  * @author angelrg
@@ -14,7 +16,7 @@ public class ModificarReservacion extends javax.swing.JInternalFrame {
     /**
      * Creates new form ModificarReservacion
      */
-    public ModificarReservacion() {
+    public ModificarReservacion(Connection conexion) {
         initComponents();
     }
 

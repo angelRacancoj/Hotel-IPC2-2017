@@ -1,11 +1,28 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package Hotel.GUI.Principal;
 
+import Hotel.BackEnd.Excepciones.InputsVaciosException;
+import Hotel.BackEnd.Hotel.Alimento;
+import Hotel.BackEnd.Hotel.Habitacion;
+import Hotel.BackEnd.Manejador.AlimentoM;
+import Hotel.BackEnd.Manejador.HabitacionM;
+import Hotel.BackEnd.Manejador.ReservarHabitacionM;
+import Hotel.GUI.Gerente.AlimentoFrame;
+import Hotel.GUI.Gerente.EditarUsuarios;
+import Hotel.GUI.Gerente.ModificarPrecioHab;
+import Hotel.GUI.Recepcionista.CheckIn.CheckInConReservacion;
+import Hotel.GUI.Recepcionista.CheckIn.SinReservacion;
+import Hotel.GUI.Recepcionista.CheckOut.CheckOut;
+import Hotel.GUI.Recepcionista.ModificarReservacion;
+import Hotel.GUI.Recepcionista.NuevaReservacion;
+import Hotel.GUI.Restaurante.ServicioHabitacion;
+import RUN.DefaultValues;
 import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+import javax.swing.JOptionPane;
+import org.jdesktop.observablecollections.ObservableList;
+import org.jdesktop.observablecollections.ObservableCollections;
 
 /**
  *
@@ -13,10 +30,58 @@ import java.sql.Connection;
  */
 public class Principal extends javax.swing.JFrame {
 
-   
-    
+    private List<Habitacion> listadoHabitacion1;
+    private List<Habitacion> listadoHabitacion2;
+    private ObservableList<Habitacion> listaHabitacionObservable1;
+    private ObservableList<Habitacion> listaHabitacionObservable2;
+    private List<Alimento> listaAlimento;
+    private ObservableList<Alimento> listaAlimentoObservable;
+
+    private HabitacionM manejadorHabitacion;
+    private AlimentoM manejadorAlimento;
+    private ReservarHabitacionM manejadorReservacion;
+
+    private ModificarReservacion modificarReservacion;
+    private NuevaReservacion nuevaReservacion;
+    private CheckInConReservacion checkInConReservacion;
+    private SinReservacion checkInSinReservacion;
+    private CheckOut checkOut;
+    private ServicioHabitacion servicionHabitacion;
+    private AlimentoFrame alimentoFrame;
+    private EditarUsuarios editarUsuario;
+    private ModificarPrecioHab modificarPrecioHab;
+
     public Principal(Connection conexion) {
+        this.manejadorReservacion = new ReservarHabitacionM(conexion);
+        this.manejadorAlimento = new AlimentoM(conexion);
+        this.manejadorHabitacion = new HabitacionM(conexion);
+        listadoHabitacion1 = new ArrayList<>();
+        listadoHabitacion2 = new ArrayList<>();
+        listaAlimento = new ArrayList<>();
+        listaHabitacionObservable1 = ObservableCollections.observableList(listadoHabitacion1);
+        listaHabitacionObservable2 = ObservableCollections.observableList(listadoHabitacion2);
+        listaAlimento = ObservableCollections.observableList(listaAlimento);
+
+        modificarReservacion = new ModificarReservacion(conexion);
+        nuevaReservacion = new NuevaReservacion(conexion);
+        checkInConReservacion = new CheckInConReservacion(conexion);
+        checkInSinReservacion = new SinReservacion(conexion);
+        checkOut = new CheckOut(conexion);
+        servicionHabitacion = new ServicioHabitacion(conexion);
+        alimentoFrame = new AlimentoFrame(conexion);
+        editarUsuario = new EditarUsuarios(conexion);
+        modificarPrecioHab = new ModificarPrecioHab(conexion);
+
         initComponents();
+        this.DesktopPane.add(modificarReservacion);
+        this.DesktopPane.add(nuevaReservacion);
+        this.DesktopPane.add(checkInConReservacion);
+        this.DesktopPane.add(checkInSinReservacion);
+        this.DesktopPane.add(checkOut);
+        this.DesktopPane.add(servicionHabitacion);
+        this.DesktopPane.add(alimentoFrame);
+        this.DesktopPane.add(editarUsuario);
+        this.DesktopPane.add(modificarPrecioHab);
     }
 
     /**
@@ -29,18 +94,18 @@ public class Principal extends javax.swing.JFrame {
     private void initComponents() {
 
         jMenuItem1 = new javax.swing.JMenuItem();
-        jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
-        jScrollPane2 = new javax.swing.JScrollPane();
-        jTable2 = new javax.swing.JTable();
         jLabel3 = new javax.swing.JLabel();
-        jLabel4 = new javax.swing.JLabel();
         jScrollPane3 = new javax.swing.JScrollPane();
         jTable3 = new javax.swing.JTable();
+        jLabel4 = new javax.swing.JLabel();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        jTable2 = new javax.swing.JTable();
         jLabel5 = new javax.swing.JLabel();
         jScrollPane4 = new javax.swing.JScrollPane();
         jTable4 = new javax.swing.JTable();
-        jLabel6 = new javax.swing.JLabel();
+        actualizarButton = new javax.swing.JButton();
+        DesktopPane = new javax.swing.JDesktopPane();
         jMenuBar1 = new javax.swing.JMenuBar();
         reservacionMenu = new javax.swing.JMenu();
         NewReserMenuItem = new javax.swing.JMenuItem();
@@ -48,11 +113,17 @@ public class Principal extends javax.swing.JFrame {
         CheckInMenu = new javax.swing.JMenu();
         conReservacionMenuItem = new javax.swing.JMenuItem();
         sinReservacionMenuItem = new javax.swing.JMenuItem();
-        modReserMenuItem = new javax.swing.JMenuItem();
+        checkOutMenu = new javax.swing.JMenu();
+        pagarMenuItem = new javax.swing.JMenuItem();
         RestauranteMenu = new javax.swing.JMenu();
-        preciosMenu = new javax.swing.JMenu();
-        modHabitacionesMenuItem = new javax.swing.JMenuItem();
+        servicioHabMenuItem = new javax.swing.JMenuItem();
+        gerenciaMenu = new javax.swing.JMenu();
+        modificarPreciocsMenu = new javax.swing.JMenu();
         alimentosMenuItem = new javax.swing.JMenuItem();
+        modHabitacionesMenuItem = new javax.swing.JMenuItem();
+        adminUsuariosMenuItem = new javax.swing.JMenuItem();
+        informacionMenu = new javax.swing.JMenu();
+        acercaDeMenuItem = new javax.swing.JMenuItem();
 
         jMenuItem1.setText("jMenuItem1");
 
@@ -60,24 +131,9 @@ public class Principal extends javax.swing.JFrame {
         setTitle("Hotel \"El Buen Descanso\"");
 
         jLabel1.setFont(new java.awt.Font("Noto Sans UI", 0, 18)); // NOI18N
-        jLabel1.setText("Habitaciones Disponibles");
+        jLabel1.setText("INFORMACION");
 
-        jTable2.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {},
-                {},
-                {},
-                {}
-            },
-            new String [] {
-
-            }
-        ));
-        jScrollPane2.setViewportView(jTable2);
-
-        jLabel3.setText("Habitaciones Junior");
-
-        jLabel4.setText("Habitacion Master");
+        jLabel3.setText("Precios de las Habitaciones");
 
         jTable3.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -92,7 +148,22 @@ public class Principal extends javax.swing.JFrame {
         ));
         jScrollPane3.setViewportView(jTable3);
 
-        jLabel5.setText("Habitacion Master");
+        jLabel4.setText("Habitacion Libres Hoy");
+
+        jTable2.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {},
+                {},
+                {},
+                {}
+            },
+            new String [] {
+
+            }
+        ));
+        jScrollPane2.setViewportView(jTable2);
+
+        jLabel5.setText("Menu Restaurante");
 
         jTable4.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -107,67 +178,29 @@ public class Principal extends javax.swing.JFrame {
         ));
         jScrollPane4.setViewportView(jTable4);
 
-        jLabel6.setFont(new java.awt.Font("Noto Sans UI", 0, 18)); // NOI18N
-        jLabel6.setText("Hoy");
-
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(82, 82, 82)
-                .addComponent(jLabel3)
-                .addGap(0, 0, Short.MAX_VALUE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addContainerGap(26, Short.MAX_VALUE)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 259, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 259, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGroup(jPanel1Layout.createSequentialGroup()
-                            .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 259, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGap(23, 23, 23)))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                        .addComponent(jLabel5)
-                        .addGap(87, 87, 87))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                        .addComponent(jLabel4)
-                        .addGap(89, 89, 89))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                        .addComponent(jLabel1)
-                        .addGap(45, 45, 45))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                        .addComponent(jLabel6)
-                        .addGap(133, 133, 133))))
-        );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel6)
-                .addGap(18, 18, 18)
-                .addComponent(jLabel3)
-                .addGap(18, 18, 18)
-                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(jLabel4)
-                .addGap(18, 18, 18)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(jLabel5)
-                .addGap(18, 18, 18)
-                .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 151, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
+        actualizarButton.setText("Actualizar");
+        actualizarButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                actualizarButtonActionPerformed(evt);
+            }
+        });
 
         reservacionMenu.setText("Reservacion ");
 
         NewReserMenuItem.setText("Nueva Reservacion");
+        NewReserMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                NewReserMenuItemActionPerformed(evt);
+            }
+        });
         reservacionMenu.add(NewReserMenuItem);
 
         nuevoReserMenuItem.setText("Modificar / Eliminar");
+        nuevoReserMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                nuevoReserMenuItemActionPerformed(evt);
+            }
+        });
         reservacionMenu.add(nuevoReserMenuItem);
 
         jMenuBar1.add(reservacionMenu);
@@ -175,28 +208,85 @@ public class Principal extends javax.swing.JFrame {
         CheckInMenu.setText("Check-In ");
 
         conReservacionMenuItem.setText("Con Resercacion");
+        conReservacionMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                conReservacionMenuItemActionPerformed(evt);
+            }
+        });
         CheckInMenu.add(conReservacionMenuItem);
 
         sinReservacionMenuItem.setText("Sin Reservacion");
+        sinReservacionMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                sinReservacionMenuItemActionPerformed(evt);
+            }
+        });
         CheckInMenu.add(sinReservacionMenuItem);
-
-        modReserMenuItem.setText("Modificar Reservacion");
-        CheckInMenu.add(modReserMenuItem);
 
         jMenuBar1.add(CheckInMenu);
 
+        checkOutMenu.setText(" Check-Out ");
+
+        pagarMenuItem.setText("Pagar");
+        pagarMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                pagarMenuItemActionPerformed(evt);
+            }
+        });
+        checkOutMenu.add(pagarMenuItem);
+
+        jMenuBar1.add(checkOutMenu);
+
         RestauranteMenu.setText("Restaurante");
+
+        servicioHabMenuItem.setText("Servicio a la Habitacion");
+        servicioHabMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                servicioHabMenuItemActionPerformed(evt);
+            }
+        });
+        RestauranteMenu.add(servicioHabMenuItem);
+
         jMenuBar1.add(RestauranteMenu);
 
-        preciosMenu.setText("Precios");
+        gerenciaMenu.setText("Gerencia");
 
-        modHabitacionesMenuItem.setText("Habitaciones");
-        preciosMenu.add(modHabitacionesMenuItem);
+        modificarPreciocsMenu.setText("Modificar precios");
 
         alimentosMenuItem.setText("Alimentos");
-        preciosMenu.add(alimentosMenuItem);
+        alimentosMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                alimentosMenuItemActionPerformed(evt);
+            }
+        });
+        modificarPreciocsMenu.add(alimentosMenuItem);
 
-        jMenuBar1.add(preciosMenu);
+        modHabitacionesMenuItem.setText("Habitaciones");
+        modHabitacionesMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                modHabitacionesMenuItemActionPerformed(evt);
+            }
+        });
+        modificarPreciocsMenu.add(modHabitacionesMenuItem);
+
+        gerenciaMenu.add(modificarPreciocsMenu);
+
+        adminUsuariosMenuItem.setText("Administrar Usuarios");
+        adminUsuariosMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                adminUsuariosMenuItemActionPerformed(evt);
+            }
+        });
+        gerenciaMenu.add(adminUsuariosMenuItem);
+
+        jMenuBar1.add(gerenciaMenu);
+
+        informacionMenu.setText(" Informacion ");
+
+        acercaDeMenuItem.setText("Acerca de ");
+        informacionMenu.add(acercaDeMenuItem);
+
+        jMenuBar1.add(informacionMenu);
 
         setJMenuBar(jMenuBar1);
 
@@ -205,32 +295,203 @@ public class Principal extends javax.swing.JFrame {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addGap(0, 716, Short.MAX_VALUE)
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap()
+                .addComponent(DesktopPane, javax.swing.GroupLayout.DEFAULT_SIZE, 712, Short.MAX_VALUE)
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 259, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 259, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 259, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                .addComponent(jLabel1)
+                                .addGap(58, 58, 58))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                .addComponent(jLabel3)
+                                .addGap(32, 32, 32))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                .addComponent(jLabel4)
+                                .addGap(51, 51, 51))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                .addComponent(jLabel5)
+                                .addGap(59, 59, 59)))
+                        .addGap(23, 23, 23))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(actualizarButton)
+                        .addGap(97, 97, 97))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(DesktopPane)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabel1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jLabel3)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(jLabel4)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(jLabel5)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 151, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(actualizarButton)
+                        .addGap(0, 5, Short.MAX_VALUE)))
+                .addContainerGap())
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void NewReserMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_NewReserMenuItemActionPerformed
+        nuevaReservacion.setVisible(true);
+    }//GEN-LAST:event_NewReserMenuItemActionPerformed
+
+    private void nuevoReserMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nuevoReserMenuItemActionPerformed
+        modificarReservacion.setVisible(true);
+    }//GEN-LAST:event_nuevoReserMenuItemActionPerformed
+
+    private void conReservacionMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_conReservacionMenuItemActionPerformed
+        checkInConReservacion.setVisible(true);
+    }//GEN-LAST:event_conReservacionMenuItemActionPerformed
+
+    private void sinReservacionMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sinReservacionMenuItemActionPerformed
+        checkInSinReservacion.setVisible(true);
+    }//GEN-LAST:event_sinReservacionMenuItemActionPerformed
+
+    private void pagarMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pagarMenuItemActionPerformed
+        checkOut.setVisible(true);
+    }//GEN-LAST:event_pagarMenuItemActionPerformed
+
+    private void servicioHabMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_servicioHabMenuItemActionPerformed
+        servicionHabitacion.setVisible(true);
+    }//GEN-LAST:event_servicioHabMenuItemActionPerformed
+
+    private void alimentosMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_alimentosMenuItemActionPerformed
+        alimentoFrame.setVisible(true);
+    }//GEN-LAST:event_alimentosMenuItemActionPerformed
+
+    private void modHabitacionesMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_modHabitacionesMenuItemActionPerformed
+        modificarPrecioHab.setVisible(true);
+    }//GEN-LAST:event_modHabitacionesMenuItemActionPerformed
+
+    private void adminUsuariosMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_adminUsuariosMenuItemActionPerformed
+        editarUsuario.setVisible(true);
+    }//GEN-LAST:event_adminUsuariosMenuItemActionPerformed
+
+    private void actualizarButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_actualizarButtonActionPerformed
+        try {
+            actualizarBusquedaOservableHab1(manejadorHabitacion.busquedaPrecioHabitacion());
+            actualizarBusquedaOservableHab2(manejadorHabitacion.habitacionesDisponibles(manejadorReservacion.fecha(), manejadorReservacion.fecha()));
+            actualizarBusquedaObservableAlimentos(manejadorAlimento.busqueda("", DefaultValues.DISPONIBLE_TODO_COMBO_BOX));
+        } catch (InputsVaciosException | SQLException e) {
+            JOptionPane.showMessageDialog(this, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }//GEN-LAST:event_actualizarButtonActionPerformed
+
+    public void iniciar(String rango) {
+        if (rango.equals(DefaultValues.CARGO_RECEPCION_ID)) {
+            validarBotones(true, true, true, false, false);
+        } else if (rango.equals(DefaultValues.CARGO_RESTAURANTE_ID)) {
+            validarBotones(false, false, false, true, false);
+        } else if (rango.equals(DefaultValues.CARGO_GERENTE_ID)) {
+            validarBotones(false, false, false, false, true);
+        } else {
+            JOptionPane.showMessageDialog(this, "Error", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    public void actualizarBusquedaOservableHab1(List<Habitacion> listaHabitaciones) {
+        this.listaHabitacionObservable1.clear();
+        this.listaHabitacionObservable1.addAll(listaHabitaciones);
+    }
+
+    public void actualizarBusquedaOservableHab2(List<Habitacion> listaHabitaciones) {
+        this.listaHabitacionObservable2.clear();
+        this.listaHabitacionObservable2.addAll(listaHabitaciones);
+    }
+
+    public void actualizarBusquedaObservableAlimentos(List<Alimento> listaAli) {
+        this.listaAlimentoObservable.clear();
+        this.listaAlimentoObservable.addAll(listaAli);
+    }
+
+    public List<Habitacion> getListadoHabitacion1() {
+        return listadoHabitacion1;
+    }
+
+    public void setListadoHabitacion1(List<Habitacion> listadoHabitacion1) {
+        this.listadoHabitacion1 = listadoHabitacion1;
+    }
+
+    public List<Habitacion> getListadoHabitacion2() {
+        return listadoHabitacion2;
+    }
+
+    public void setListadoHabitacion2(List<Habitacion> listadoHabitacion2) {
+        this.listadoHabitacion2 = listadoHabitacion2;
+    }
+
+    public ObservableList<Habitacion> getListaHabitacionObservable1() {
+        return listaHabitacionObservable1;
+    }
+
+    public void setListaHabitacionObservable1(ObservableList<Habitacion> listaHabitacionObservable1) {
+        this.listaHabitacionObservable1 = listaHabitacionObservable1;
+    }
+
+    public ObservableList<Habitacion> getListaHabitacionObservable2() {
+        return listaHabitacionObservable2;
+    }
+
+    public void setListaHabitacionObservable2(ObservableList<Habitacion> listaHabitacionObservable2) {
+        this.listaHabitacionObservable2 = listaHabitacionObservable2;
+    }
+
+    public List<Alimento> getListaAlimento() {
+        return listaAlimento;
+    }
+
+    public void setListaAlimento(List<Alimento> listaAlimento) {
+        this.listaAlimento = listaAlimento;
+    }
+
+    public ObservableList<Alimento> getListaAlimentoObservable() {
+        return listaAlimentoObservable;
+    }
+
+    public void setListaAlimentoObservable(ObservableList<Alimento> listaAlimentoObservable) {
+        this.listaAlimentoObservable = listaAlimentoObservable;
+    }
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenu CheckInMenu;
+    private javax.swing.JDesktopPane DesktopPane;
     private javax.swing.JMenuItem NewReserMenuItem;
     private javax.swing.JMenu RestauranteMenu;
+    private javax.swing.JMenuItem acercaDeMenuItem;
+    private javax.swing.JButton actualizarButton;
+    private javax.swing.JMenuItem adminUsuariosMenuItem;
     private javax.swing.JMenuItem alimentosMenuItem;
+    private javax.swing.JMenu checkOutMenu;
     private javax.swing.JMenuItem conReservacionMenuItem;
+    private javax.swing.JMenu gerenciaMenu;
+    private javax.swing.JMenu informacionMenu;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
-    private javax.swing.JLabel jLabel6;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JMenuItem jMenuItem1;
-    private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;
@@ -238,10 +499,19 @@ public class Principal extends javax.swing.JFrame {
     private javax.swing.JTable jTable3;
     private javax.swing.JTable jTable4;
     private javax.swing.JMenuItem modHabitacionesMenuItem;
-    private javax.swing.JMenuItem modReserMenuItem;
+    private javax.swing.JMenu modificarPreciocsMenu;
     private javax.swing.JMenuItem nuevoReserMenuItem;
-    private javax.swing.JMenu preciosMenu;
+    private javax.swing.JMenuItem pagarMenuItem;
     private javax.swing.JMenu reservacionMenu;
+    private javax.swing.JMenuItem servicioHabMenuItem;
     private javax.swing.JMenuItem sinReservacionMenuItem;
     // End of variables declaration//GEN-END:variables
+
+    private void validarBotones(boolean CheckIn, boolean checkOut, boolean reservacion, boolean restaurante, boolean gerencia) {
+        CheckInMenu.setEnabled(CheckIn);
+        checkOutMenu.setEnabled(checkOut);
+        reservacionMenu.setEnabled(reservacion);
+        RestauranteMenu.setEnabled(restaurante);
+        gerenciaMenu.setEnabled(gerencia);
+    }
 }

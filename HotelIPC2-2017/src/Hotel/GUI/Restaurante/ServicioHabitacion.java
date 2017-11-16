@@ -5,6 +5,8 @@
  */
 package Hotel.GUI.Restaurante;
 
+import java.sql.Connection;
+
 /**
  *
  * @author angelrg
@@ -14,7 +16,7 @@ public class ServicioHabitacion extends javax.swing.JInternalFrame {
     /**
      * Creates new form ServicioHabitacion
      */
-    public ServicioHabitacion() {
+    public ServicioHabitacion(Connection conexion) {
         initComponents();
     }
 

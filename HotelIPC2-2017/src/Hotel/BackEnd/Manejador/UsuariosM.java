@@ -66,6 +66,7 @@ public class UsuariosM {
                        throw new InputsVaciosException("No existe el usuario"); 
                     }
                 }
+                resultado.close();
             }
         } catch (SQLException e) {
             throw new InputsVaciosException("Error en la Base de Datos");

@@ -5,6 +5,8 @@
  */
 package Hotel.GUI.Recepcionista;
 
+import java.sql.Connection;
+
 /**
  *
  * @author angelrg
@@ -14,7 +16,7 @@ public class NuevaReservacion extends javax.swing.JInternalFrame {
     /**
      * Creates new form NuevaReservacion
      */
-    public NuevaReservacion() {
+    public NuevaReservacion(Connection conexion) {
         initComponents();
     }
 
@@ -166,9 +168,9 @@ public class NuevaReservacion extends javax.swing.JInternalFrame {
                 .addGap(3, 3, 3)
                 .addComponent(jLabel3)
                 .addGap(11, 11, 11)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel4)
-                    .addComponent(jLabel5))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel5, javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jLabel4))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 337, Short.MAX_VALUE)

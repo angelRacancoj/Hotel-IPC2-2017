@@ -8,7 +8,10 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -498,6 +501,33 @@ public class ReservarHabitacionM {
             }
             resultado.close();
             return total;
+        } catch (SQLException e) {
+            throw new InputsVaciosException("Error en la base de datos");
+        }
+    }
+
+    public List<Reservacion> getBusquedaReservacion() {
+        return busquedaReservacion;
+    }
+
+    public void setBusquedaReservacion(List<Reservacion> busquedaReservacion){
+        this.busquedaReservacion = busquedaReservacion;
+    }
+
+    /**
+     * Devuelve la fecha actual en la base de datos
+     *
+     * @return
+     */
+    public String fecha() throws SQLException, InputsVaciosException {
+        String fechaActual = "";
+        try {
+            PreparedStatement objeto = coneccion.prepareStatement("SELECT CURDATE() FECHA_ACTUAL");
+            ResultSet resultado = objeto.executeQuery();
+            while (resultado.next()) {
+                fechaActual = resultado.getString("FECHA_ACTUAL");
+            }
+            return fechaActual;
         } catch (SQLException e) {
             throw new InputsVaciosException("Error en la base de datos");
         }

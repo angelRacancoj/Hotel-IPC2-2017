@@ -26,6 +26,32 @@ public class HabitacionM {
     }
 
     /**
+     * Devuelve el elemento Habitacion pero con los paramentros numero, cantidad y texto en la ultima casilla
+     * @return
+     * @throws SQLException
+     * @throws InputsVaciosException
+     */
+    public Habitacion habitacionPopular() throws SQLException, InputsVaciosException {
+        busquedaHabitacion.clear();
+        try {
+            PreparedStatement sentencia = conexion.prepareStatement("SELECT Numero_Haibtacion, COUNT(*) FROM RESERVACION,HABITACION "
+                    + "WHERE Numero_Haibtacion=Numero GROUP BY Numero_Haibtacion ORDER BY COUNT(*) DESC LIMIT 1");
+            ResultSet resultado = sentencia.executeQuery();
+            while (resultado.next()) {
+                String numero = resultado.getString("Numero_Haibtacion");
+                String cantidad = resultado.getString("COUNT(*)");
+                System.out.println("Habitacion: " + numero + "," + cantidad);
+                return new Habitacion(numero, cantidad, "Mas Popular");
+            }
+            System.out.println("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&");
+            resultado.close();
+        } catch (SQLException e) {
+            throw new InputsVaciosException("Error en la Base de Datos");
+        }
+        return null;
+    }
+
+    /**
      * Devuelve las habitaciones con la categoria, precio y numero, busca la
      * habitaciones que tiene reservacion en el intervalo de tiempo
      *
@@ -227,15 +253,25 @@ public class HabitacionM {
         }
     }
 
+    /**
+     * Nos devuelve si la habitacion q le hemos indicado esta reservada mediante
+     * una lista vacio o con el elemente que se pidio
+     *
+     * @param noHabitacion
+     * @return
+     * @throws SQLException
+     * @throws InputsVaciosException
+     */
     public List<Habitacion> habitacionEnOcupadaHoy(String noHabitacion) throws SQLException, InputsVaciosException {
+
         try {
             /**
              * Lineas de prueba INSERT INTO RESERVACION
-             * 
+             *
              * (Fecha_Inicial,Fecha_Final,Estado,Pago_Habitacion,Pago_Restaurante,Numero_Haibtacion,ID_Cliente)
              * VALUES
              * ('2017-11-13','2017-11-17','2','1002.75','0','201','2929292920901');
-             * 
+             *
              * SELECT Categoria,Precio,Numero FROM
              * RESERVACION,TIPO_HABITACION,HABITACION WHERE Numero =
              * Numero_Haibtacion AND Categoria=CategoriaTipoHabitacion AND
@@ -252,4 +288,14 @@ public class HabitacionM {
             throw new InputsVaciosException("Error en la Base de Datos");
         }
     }
+
+    public List<Habitacion> getBusquedaHabitacion() {
+        return busquedaHabitacion;
+    }
+
+    public void setBusquedaHabitacion(List<Habitacion> busquedaHabitacion) {
+        this.busquedaHabitacion = busquedaHabitacion;
+    }
+    
+    
 }

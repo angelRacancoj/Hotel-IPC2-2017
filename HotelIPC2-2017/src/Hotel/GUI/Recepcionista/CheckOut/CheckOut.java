@@ -5,6 +5,8 @@
  */
 package Hotel.GUI.Recepcionista.CheckOut;
 
+import java.sql.Connection;
+
 /**
  *
  * @author angelrg
@@ -14,7 +16,7 @@ public class CheckOut extends javax.swing.JInternalFrame {
     /**
      * Creates new form CheckOut
      */
-    public CheckOut() {
+    public CheckOut(Connection conexion) {
         initComponents();
     }
 

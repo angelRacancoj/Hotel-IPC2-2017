@@ -231,4 +231,14 @@ public class ConsumoM {
             throw new InputsVaciosException("Error en la base de datos");
         }
     }
+
+    public List<Consumo> getBusquedaConsumo() {
+        return busquedaConsumo;
+    }
+
+    public void setBusquedaConsumo(List<Consumo> busquedaConsumo) {
+        this.busquedaConsumo = busquedaConsumo;
+    }
+    
+    
 }

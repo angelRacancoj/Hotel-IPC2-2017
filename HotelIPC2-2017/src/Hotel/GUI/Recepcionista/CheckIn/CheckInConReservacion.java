@@ -5,16 +5,18 @@
  */
 package Hotel.GUI.Recepcionista.CheckIn;
 
+import java.sql.Connection;
+
 /**
  *
  * @author angelrg
  */
-public class Reservacion extends javax.swing.JInternalFrame {
+public class CheckInConReservacion extends javax.swing.JInternalFrame {
 
     /**
      * Creates new form Reservacion
      */
-    public Reservacion() {
+    public CheckInConReservacion(Connection conexion) {
         initComponents();
     }
 
