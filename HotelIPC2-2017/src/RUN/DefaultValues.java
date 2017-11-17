@@ -56,6 +56,11 @@ public class DefaultValues {
     public static final String HAB_RESERVADA_COMBO_BOX = "1";
     public static final String HAB_OCUPADA_COMBO_BOX = "2";
     public static final String HAB_ELIMINADA_COMBO_BOX = "3";
+    
+    //para los pagos
+    public static final String PAGO_ALOJAMIENTO = "1";
+    public static final String PAGO_SIN_RESERVACION = "2";
+    public static final String PAGO_ALIMENTO = "3";
 
     // numeracion habitaciones
     /**

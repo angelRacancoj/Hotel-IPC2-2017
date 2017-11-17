@@ -127,6 +127,8 @@ public class LogIn extends javax.swing.JFrame {
             } else {
                 if (manejadorUsuario.busqueda(usuarioTextField.getText(), "").isEmpty()) {
                     JOptionPane.showMessageDialog(this, "No existe el usuario", "Error", JOptionPane.ERROR_MESSAGE);
+                    usuarioTextField.setText("");
+                    ContrasenaPasswordField.setText("");
                 } else {
                     ingresarButton.setEnabled(true);
                 }

@@ -31,6 +31,7 @@ public class ConsumoM {
 
     /**
      * Crea un consumo por alimentos.
+     *
      * @param noHabitacion
      * @param nombreAlimento
      * @param cantidad
@@ -145,6 +146,26 @@ public class ConsumoM {
         }
     }
 
+    public List<Consumo> busquedaNoHabitacion(String IDCliente, String fechaInicial, String fechaFinal, String noHabitacion) throws SQLException, InputsVaciosException {
+
+        try {
+            PreparedStatement sentencia = conexion.prepareStatement("SELECT Nombre_Alimento, Cantidad,"
+                    + "Total, ID_Cliente, Numero_Haibtacion FROM CONSUMO,RESERVACION WHERE RESERVACION.ID = ID_Reservacion"
+                    + "AND (Fecha_Inicial BETWEEN ? AND ? AND Fecha_Final BETWEEN ? AND ?) AND ID_Cliente=? AND Estado=? AND Numero_Haibtacion=?");
+            sentencia.setString(1, fechaInicial);
+            sentencia.setString(2, fechaFinal);
+            sentencia.setString(3, fechaInicial);
+            sentencia.setString(4, fechaFinal);
+            sentencia.setString(5, IDCliente);
+            sentencia.setString(6, DefaultValues.HAB_OCUPADA_COD);
+            sentencia.setString(7, noHabitacion);
+            return consultaConsumo(sentencia);
+
+        } catch (InputsVaciosException | SQLException e) {
+            throw new InputsVaciosException("Error en la base de datos");
+        }
+    }
+
     /**
      * Obtiene el total de todos los consumos realizados por un cliente con un
      * filtro de fechas Si no se ingresan paramentros lanza todos los resultados
@@ -164,7 +185,7 @@ public class ConsumoM {
         try {
             if (IDtry && (fechaFinalTry || fechaInicialTry)) {
                 PreparedStatement sentencia = conexion.prepareStatement("SELECT SUM(Total) as total FROM CONSUMO,RESERVACION "
-                        + "WHERE RESERVACION.ID = ID_Reservacion AND (Estado=? OR Estado=?)");
+                        + "WHERE RESERVACION.ID = ID_Reservacion AND (Estado=? AND Estado=?)");
                 sentencia.setString(1, DefaultValues.HAB_OCUPADA_COD);
                 sentencia.setString(2, DefaultValues.HAB_CHECK_OUT_COD);
                 return totalSuma(sentencia);
@@ -192,6 +213,25 @@ public class ConsumoM {
                 sentencia.setString(7, DefaultValues.HAB_CHECK_OUT_COD);
                 return totalSuma(sentencia);
             }
+        } catch (InputsVaciosException | SQLException e) {
+            throw new InputsVaciosException("Error en la base de datos");
+        }
+    }
+
+    public String totalConsumoNoHabitacion(String IDCliente, String fechaInicial, String fechaFinal, String noHabitacion) throws SQLException, InputsVaciosException {
+
+        try {
+            PreparedStatement sentencia = conexion.prepareStatement("SELECT SUM(Total) as total FROM CONSUMO,RESERVACION "
+                    + "WHERE RESERVACION.ID = ID_Reservacion AND (Fecha_Inicial BETWEEN ? AND ? AND Fecha_Final BETWEEN ? AND ?) "
+                    + "AND ID_Cliente=? AND Estado=? AND Numero_Haibtacion=?");
+            sentencia.setString(1, fechaInicial);
+            sentencia.setString(2, fechaFinal);
+            sentencia.setString(3, fechaInicial);
+            sentencia.setString(4, fechaFinal);
+            sentencia.setString(5, IDCliente);
+            sentencia.setString(6, DefaultValues.HAB_OCUPADA_COD);
+            sentencia.setString(7, noHabitacion);
+            return totalSuma(sentencia);
         } catch (InputsVaciosException | SQLException e) {
             throw new InputsVaciosException("Error en la base de datos");
         }
@@ -243,6 +283,5 @@ public class ConsumoM {
     public void setBusquedaConsumo(List<Consumo> busquedaConsumo) {
         this.busquedaConsumo = busquedaConsumo;
     }
-    
-    
+
 }

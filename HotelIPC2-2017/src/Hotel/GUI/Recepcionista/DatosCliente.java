@@ -1,11 +1,8 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package Hotel.GUI.Recepcionista;
 
+import Hotel.BackEnd.Hotel.Habitacion;
 import java.sql.Connection;
+import java.util.List;
 
 /**
  *
@@ -13,9 +10,9 @@ import java.sql.Connection;
  */
 public class DatosCliente extends javax.swing.JInternalFrame {
 
-    /**
-     * Creates new form DatosCliente
-     */
+    private List<Habitacion> listadoHabitaciones;
+    
+    
     public DatosCliente(Connection conexion) {
         initComponents();
     }
@@ -63,6 +60,12 @@ public class DatosCliente extends javax.swing.JInternalFrame {
         });
 
         jLabel3.setText("*Nombre:");
+
+        idClienteTextField.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                idClienteTextFieldFocusLost(evt);
+            }
+        });
 
         jLabel4.setText("*ID:");
 
@@ -151,7 +154,14 @@ public class DatosCliente extends javax.swing.JInternalFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_nombreTextFieldActionPerformed
 
+    private void idClienteTextFieldFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_idClienteTextFieldFocusLost
+        // TODO add your handling code here:
+    }//GEN-LAST:event_idClienteTextFieldFocusLost
 
+    public void guardarReservacion(List<Habitacion> listaHabitacion){
+        listadoHabitaciones.addAll(listaHabitacion);
+    }
+    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton cancelarButton;
     private javax.swing.JTextField direccionTextField;

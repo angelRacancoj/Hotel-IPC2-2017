@@ -131,6 +131,9 @@
       </Properties>
     </Component>
     <Component class="javax.swing.JTextField" name="idClienteTextField">
+      <Events>
+        <EventHandler event="focusLost" listener="java.awt.event.FocusListener" parameters="java.awt.event.FocusEvent" handler="idClienteTextFieldFocusLost"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JLabel" name="jLabel4">
       <Properties>

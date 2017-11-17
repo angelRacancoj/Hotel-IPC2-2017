@@ -2,10 +2,14 @@ package Hotel.GUI.Recepcionista;
 
 import Hotel.BackEnd.Hotel.Habitacion;
 import Hotel.BackEnd.Manejador.HabitacionM;
+import Hotel.BackEnd.Manejador.ReservarHabitacionM;
 import Hotel.GUI.Principal.Principal;
 import RUN.DefaultValues;
 import java.sql.Connection;
+import java.util.ArrayList;
 import java.util.List;
+import javax.swing.JOptionPane;
+import org.jdesktop.observablecollections.ObservableCollections;
 import org.jdesktop.observablecollections.ObservableList;
 
 /**
@@ -16,16 +20,34 @@ public class NuevaReservacion extends javax.swing.JInternalFrame {
 
     private List<Habitacion> listadoHabEntrada;
     private List<Habitacion> listadoHabSalida;
+    private List<Habitacion> listadoAux;
     private ObservableList<Habitacion> listaObservableHabEstrada;
     private ObservableList<Habitacion> listaObservableHabSalida;
-    
+
     private HabitacionM manejadorHabitacion;
     private DefaultValues valoresDefinidos;
-    
-    private Principal pantallaPrincipal; 
-    
-    
+    private ReservarHabitacionM manejadorReservacion;
+
+    private Habitacion habitacionSeleccionada;
+
+    private DatosCliente datosCliente;
+
+    private String fechaInicial = "";
+    private String fechaFinal = "";
+
     public NuevaReservacion(Connection conexion) {
+        listadoHabEntrada = new ArrayList<>();
+        listadoHabSalida = new ArrayList<>();
+        listadoAux = new ArrayList<>();
+        listaObservableHabEstrada = ObservableCollections.observableList(listadoHabEntrada);
+        listaObservableHabSalida = ObservableCollections.observableList(listadoHabSalida);
+        valoresDefinidos = new DefaultValues();
+
+        habitacionSeleccionada = new Habitacion();
+        manejadorHabitacion = new HabitacionM(conexion);
+        manejadorReservacion = new ReservarHabitacionM(conexion);
+        datosCliente = new DatosCliente(conexion);
+
         initComponents();
     }
 
@@ -37,6 +59,7 @@ public class NuevaReservacion extends javax.swing.JInternalFrame {
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
+        bindingGroup = new org.jdesktop.beansbinding.BindingGroup();
 
         jLabel1 = new javax.swing.JLabel();
         fechaInicialFormattedTextField = new javax.swing.JFormattedTextField();
@@ -55,6 +78,7 @@ public class NuevaReservacion extends javax.swing.JInternalFrame {
         jLabel5 = new javax.swing.JLabel();
         guardarButton = new javax.swing.JButton();
 
+        setMaximizable(true);
         setResizable(true);
         setTitle("Nueva Reservacion");
 
@@ -78,6 +102,11 @@ public class NuevaReservacion extends javax.swing.JInternalFrame {
         } catch (java.text.ParseException ex) {
             ex.printStackTrace();
         }
+        fechaFinalFormattedTextField.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                fechaFinalFormattedTextFieldFocusLost(evt);
+            }
+        });
 
         habitacionesTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -90,6 +119,22 @@ public class NuevaReservacion extends javax.swing.JInternalFrame {
 
             }
         ));
+
+        org.jdesktop.beansbinding.ELProperty eLProperty = org.jdesktop.beansbinding.ELProperty.create("${listaObservableHabEstrada}");
+        org.jdesktop.swingbinding.JTableBinding jTableBinding = org.jdesktop.swingbinding.SwingBindings.createJTableBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ_WRITE, this, eLProperty, habitacionesTable);
+        org.jdesktop.swingbinding.JTableBinding.ColumnBinding columnBinding = jTableBinding.addColumnBinding(org.jdesktop.beansbinding.ELProperty.create("${nombre}"));
+        columnBinding.setColumnName("Nombre");
+        columnBinding.setColumnClass(String.class);
+        columnBinding = jTableBinding.addColumnBinding(org.jdesktop.beansbinding.ELProperty.create("${precio}"));
+        columnBinding.setColumnName("Precio");
+        columnBinding.setColumnClass(String.class);
+        columnBinding = jTableBinding.addColumnBinding(org.jdesktop.beansbinding.ELProperty.create("${estadoTipo}"));
+        columnBinding.setColumnName("Estado Tipo");
+        columnBinding.setColumnClass(String.class);
+        bindingGroup.addBinding(jTableBinding);
+        jTableBinding.bind();org.jdesktop.beansbinding.Binding binding = org.jdesktop.beansbinding.Bindings.createAutoBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ_WRITE, this, org.jdesktop.beansbinding.ELProperty.create("${habitacionSeleccionada}"), habitacionesTable, org.jdesktop.beansbinding.BeanProperty.create("selectedElement"));
+        bindingGroup.addBinding(binding);
+
         jScrollPane1.setViewportView(habitacionesTable);
 
         limpiarButton.setText("Limpiar");
@@ -134,6 +179,20 @@ public class NuevaReservacion extends javax.swing.JInternalFrame {
 
             }
         ));
+
+        eLProperty = org.jdesktop.beansbinding.ELProperty.create("${listaObservableHabSalida}");
+        jTableBinding = org.jdesktop.swingbinding.SwingBindings.createJTableBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ_WRITE, this, eLProperty, habitacionesTable1);
+        columnBinding = jTableBinding.addColumnBinding(org.jdesktop.beansbinding.ELProperty.create("${nombre}"));
+        columnBinding.setColumnName("Nombre");
+        columnBinding.setColumnClass(String.class);
+        columnBinding = jTableBinding.addColumnBinding(org.jdesktop.beansbinding.ELProperty.create("${estadoTipo}"));
+        columnBinding.setColumnName("Estado Tipo");
+        columnBinding.setColumnClass(String.class);
+        columnBinding = jTableBinding.addColumnBinding(org.jdesktop.beansbinding.ELProperty.create("${precio}"));
+        columnBinding.setColumnName("Precio");
+        columnBinding.setColumnClass(String.class);
+        bindingGroup.addBinding(jTableBinding);
+        jTableBinding.bind();
         jScrollPane2.setViewportView(habitacionesTable1);
 
         jLabel4.setText("Resultados de Busqueda");
@@ -216,32 +275,132 @@ public class NuevaReservacion extends javax.swing.JInternalFrame {
                 .addContainerGap())
         );
 
+        bindingGroup.bind();
+
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
     private void buscarButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buscarButtonActionPerformed
-        // TODO add your handling code here:
+        try {
+            if (fechaFinalFormattedTextField.getText().replace(" ", "").replace("-", "").isEmpty()
+                    || fechaInicialFormattedTextField.getText().replace(" ", "").replace("-", "").isEmpty()) {
+                limpiarFechas();
+                JOptionPane.showMessageDialog(this, "Debe indicar un intervalo de tiempo", "Error", JOptionPane.ERROR_MESSAGE);
+            } else if (!fechaFinalFormattedTextField.getText().replace(" ", "").replace("-", "").isEmpty()
+                    && !fechaInicialFormattedTextField.getText().replace(" ", "").replace("-", "").isEmpty()) {
+                if (valoresDefinidos.validarFecha(fechaInicialFormattedTextField.getText()) && valoresDefinidos.validarFecha(fechaFinalFormattedTextField.getText())) {
+                    if (manejadorReservacion.cantidadDelDias(fechaInicialFormattedTextField.getText(), fechaFinalFormattedTextField.getText()) <= 0) {
+                        fechaFinal = fechaFinalFormattedTextField.getText();
+                        fechaInicial = fechaInicialFormattedTextField.getText();
+                        limpiarFechas();
+                        JOptionPane.showMessageDialog(this, "Intervalo de tiempo Incorrecto", "Error", JOptionPane.ERROR_MESSAGE);
+                    } else {
+                        actualizarBusquedaObservableEntrada(manejadorHabitacion.habitacionesDisponibles(fechaInicialFormattedTextField.getText(), fechaFinalFormattedTextField.getText()));
+                    }
+                } else {
+                    limpiarFechas();
+                    JOptionPane.showMessageDialog(this, "Fecha invalida", "Error", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        } catch (Exception e) {
+        }
     }//GEN-LAST:event_buscarButtonActionPerformed
 
     private void cancelarButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelarButtonActionPerformed
-        // TODO add your handling code here:
+        if (!listadoHabSalida.isEmpty()) {
+            int respuesta = JOptionPane.showConfirmDialog(this, "Desea abandonar sin terminar la reservacion?", "Salir", JOptionPane.YES_NO_OPTION);
+            if (respuesta == 0) {
+                limpiarFechas();
+                limpiarTablas();
+                this.setVisible(false);
+            }
+        } else {
+            this.setVisible(false);
+        }
     }//GEN-LAST:event_cancelarButtonActionPerformed
 
     private void limpiarButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_limpiarButtonActionPerformed
-        // TODO add your handling code here:
+        limpiarFechas();
+        limpiarTablas();
+        listaObservableHabSalida.clear();
+        listaObservableHabEstrada.clear();
+        seleccionarButton.setEnabled(false);
+        guardarButton.setEnabled(false);
     }//GEN-LAST:event_limpiarButtonActionPerformed
 
     private void seleccionarButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_seleccionarButtonActionPerformed
-        // TODO add your handling code here:
+        if (habitacionSeleccionada != null) {
+            listadoAux.add(habitacionSeleccionada);
+            actualizarBusquedaObservableSalida(listadoAux);
+            guardarButton.setEnabled(false);
+        } else {
+            seleccionarButton.setEnabled(false);
+        }
     }//GEN-LAST:event_seleccionarButtonActionPerformed
 
     private void guardarButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_guardarButtonActionPerformed
-        // TODO add your handling code here:
+        datosCliente.guardarReservacion(listadoHabSalida);
     }//GEN-LAST:event_guardarButtonActionPerformed
 
     private void fechaInicialFormattedTextFieldFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_fechaInicialFormattedTextFieldFocusLost
-        // TODO add your handling code here:
+        if (!fechaInicialFormattedTextField.getText().replace(" ", "").replace("-", "").isEmpty()) {
+            if (!valoresDefinidos.validarFecha(fechaInicialFormattedTextField.getText())) {
+                JOptionPane.showMessageDialog(this, "Formato de fecha inicial invalido", "Error", JOptionPane.ERROR_MESSAGE);
+                fechaInicialFormattedTextField.setText("");
+            }
+        }
+
     }//GEN-LAST:event_fechaInicialFormattedTextFieldFocusLost
+
+    private void fechaFinalFormattedTextFieldFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_fechaFinalFormattedTextFieldFocusLost
+        if (!fechaFinalFormattedTextField.getText().replace(" ", "").replace("-", "").isEmpty()) {
+            if (!valoresDefinidos.validarFecha(fechaFinalFormattedTextField.getText())) {
+                JOptionPane.showMessageDialog(this, "Formato de fecha final invalido", "Error", JOptionPane.ERROR_MESSAGE);
+                fechaFinalFormattedTextField.setText("");
+            }
+        }
+    }//GEN-LAST:event_fechaFinalFormattedTextFieldFocusLost
+
+    public void actualizarBusquedaObservableEntrada(List<Habitacion> listaHabitacion) {
+        this.listaObservableHabEstrada.clear();
+        this.listaObservableHabEstrada.addAll(listaHabitacion);
+    }
+
+    public void actualizarBusquedaObservableSalida(List<Habitacion> listaHabitacion) {
+        this.listaObservableHabSalida.clear();
+        this.listaObservableHabSalida.addAll(listaHabitacion);
+    }
+
+    public ObservableList<Habitacion> getListaObservableHabEstrada() {
+        return listaObservableHabEstrada;
+    }
+
+    public void setListaObservableHabEstrada(ObservableList<Habitacion> listaObservableHabEstrada) {
+        this.listaObservableHabEstrada = listaObservableHabEstrada;
+    }
+
+    public ObservableList<Habitacion> getListaObservableHabSalida() {
+        return listaObservableHabSalida;
+    }
+
+    public void setListaObservableHabSalida(ObservableList<Habitacion> listaObservableHabSalida) {
+        this.listaObservableHabSalida = listaObservableHabSalida;
+    }
+
+    public Habitacion getHabitacionSeleccionada() {
+        return habitacionSeleccionada;
+    }
+
+    public void setHabitacionSeleccionada(Habitacion habitacionSeleccionada) {
+        if (habitacionSeleccionada != null) {
+            this.habitacionSeleccionada = habitacionSeleccionada.clone();
+            seleccionarButton.setEnabled(true);
+        } else {
+            seleccionarButton.setEnabled(false);
+            this.habitacionSeleccionada = null;
+        }
+        this.habitacionSeleccionada = habitacionSeleccionada;
+    }
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -261,5 +420,21 @@ public class NuevaReservacion extends javax.swing.JInternalFrame {
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JButton limpiarButton;
     private javax.swing.JButton seleccionarButton;
+    private org.jdesktop.beansbinding.BindingGroup bindingGroup;
     // End of variables declaration//GEN-END:variables
+
+    public void limpiarFechas() {
+        fechaFinalFormattedTextField.setText("");
+        fechaInicialFormattedTextField.setText("");
+        fechaFinal = "";
+        fechaInicial = "";
+    }
+
+    public void limpiarTablas() {
+        listaObservableHabEstrada.clear();
+        listaObservableHabSalida.clear();
+        listadoHabEntrada.clear();
+        listadoHabSalida.clear();
+        listadoAux.clear();
+    }
 }

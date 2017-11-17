@@ -130,6 +130,13 @@ public class SinReservacion extends javax.swing.JInternalFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    public void validarPago(boolean tarjeta, String vaucher){
+        if (tarjeta) {
+            
+        }else{
+            
+        }
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextField idTextField;

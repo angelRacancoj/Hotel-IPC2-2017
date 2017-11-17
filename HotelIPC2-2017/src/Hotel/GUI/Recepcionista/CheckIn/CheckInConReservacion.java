@@ -5,7 +5,19 @@
  */
 package Hotel.GUI.Recepcionista.CheckIn;
 
+import Hotel.BackEnd.Excepciones.InputsVaciosException;
+import Hotel.BackEnd.Hotel.Reservacion;
+import Hotel.BackEnd.Manejador.ReservarHabitacionM;
+import Hotel.GUI.Recepcionista.TipoPago.Efectivo;
+import Hotel.GUI.Recepcionista.TipoPago.Tarjeta;
+import RUN.DefaultValues;
 import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.LinkedList;
+import java.util.List;
+import javax.swing.JOptionPane;
+import org.jdesktop.observablecollections.ObservableCollections;
+import org.jdesktop.observablecollections.ObservableList;
 
 /**
  *
@@ -13,10 +25,26 @@ import java.sql.Connection;
  */
 public class CheckInConReservacion extends javax.swing.JInternalFrame {
 
-    /**
-     * Creates new form Reservacion
-     */
+    private List<Reservacion> busquedaReservacion;
+    private ObservableList<Reservacion> listaObsReservacion;
+
+    private ReservarHabitacionM manejadorReservacion;
+
+    private Reservacion reservacionSeleccionada;
+
+    private Efectivo pagoEfectivo;
+    private Tarjeta pagoTrajeta;
+
     public CheckInConReservacion(Connection conexion) {
+        busquedaReservacion = new LinkedList<>();
+        listaObsReservacion = ObservableCollections.observableList(busquedaReservacion);
+
+        manejadorReservacion = new ReservarHabitacionM(conexion);
+
+        reservacionSeleccionada = new Reservacion();
+
+        pagoEfectivo = new Efectivo(conexion);
+        pagoTrajeta = new Tarjeta(conexion);
         initComponents();
     }
 
@@ -28,22 +56,29 @@ public class CheckInConReservacion extends javax.swing.JInternalFrame {
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
+        bindingGroup = new org.jdesktop.beansbinding.BindingGroup();
 
         jLabel1 = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
+        IDClienteTextField = new javax.swing.JTextField();
         buscarButton = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
+        checkInSinReserButton = new javax.swing.JButton();
+        regresarButton = new javax.swing.JButton();
         jButton1 = new javax.swing.JButton();
-        jButton3 = new javax.swing.JButton();
-        jToggleButton1 = new javax.swing.JToggleButton();
-        jToggleButton2 = new javax.swing.JToggleButton();
+        tarjetaButton = new javax.swing.JButton();
+        jLabel2 = new javax.swing.JLabel();
 
         setTitle("Reservacion");
 
         jLabel1.setText("Ingrese el ID del cliente para busca la reservacion:");
 
         buscarButton.setText("Buscar");
+        buscarButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                buscarButtonActionPerformed(evt);
+            }
+        });
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -56,15 +91,54 @@ public class CheckInConReservacion extends javax.swing.JInternalFrame {
 
             }
         ));
+
+        org.jdesktop.beansbinding.ELProperty eLProperty = org.jdesktop.beansbinding.ELProperty.create("${listaObsReservacion}");
+        org.jdesktop.swingbinding.JTableBinding jTableBinding = org.jdesktop.swingbinding.SwingBindings.createJTableBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ_WRITE, this, eLProperty, jTable1);
+        org.jdesktop.swingbinding.JTableBinding.ColumnBinding columnBinding = jTableBinding.addColumnBinding(org.jdesktop.beansbinding.ELProperty.create("${IDCliente}"));
+        columnBinding.setColumnName("IDCliente");
+        columnBinding.setColumnClass(String.class);
+        columnBinding = jTableBinding.addColumnBinding(org.jdesktop.beansbinding.ELProperty.create("${fechaFinal}"));
+        columnBinding.setColumnName("Fecha Final");
+        columnBinding.setColumnClass(String.class);
+        columnBinding = jTableBinding.addColumnBinding(org.jdesktop.beansbinding.ELProperty.create("${fechaInicial}"));
+        columnBinding.setColumnName("Fecha Inicial");
+        columnBinding.setColumnClass(String.class);
+        columnBinding = jTableBinding.addColumnBinding(org.jdesktop.beansbinding.ELProperty.create("${noHabitacion}"));
+        columnBinding.setColumnName("No Habitacion");
+        columnBinding.setColumnClass(String.class);
+        bindingGroup.addBinding(jTableBinding);
+        jTableBinding.bind();
         jScrollPane1.setViewportView(jTable1);
 
-        jButton1.setText("Check-In Sin Reservacion");
+        checkInSinReserButton.setText("Check-In Sin Reservacion");
+        checkInSinReserButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                checkInSinReserButtonActionPerformed(evt);
+            }
+        });
 
-        jButton3.setText("Regresar");
+        regresarButton.setText("Regresar");
+        regresarButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                regresarButtonActionPerformed(evt);
+            }
+        });
 
-        jToggleButton1.setText("Pago en Efectivo");
+        jButton1.setText("Efectivo");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
 
-        jToggleButton2.setText("Pago con Tarjeta");
+        tarjetaButton.setText("Tarjeta");
+        tarjetaButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                tarjetaButtonActionPerformed(evt);
+            }
+        });
+
+        jLabel2.setText("Pago:");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -77,17 +151,19 @@ public class CheckInConReservacion extends javax.swing.JInternalFrame {
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addComponent(jLabel1)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(IDClienteTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addComponent(buscarButton))
                     .addGroup(layout.createSequentialGroup()
+                        .addComponent(checkInSinReserButton)
+                        .addGap(24, 24, 24)
+                        .addComponent(jLabel2)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(tarjetaButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jButton1)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jToggleButton2)
-                        .addGap(18, 18, 18)
-                        .addComponent(jToggleButton1)
-                        .addGap(18, 18, 18)
-                        .addComponent(jButton3)))
+                        .addComponent(regresarButton)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
@@ -96,32 +172,128 @@ public class CheckInConReservacion extends javax.swing.JInternalFrame {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
-                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(IDClienteTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(buscarButton))
                 .addGap(18, 18, 18)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 400, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(checkInSinReserButton)
+                    .addComponent(regresarButton)
                     .addComponent(jButton1)
-                    .addComponent(jButton3)
-                    .addComponent(jToggleButton1)
-                    .addComponent(jToggleButton2))
-                .addContainerGap(15, Short.MAX_VALUE))
+                    .addComponent(tarjetaButton)
+                    .addComponent(jLabel2))
+                .addContainerGap(18, Short.MAX_VALUE))
         );
+
+        bindingGroup.bind();
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void buscarButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buscarButtonActionPerformed
+        try {
+            if (IDClienteTextField.getText().replace(" ", "").isEmpty()) {
+                actualizarListaObservable(manejadorReservacion.busquedaPorIDClienteEstadoYFechas("", DefaultValues.HAB_RESERVADA_COD, "", ""));
+            } else {
+                actualizarListaObservable(manejadorReservacion.busquedaPorIDClienteEstadoYFechas(IDClienteTextField.getText(), DefaultValues.HAB_RESERVADA_COD, "", ""));
+            }
+        } catch (InputsVaciosException | SQLException e) {
+            JOptionPane.showMessageDialog(this, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }//GEN-LAST:event_buscarButtonActionPerformed
+
+    private void regresarButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_regresarButtonActionPerformed
+        if (!listaObsReservacion.isEmpty()) {
+            int respuesta = JOptionPane.showConfirmDialog(this, "Desea abandonar sin terminar la reservacion?", "Salir", JOptionPane.YES_NO_OPTION);
+            if (respuesta == 0) {
+                this.setVisible(false);
+            }
+        } else {
+            this.setVisible(false);
+        }
+    }//GEN-LAST:event_regresarButtonActionPerformed
+
+    private void checkInSinReserButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_checkInSinReserButtonActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_checkInSinReserButtonActionPerformed
+
+    private void tarjetaButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tarjetaButtonActionPerformed
+        try {
+            pagoEfectivo.pagar(manejadorReservacion.totalPago(reservacionSeleccionada.getFechaInicial(), reservacionSeleccionada.getFechaFinal(), reservacionSeleccionada.getNoHabitacion()), DefaultValues.PAGO_ALOJAMIENTO);
+        } catch (Exception e) {
+        }
+    }//GEN-LAST:event_tarjetaButtonActionPerformed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        try {
+
+        } catch (Exception e) {
+        }
+    }//GEN-LAST:event_jButton1ActionPerformed
+
+    public void actualizarListaObservable(List<Reservacion> listaReservacion) {
+        this.listaObsReservacion.clear();
+        this.listaObsReservacion.addAll(listaReservacion);
+    }
+
+    public ObservableList<Reservacion> getListaObsReservacion() {
+        return listaObsReservacion;
+    }
+
+    public void setListaObsReservacion(ObservableList<Reservacion> listaObsReservacion) {
+        this.listaObsReservacion = listaObsReservacion;
+    }
+
+    public Reservacion getReservacionSeleccionada() {
+        return reservacionSeleccionada;
+    }
+
+    public void setReservacionSeleccionada(Reservacion reservacionSeleccionada) {
+        if (reservacionSeleccionada != null) {
+            this.reservacionSeleccionada = reservacionSeleccionada.clone();
+        } else {
+            this.reservacionSeleccionada = null;
+        }
+    }
+
+    public void validarPago(boolean tarjeta, String vaucher) {
+        try {
+            if (!tarjeta) {
+                if (!manejadorReservacion.CheckInConReservacion(reservacionSeleccionada.getIDCliente(), reservacionSeleccionada.getFechaInicial(), reservacionSeleccionada.getFechaFinal(), reservacionSeleccionada.getNoHabitacion(), "Efectivo")) {
+                    JOptionPane.showMessageDialog(this, "Fallo durante el pago", "Error", JOptionPane.ERROR_MESSAGE);
+                } else {
+                    limpiar();
+                    this.setVisible(false);
+                }
+            } else {
+                if (!manejadorReservacion.CheckInConReservacion(reservacionSeleccionada.getIDCliente(), reservacionSeleccionada.getFechaInicial(), reservacionSeleccionada.getFechaFinal(), reservacionSeleccionada.getNoHabitacion(), vaucher)) {
+                    JOptionPane.showMessageDialog(this, "Fallo durante el pago", "Error", JOptionPane.ERROR_MESSAGE);
+                } else {
+                    limpiar();
+                    this.setVisible(false);
+                }
+            }
+        } catch (Exception e) {
+        }
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JTextField IDClienteTextField;
     private javax.swing.JButton buscarButton;
+    private javax.swing.JButton checkInSinReserButton;
     private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton3;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable jTable1;
-    private javax.swing.JTextField jTextField1;
-    private javax.swing.JToggleButton jToggleButton1;
-    private javax.swing.JToggleButton jToggleButton2;
+    private javax.swing.JButton regresarButton;
+    private javax.swing.JButton tarjetaButton;
+    private org.jdesktop.beansbinding.BindingGroup bindingGroup;
     // End of variables declaration//GEN-END:variables
+
+    private void limpiar() {
+        IDClienteTextField.setText("");
+        listaObsReservacion.clear();
+    }
 }

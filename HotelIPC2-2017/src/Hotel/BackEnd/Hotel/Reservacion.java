@@ -24,7 +24,9 @@ public class Reservacion implements Serializable {
     private String fechaFinal;
     private String estado;
     private String pagoHabitacion;
+    private String voucherHabitacion;
     private String pagoRestaurante;
+    private String voucherRestaurante;
 
     public static final String PROP_NO_HAB = "NoHabitacion";
     public static final String PROP_ID_CLIENTE = "IDCliente";
@@ -33,15 +35,19 @@ public class Reservacion implements Serializable {
     public static final String PROP_ESTADO = "estado";
     public static final String PROP_PAGO_HABITACION = "pagoHabitacion";
     public static final String PROP_PAGO_RESTAURANTE = "pagoRestaurante";
+    public static final String PROP_VOUCHER_RESTAURANTE = "voucherRestaurante";
+    public static final String PROP_VOUCHER_HABITACION = "voucherHabitacion";
 
-    public Reservacion(String NoHabitacion, String IDCliente, String fechaInicial, String fechaFinal, String estado, String pagoHabitacion, String pagoRestaurante) {
+    public Reservacion(String NoHabitacion, String IDCliente, String fechaInicial, String fechaFinal, String estado, String pagoHabitacion, String voucherHabitacion, String pagoRestaurante, String voucherRestaurante) {
         this.NoHabitacion = NoHabitacion;
         this.IDCliente = IDCliente;
         this.fechaInicial = fechaInicial;
         this.fechaFinal = fechaFinal;
         this.estado = estado;
         this.pagoHabitacion = pagoHabitacion;
+        this.voucherHabitacion = voucherHabitacion;
         this.pagoRestaurante = pagoRestaurante;
+        this.voucherRestaurante = voucherRestaurante;
     }
 
     public Reservacion() {
@@ -131,8 +137,28 @@ public class Reservacion implements Serializable {
         propertySupport.firePropertyChange(PROP_PAGO_RESTAURANTE, oldPago, pagoRestaurante);
     }
 
+    public String getVoucherHabitacion() {
+        return voucherHabitacion;
+    }
+
+    public void setVoucherHabitacion(String voucherHabitacion) {
+        String voucher = this.voucherHabitacion;
+        this.voucherHabitacion = voucherHabitacion;
+        propertySupport.firePropertyChange(PROP_VOUCHER_HABITACION, voucher, voucherHabitacion);
+    }
+
+    public String getVoucherRestaurante() {
+        return voucherRestaurante;
+    }
+
+    public void setVoucherRestaurante(String voucherRestaurante) {
+        String voucher = this.voucherRestaurante;
+        this.voucherRestaurante = voucherRestaurante;
+        propertySupport.firePropertyChange(PROP_VOUCHER_RESTAURANTE, voucher, voucherRestaurante);
+    }
+
     public Reservacion clone() {
-        return new Reservacion(this.NoHabitacion, this.IDCliente, this.fechaInicial, this.fechaFinal, this.estado, this.pagoHabitacion, this.pagoRestaurante);
+        return new Reservacion(NoHabitacion, IDCliente, fechaInicial, fechaFinal, estado, pagoHabitacion, voucherHabitacion, pagoRestaurante, voucherRestaurante);
     }
 
     public void addPropertyChangeListener(PropertyChangeListener listener) {
