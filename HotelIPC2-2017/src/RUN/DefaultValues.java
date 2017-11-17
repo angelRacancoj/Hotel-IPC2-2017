@@ -62,6 +62,10 @@ public class DefaultValues {
     public static final String PAGO_SIN_RESERVACION = "2";
     public static final String PAGO_ALIMENTO = "3";
 
+    //identificacion reservacion
+    public static final String CON_RESERVACION ="1";
+    public static final String SIN_RESERVACION ="2";
+
     // numeracion habitaciones
     /**
      * Verifica que el texto de entrada como fecha sea valido, devuelve true al

@@ -1,11 +1,14 @@
 package Hotel.GUI.Recepcionista;
 
+import Hotel.BackEnd.Excepciones.InputsVaciosException;
 import Hotel.BackEnd.Hotel.Habitacion;
 import Hotel.BackEnd.Manejador.HabitacionM;
 import Hotel.BackEnd.Manejador.ReservarHabitacionM;
 import Hotel.GUI.Principal.Principal;
 import RUN.DefaultValues;
+import java.awt.HeadlessException;
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JOptionPane;
@@ -30,7 +33,7 @@ public class NuevaReservacion extends javax.swing.JInternalFrame {
 
     private Habitacion habitacionSeleccionada;
 
-    private DatosCliente datosCliente;
+    private DatosClienteReservacion datosCliente;
 
     private String fechaInicial = "";
     private String fechaFinal = "";
@@ -46,7 +49,7 @@ public class NuevaReservacion extends javax.swing.JInternalFrame {
         habitacionSeleccionada = new Habitacion();
         manejadorHabitacion = new HabitacionM(conexion);
         manejadorReservacion = new ReservarHabitacionM(conexion);
-        datosCliente = new DatosCliente(conexion);
+        datosCliente = new DatosClienteReservacion(conexion);
 
         initComponents();
     }
@@ -69,7 +72,7 @@ public class NuevaReservacion extends javax.swing.JInternalFrame {
         habitacionesTable = new javax.swing.JTable();
         limpiarButton = new javax.swing.JButton();
         buscarButton = new javax.swing.JButton();
-        seleccionarButton = new javax.swing.JButton();
+        agregarButton = new javax.swing.JButton();
         cancelarButton = new javax.swing.JButton();
         jLabel3 = new javax.swing.JLabel();
         jScrollPane2 = new javax.swing.JScrollPane();
@@ -151,10 +154,10 @@ public class NuevaReservacion extends javax.swing.JInternalFrame {
             }
         });
 
-        seleccionarButton.setText("Agregar al Listado");
-        seleccionarButton.addActionListener(new java.awt.event.ActionListener() {
+        agregarButton.setText("Agregar al Listado");
+        agregarButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                seleccionarButtonActionPerformed(evt);
+                agregarButtonActionPerformed(evt);
             }
         });
 
@@ -237,7 +240,7 @@ public class NuevaReservacion extends javax.swing.JInternalFrame {
                         .addGroup(layout.createSequentialGroup()
                             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                    .addComponent(seleccionarButton)
+                                    .addComponent(agregarButton)
                                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 350, javax.swing.GroupLayout.PREFERRED_SIZE))
                                 .addComponent(limpiarButton))
                             .addGap(18, 18, 18)
@@ -270,7 +273,7 @@ public class NuevaReservacion extends javax.swing.JInternalFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 20, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(limpiarButton)
-                    .addComponent(seleccionarButton)
+                    .addComponent(agregarButton)
                     .addComponent(guardarButton))
                 .addContainerGap())
         );
@@ -302,7 +305,8 @@ public class NuevaReservacion extends javax.swing.JInternalFrame {
                     JOptionPane.showMessageDialog(this, "Fecha invalida", "Error", JOptionPane.ERROR_MESSAGE);
                 }
             }
-        } catch (Exception e) {
+        } catch (InputsVaciosException | HeadlessException | SQLException e) {
+            JOptionPane.showMessageDialog(this, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
     }//GEN-LAST:event_buscarButtonActionPerformed
 
@@ -324,22 +328,28 @@ public class NuevaReservacion extends javax.swing.JInternalFrame {
         limpiarTablas();
         listaObservableHabSalida.clear();
         listaObservableHabEstrada.clear();
-        seleccionarButton.setEnabled(false);
+        agregarButton.setEnabled(false);
         guardarButton.setEnabled(false);
     }//GEN-LAST:event_limpiarButtonActionPerformed
 
-    private void seleccionarButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_seleccionarButtonActionPerformed
+    private void agregarButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_agregarButtonActionPerformed
         if (habitacionSeleccionada != null) {
+            fechaFinalFormattedTextField.setEnabled(false);
+            fechaInicialFormattedTextField.setEnabled(false);
             listadoAux.add(habitacionSeleccionada);
             actualizarBusquedaObservableSalida(listadoAux);
-            guardarButton.setEnabled(false);
+            guardarButton.setEnabled(true);
         } else {
-            seleccionarButton.setEnabled(false);
+            agregarButton.setEnabled(false);
         }
-    }//GEN-LAST:event_seleccionarButtonActionPerformed
+    }//GEN-LAST:event_agregarButtonActionPerformed
 
     private void guardarButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_guardarButtonActionPerformed
-        datosCliente.guardarReservacion(listadoHabSalida);
+        if (listadoHabSalida.size() <= 0) {
+            JOptionPane.showMessageDialog(this, "Ya exiten usuarios con similar ID", "Error", JOptionPane.ERROR_MESSAGE);
+        } else {
+            datosCliente.guardarReservacion(listadoHabSalida, DefaultValues.CON_RESERVACION, fechaInicialFormattedTextField.getText(), fechaFinalFormattedTextField.getText());
+        }
     }//GEN-LAST:event_guardarButtonActionPerformed
 
     private void fechaInicialFormattedTextFieldFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_fechaInicialFormattedTextFieldFocusLost
@@ -394,9 +404,9 @@ public class NuevaReservacion extends javax.swing.JInternalFrame {
     public void setHabitacionSeleccionada(Habitacion habitacionSeleccionada) {
         if (habitacionSeleccionada != null) {
             this.habitacionSeleccionada = habitacionSeleccionada.clone();
-            seleccionarButton.setEnabled(true);
+            agregarButton.setEnabled(true);
         } else {
-            seleccionarButton.setEnabled(false);
+            agregarButton.setEnabled(false);
             this.habitacionSeleccionada = null;
         }
         this.habitacionSeleccionada = habitacionSeleccionada;
@@ -404,6 +414,7 @@ public class NuevaReservacion extends javax.swing.JInternalFrame {
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton agregarButton;
     private javax.swing.JButton buscarButton;
     private javax.swing.JButton cancelarButton;
     private javax.swing.JFormattedTextField fechaFinalFormattedTextField;
@@ -419,7 +430,6 @@ public class NuevaReservacion extends javax.swing.JInternalFrame {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JButton limpiarButton;
-    private javax.swing.JButton seleccionarButton;
     private org.jdesktop.beansbinding.BindingGroup bindingGroup;
     // End of variables declaration//GEN-END:variables
 
@@ -428,6 +438,8 @@ public class NuevaReservacion extends javax.swing.JInternalFrame {
         fechaInicialFormattedTextField.setText("");
         fechaFinal = "";
         fechaInicial = "";
+        fechaFinalFormattedTextField.setEnabled(true);
+        fechaInicialFormattedTextField.setEnabled(true);
     }
 
     public void limpiarTablas() {

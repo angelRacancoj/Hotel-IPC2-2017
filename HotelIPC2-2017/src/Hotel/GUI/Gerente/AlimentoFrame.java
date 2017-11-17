@@ -42,6 +42,12 @@ public class AlimentoFrame extends javax.swing.JInternalFrame {
 
         jLabel1.setText("Nombre:");
 
+        nombreTextField.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                nombreTextFieldKeyPressed(evt);
+            }
+        });
+
         jLabel2.setText("Precio:");
 
         jLabel3.setText("Descripcion:");
@@ -131,6 +137,10 @@ public class AlimentoFrame extends javax.swing.JInternalFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void nombreTextFieldKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_nombreTextFieldKeyPressed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_nombreTextFieldKeyPressed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

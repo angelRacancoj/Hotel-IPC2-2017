@@ -5,11 +5,16 @@
  */
 package Hotel.GUI.Recepcionista.TipoPago;
 
+import Hotel.BackEnd.Excepciones.InputsVaciosException;
+import Hotel.BackEnd.Hotel.Reservacion;
+import Hotel.BackEnd.Manejador.ReservarHabitacionM;
 import Hotel.GUI.Recepcionista.CheckIn.CheckInConReservacion;
 import Hotel.GUI.Recepcionista.CheckIn.SinReservacion;
 import Hotel.GUI.Recepcionista.CheckOut.CheckOut;
 import RUN.DefaultValues;
+import java.awt.HeadlessException;
 import java.sql.Connection;
+import java.sql.SQLException;
 import javax.swing.JOptionPane;
 
 /**
@@ -18,16 +23,16 @@ import javax.swing.JOptionPane;
  */
 public class Efectivo extends javax.swing.JFrame {
 
-    private String totalPago;
     private String estado;
-    
-    private CheckInConReservacion checkInConR;
-    private SinReservacion checkInSinR;
-    private CheckOut checkOut;
+
+    private ReservarHabitacionM manejadorReservacion;
+
+    private Reservacion reservacionSeleccionada;
+
     public Efectivo(Connection conexion) {
-        checkInConR = new CheckInConReservacion(conexion);
-        checkInSinR = new SinReservacion(conexion);
-        checkOut = new CheckOut(conexion);
+        manejadorReservacion = new ReservarHabitacionM(conexion);
+
+        reservacionSeleccionada = new Reservacion();
         initComponents();
     }
 
@@ -62,6 +67,11 @@ public class Efectivo extends javax.swing.JFrame {
         });
 
         regresarButton.setText("Regresar");
+        regresarButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                regresarButtonActionPerformed(evt);
+            }
+        });
 
         montoFormattedTextField.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter()));
 
@@ -115,29 +125,46 @@ public class Efectivo extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void pagarButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pagarButtonActionPerformed
-        if (montoFormattedTextField.getText().replace(" ","").replace(".","").isEmpty()) {
-            JOptionPane.showMessageDialog(this,"Debe ingresar ingresar un monto", "Error", JOptionPane.ERROR_MESSAGE);
-        }else{
-            if ((Double.parseDouble(montoFormattedTextField.getText())-Double.parseDouble(totalTextField.getText())) < 0) {
-                JOptionPane.showMessageDialog(this,"Monto menor al pago necesario", "Error", JOptionPane.ERROR_MESSAGE);
-            }else{
-                if (estado.equalsIgnoreCase(DefaultValues.PAGO_ALOJAMIENTO)) {
-                    limpiar();
-                    checkInConR.validarPago(false, "");
-                    this.setVisible(false);
-                }else if (estado.equalsIgnoreCase(DefaultValues.PAGO_SIN_RESERVACION)) {
-                    limpiar();
-                    checkInSinR.validarPago(false, "");
-                    this.setVisible(false);
+        try {
+            if (montoFormattedTextField.getText().replace(" ", "").replace(".", "").isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Debe ingresar ingresar un monto", "Error", JOptionPane.ERROR_MESSAGE);
+            } else {
+                if ((Double.parseDouble(montoFormattedTextField.getText()) - Double.parseDouble(totalTextField.getText())) < 0) {
+                    JOptionPane.showMessageDialog(this, "Monto menor al pago necesario", "Error", JOptionPane.ERROR_MESSAGE);
+                } else {
+                    if (estado.equalsIgnoreCase(DefaultValues.PAGO_ALOJAMIENTO)) {
+                        limpiar();
+                        if (!manejadorReservacion.CheckInConReservacion(reservacionSeleccionada.getIDCliente(), reservacionSeleccionada.getFechaInicial(), reservacionSeleccionada.getFechaFinal(), reservacionSeleccionada.getNoHabitacion(), "Efectivo")) {
+                            JOptionPane.showMessageDialog(this, "Fallo durante el pago", "Error", JOptionPane.ERROR_MESSAGE);
+                        } else {
+                            limpiar();
+                            this.setVisible(false);
+                        }
+                        this.setVisible(false);
+                    } else if (estado.equalsIgnoreCase(DefaultValues.PAGO_SIN_RESERVACION)) {
+                        limpiar();
+
+                        this.setVisible(false);
+                    }
                 }
             }
+        } catch (InputsVaciosException | HeadlessException | NumberFormatException | SQLException e) {
+            JOptionPane.showMessageDialog(this, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
     }//GEN-LAST:event_pagarButtonActionPerformed
 
-    public void pagar(String total,String estado){
+    private void regresarButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_regresarButtonActionPerformed
+        this.setVisible(false);
+        limpiar();
+    }//GEN-LAST:event_regresarButtonActionPerformed
+
+    public void pagar(String total, String estado, Reservacion reservacion) {
         limpiar();
         totalTextField.setText(total);
         totalTextField.setEnabled(false);
+        this.estado = estado;
+        reservacionSeleccionada = reservacion;
+        setVisible(true);
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel jLabel1;
@@ -149,8 +176,8 @@ public class Efectivo extends javax.swing.JFrame {
     private javax.swing.JTextField totalTextField;
     // End of variables declaration//GEN-END:variables
 
-private void limpiar(){
-    montoFormattedTextField.setText("");
-    totalTextField.setText("");
-}
+    private void limpiar() {
+        montoFormattedTextField.setText("");
+        totalTextField.setText("");
+    }
 }

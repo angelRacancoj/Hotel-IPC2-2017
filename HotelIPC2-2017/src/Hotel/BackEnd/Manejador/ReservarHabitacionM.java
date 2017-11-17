@@ -44,7 +44,7 @@ public class ReservarHabitacionM {
      * @throws SQLException
      * @throws InputsVaciosException
      */
-    public boolean CheckInSinReservacion(String IDCliente, String fechaInicial, String fechaFinal, String numeroHabitacion) throws SQLException, InputsVaciosException {
+    public boolean CheckInSinReservacion(String IDCliente, String fechaInicial, String fechaFinal, String numeroHabitacion, String voucher) throws SQLException, InputsVaciosException {
         boolean IDClienteTry = IDCliente.replace(" ", "").isEmpty();
         boolean fechaInicialTry = fechaInicial.replace(" ", "").isEmpty();
         boolean fechaFinalTry = fechaFinal.replace(" ", "").isEmpty();
@@ -55,13 +55,14 @@ public class ReservarHabitacionM {
                 throw new InputsVaciosException("Debe llenar todos los campos");
             } else {
                 PreparedStatement sentencia = coneccion.prepareStatement("INSERT INTO RESERVACION "
-                        + "(Fecha_Inicial, Fecha_Final, Estado, Numero_Haibtacion, ID_Cliente,Pago_Habitacion) VALUES (?,?,?,?,?,?)");
+                        + "(Fecha_Inicial, Fecha_Final, Estado, Numero_Haibtacion, ID_Cliente,Pago_Habitacion, Pago_Hab_Tarjeta) VALUES (?,?,?,?,?,?,?)");
                 sentencia.setString(1, fechaInicial);
                 sentencia.setString(2, fechaFinal);
                 sentencia.setString(3, DefaultValues.HAB_OCUPADA_COD);
                 sentencia.setString(4, numeroHabitacion);
                 sentencia.setString(5, IDCliente);
                 sentencia.setString(6, String.valueOf(cantidadDelDias(fechaInicial, fechaFinal) * manejadorHabitacion.precioHabitacion(numeroHabitacion)));
+                sentencia.setString(6, voucher);
                 if (sentencia.executeUpdate() == 1) {
                     sentencia.close();
                     return true;
@@ -490,16 +491,16 @@ public class ReservarHabitacionM {
      * @throws SQLException
      * @throws InputsVaciosException
      */
-    public int cantidadDelDias(String fechaInicial, String fechaFinal) throws SQLException, InputsVaciosException {
-        int dias = 0;
+    public double cantidadDelDias(String fechaInicial, String fechaFinal) throws SQLException, InputsVaciosException {
+        double dias = 0;
         try {
-            String query = ("SELECT (DATEDIFF(?,?)+1) AS CantDias");
-            PreparedStatement objeto = coneccion.prepareStatement(query);
+            PreparedStatement objeto = coneccion.prepareStatement("SELECT (DATEDIFF(?,?)+1) AS CantDias");
             objeto.setString(1, fechaFinal);
             objeto.setString(2, fechaInicial);
             ResultSet resultado = objeto.executeQuery();
             while (resultado.next()) {
-                dias = resultado.getInt("CantDias");
+                dias = resultado.getDouble("CantDias");
+                System.out.println(dias);
             }
             resultado.close();
             objeto.close();
@@ -567,9 +568,12 @@ public class ReservarHabitacionM {
      */
     public String totalPago(String fechaInicial, String fechaFinal, String numeroHabitacion)throws SQLException, InputsVaciosException{
         try {
+            System.out.println("Dias: "+cantidadDelDias(fechaInicial, fechaFinal));
+            System.out.println("Precio: "+manejadorHabitacion.precioHabitacion(numeroHabitacion));
+            System.out.println("total:" +(cantidadDelDias(fechaInicial, fechaFinal) * manejadorHabitacion.precioHabitacion(numeroHabitacion)));
             return String.valueOf(cantidadDelDias(fechaInicial, fechaFinal) * manejadorHabitacion.precioHabitacion(numeroHabitacion));
-        } catch (Exception e) {
-            throw new InputsVaciosException("Error en la base de datos");
+        } catch (InputsVaciosException | SQLException e) {
+            throw new InputsVaciosException("Error al calcular el total");
         }
     }
 }

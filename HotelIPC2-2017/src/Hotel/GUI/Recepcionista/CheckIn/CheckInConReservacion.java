@@ -11,6 +11,7 @@ import Hotel.BackEnd.Manejador.ReservarHabitacionM;
 import Hotel.GUI.Recepcionista.TipoPago.Efectivo;
 import Hotel.GUI.Recepcionista.TipoPago.Tarjeta;
 import RUN.DefaultValues;
+import java.awt.HeadlessException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.LinkedList;
@@ -65,7 +66,7 @@ public class CheckInConReservacion extends javax.swing.JInternalFrame {
         jTable1 = new javax.swing.JTable();
         checkInSinReserButton = new javax.swing.JButton();
         regresarButton = new javax.swing.JButton();
-        jButton1 = new javax.swing.JButton();
+        efectivoButton = new javax.swing.JButton();
         tarjetaButton = new javax.swing.JButton();
         jLabel2 = new javax.swing.JLabel();
 
@@ -124,10 +125,10 @@ public class CheckInConReservacion extends javax.swing.JInternalFrame {
             }
         });
 
-        jButton1.setText("Efectivo");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        efectivoButton.setText("Efectivo");
+        efectivoButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                efectivoButtonActionPerformed(evt);
             }
         });
 
@@ -161,7 +162,7 @@ public class CheckInConReservacion extends javax.swing.JInternalFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(tarjetaButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton1)
+                        .addComponent(efectivoButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(regresarButton)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -180,7 +181,7 @@ public class CheckInConReservacion extends javax.swing.JInternalFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(checkInSinReserButton)
                     .addComponent(regresarButton)
-                    .addComponent(jButton1)
+                    .addComponent(efectivoButton)
                     .addComponent(tarjetaButton)
                     .addComponent(jLabel2))
                 .addContainerGap(18, Short.MAX_VALUE))
@@ -194,7 +195,7 @@ public class CheckInConReservacion extends javax.swing.JInternalFrame {
     private void buscarButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buscarButtonActionPerformed
         try {
             if (IDClienteTextField.getText().replace(" ", "").isEmpty()) {
-                actualizarListaObservable(manejadorReservacion.busquedaPorIDClienteEstadoYFechas("", DefaultValues.HAB_RESERVADA_COD, "", ""));
+                actualizarListaObservable(manejadorReservacion.busquedaPorIDClienteEstadoYFechas("", DefaultValues.HAB_TODO_COMBO_BOX, "", ""));
             } else {
                 actualizarListaObservable(manejadorReservacion.busquedaPorIDClienteEstadoYFechas(IDClienteTextField.getText(), DefaultValues.HAB_RESERVADA_COD, "", ""));
             }
@@ -220,17 +221,20 @@ public class CheckInConReservacion extends javax.swing.JInternalFrame {
 
     private void tarjetaButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tarjetaButtonActionPerformed
         try {
-            pagoEfectivo.pagar(manejadorReservacion.totalPago(reservacionSeleccionada.getFechaInicial(), reservacionSeleccionada.getFechaFinal(), reservacionSeleccionada.getNoHabitacion()), DefaultValues.PAGO_ALOJAMIENTO);
-        } catch (Exception e) {
+            pagoTrajeta.pagar(manejadorReservacion.totalPago(reservacionSeleccionada.getFechaInicial(), reservacionSeleccionada.getFechaFinal(), reservacionSeleccionada.getNoHabitacion()), DefaultValues.PAGO_ALOJAMIENTO, reservacionSeleccionada);
+        } catch (InputsVaciosException | SQLException e) {
+            JOptionPane.showMessageDialog(this, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
     }//GEN-LAST:event_tarjetaButtonActionPerformed
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+    private void efectivoButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_efectivoButtonActionPerformed
         try {
-
-        } catch (Exception e) {
+            System.out.println("Pago:"+manejadorReservacion.totalPago(reservacionSeleccionada.getFechaInicial(), reservacionSeleccionada.getFechaFinal(), reservacionSeleccionada.getNoHabitacion()));
+            pagoEfectivo.pagar(manejadorReservacion.totalPago(reservacionSeleccionada.getFechaInicial(), reservacionSeleccionada.getFechaFinal(), reservacionSeleccionada.getNoHabitacion()), DefaultValues.PAGO_ALOJAMIENTO, reservacionSeleccionada);
+        } catch (InputsVaciosException | SQLException e) {
+            JOptionPane.showMessageDialog(this, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
-    }//GEN-LAST:event_jButton1ActionPerformed
+    }//GEN-LAST:event_efectivoButtonActionPerformed
 
     public void actualizarListaObservable(List<Reservacion> listaReservacion) {
         this.listaObsReservacion.clear();
@@ -257,32 +261,33 @@ public class CheckInConReservacion extends javax.swing.JInternalFrame {
         }
     }
 
-    public void validarPago(boolean tarjeta, String vaucher) {
-        try {
-            if (!tarjeta) {
-                if (!manejadorReservacion.CheckInConReservacion(reservacionSeleccionada.getIDCliente(), reservacionSeleccionada.getFechaInicial(), reservacionSeleccionada.getFechaFinal(), reservacionSeleccionada.getNoHabitacion(), "Efectivo")) {
-                    JOptionPane.showMessageDialog(this, "Fallo durante el pago", "Error", JOptionPane.ERROR_MESSAGE);
-                } else {
-                    limpiar();
-                    this.setVisible(false);
-                }
-            } else {
-                if (!manejadorReservacion.CheckInConReservacion(reservacionSeleccionada.getIDCliente(), reservacionSeleccionada.getFechaInicial(), reservacionSeleccionada.getFechaFinal(), reservacionSeleccionada.getNoHabitacion(), vaucher)) {
-                    JOptionPane.showMessageDialog(this, "Fallo durante el pago", "Error", JOptionPane.ERROR_MESSAGE);
-                } else {
-                    limpiar();
-                    this.setVisible(false);
-                }
-            }
-        } catch (Exception e) {
-        }
-    }
+//    public void validarPago(boolean tarjeta, String vaucher) {
+//        try {
+//            if (!tarjeta) {
+//                if (!manejadorReservacion.CheckInConReservacion(reservacionSeleccionada.getIDCliente(), reservacionSeleccionada.getFechaInicial(), reservacionSeleccionada.getFechaFinal(), reservacionSeleccionada.getNoHabitacion(), "Efectivo")) {
+//                    JOptionPane.showMessageDialog(this, "Fallo durante el pago", "Error", JOptionPane.ERROR_MESSAGE);
+//                } else {
+//                    limpiar();
+//                    this.setVisible(false);
+//                }
+//            } else {
+//                if (!manejadorReservacion.CheckInConReservacion(reservacionSeleccionada.getIDCliente(), reservacionSeleccionada.getFechaInicial(), reservacionSeleccionada.getFechaFinal(), reservacionSeleccionada.getNoHabitacion(), vaucher)) {
+//                    JOptionPane.showMessageDialog(this, "Fallo durante el pago", "Error", JOptionPane.ERROR_MESSAGE);
+//                } else {
+//                    limpiar();
+//                    this.setVisible(false);
+//                }
+//            }
+//        } catch (InputsVaciosException | HeadlessException | SQLException e) {
+//            JOptionPane.showMessageDialog(this, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+//        }
+//    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextField IDClienteTextField;
     private javax.swing.JButton buscarButton;
     private javax.swing.JButton checkInSinReserButton;
-    private javax.swing.JButton jButton1;
+    private javax.swing.JButton efectivoButton;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JScrollPane jScrollPane1;

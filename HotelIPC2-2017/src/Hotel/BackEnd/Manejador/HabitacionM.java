@@ -263,6 +263,7 @@ public class HabitacionM {
             ResultSet resultado = sentencia.executeQuery();
             while (resultado.next()) {
                 precio = resultado.getDouble("Precio");
+                System.out.println(precio);
             }
             resultado.close();
             sentencia.close();

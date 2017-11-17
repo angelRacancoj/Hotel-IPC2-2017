@@ -111,12 +111,14 @@ public class LogIn extends javax.swing.JFrame {
             if (manejadorUsuario.iniciar(usuarioTextField.getText(), new String(ContrasenaPasswordField.getPassword()))!=null) {
                 principalFrame.iniciar(manejadorUsuario.iniciar(usuarioTextField.getText(), new String(ContrasenaPasswordField.getPassword())));
             limpiar();
+            this.setVisible(false);
             principalFrame.setVisible(true);
             }else{
                 JOptionPane.showMessageDialog(this, "Usuario o Contraseña incorrecta", "Error", JOptionPane.ERROR_MESSAGE);
             }
             
-        } catch (Exception e) {
+        } catch (InputsVaciosException | HeadlessException | SQLException e) {
+            JOptionPane.showMessageDialog(this, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
     }//GEN-LAST:event_ingresarButtonActionPerformed
 

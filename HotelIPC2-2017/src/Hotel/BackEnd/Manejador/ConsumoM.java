@@ -62,7 +62,7 @@ public class ConsumoM {
 
             if (manejadorHabitacion.habitacionEnOcupadaHoy(noHabitacion).isEmpty()) {
                 throw new InputsVaciosException("No esta acupada hoy la habitacion " + noHabitacion);
-            } else if (manejadorAlimentos.busqueda(cantidad, DefaultValues.DISPONIBLE_SI_COMBO_BOX).isEmpty()) {
+            } else if (manejadorAlimentos.busqueda(nombreAlimento, DefaultValues.DISPONIBLE_SI_COMBO_BOX).isEmpty()) {
                 throw new InputsVaciosException("No esta disponible el alimento " + nombreAlimento);
             } else {
                 PreparedStatement sentencia = conexion.prepareStatement("INSERT INTO CONSUMO"

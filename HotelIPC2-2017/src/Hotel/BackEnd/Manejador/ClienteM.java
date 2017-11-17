@@ -60,7 +60,12 @@ public class ClienteM {
                 sentencia.setString(3, nombre);
                 sentencia.setString(4, direccion);
                 sentencia.setString(5, phone);
-                sentencia.setString(6, cumpleanios);
+                if (cumpleanios.replace(" ","").replace("-","").isEmpty()) {
+                   sentencia.setString(6, null); 
+                }else{
+                    sentencia.setString(6, cumpleanios);
+                }
+                
                 if (sentencia.executeUpdate() == 1) {
                     sentencia.close();
                     return true;
@@ -72,7 +77,7 @@ public class ClienteM {
                 throw new InputsVaciosException("Ya existe el Cliente");
             }
         } catch (SQLException e) {
-            throw new InputsVaciosException("Error en la Base de Datos");
+            throw new InputsVaciosException("Error en la Base de Datos al agregar el Cliente");
         }
     }
 

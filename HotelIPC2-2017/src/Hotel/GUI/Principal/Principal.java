@@ -12,7 +12,6 @@ import Hotel.GUI.Gerente.ModificarPrecioHab;
 import Hotel.GUI.Recepcionista.CheckIn.CheckInConReservacion;
 import Hotel.GUI.Recepcionista.CheckIn.SinReservacion;
 import Hotel.GUI.Recepcionista.CheckOut.CheckOut;
-import Hotel.GUI.Recepcionista.DatosCliente;
 import Hotel.GUI.Recepcionista.ModificarReservacion;
 import Hotel.GUI.Recepcionista.NuevaReservacion;
 import Hotel.GUI.Restaurante.ServicioHabitacion;
@@ -51,7 +50,6 @@ public class Principal extends javax.swing.JFrame {
     private AlimentoFrame alimentoFrame;
     private EditarUsuarios editarUsuario;
     private ModificarPrecioHab modificarPrecioHab;
-    public DatosCliente datosCliente;
 
     public Principal(Connection conexion) {
         this.manejadorReservacion = new ReservarHabitacionM(conexion);
@@ -73,7 +71,6 @@ public class Principal extends javax.swing.JFrame {
         alimentoFrame = new AlimentoFrame(conexion);
         editarUsuario = new EditarUsuarios(conexion);
         modificarPrecioHab = new ModificarPrecioHab(conexion);
-        datosCliente = new DatosCliente(conexion);
 
         initComponents();
         this.DesktopPane.add(modificarReservacion);
@@ -85,7 +82,6 @@ public class Principal extends javax.swing.JFrame {
         this.DesktopPane.add(alimentoFrame);
         this.DesktopPane.add(editarUsuario);
         this.DesktopPane.add(modificarPrecioHab);
-        this.DesktopPane.add(datosCliente);
     }
 
     /**

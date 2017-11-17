@@ -5,7 +5,17 @@
  */
 package Hotel.GUI.Recepcionista.TipoPago;
 
+import Hotel.BackEnd.Excepciones.InputsVaciosException;
+import Hotel.BackEnd.Hotel.Reservacion;
+import Hotel.BackEnd.Manejador.ReservarHabitacionM;
+import Hotel.GUI.Recepcionista.CheckIn.CheckInConReservacion;
+import Hotel.GUI.Recepcionista.CheckIn.SinReservacion;
+import Hotel.GUI.Recepcionista.CheckOut.CheckOut;
+import RUN.DefaultValues;
+import java.awt.HeadlessException;
 import java.sql.Connection;
+import java.sql.SQLException;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -13,9 +23,13 @@ import java.sql.Connection;
  */
 public class Tarjeta extends javax.swing.JFrame {
 
-    /**
-     * Creates new form Tarjeta
-     */
+    private String voucher;
+    private String estado;
+
+    private ReservarHabitacionM manejadorReservacion;
+
+    private Reservacion reservacionSeleccionada;
+
     public Tarjeta(Connection conexion) {
         initComponents();
     }
@@ -46,8 +60,18 @@ public class Tarjeta extends javax.swing.JFrame {
         jLabel2.setText("Total a Pagar:");
 
         pagarButton.setText("Pagar");
+        pagarButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                pagarButtonActionPerformed(evt);
+            }
+        });
 
         regresarButton.setText("Regresar");
+        regresarButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                regresarButtonActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -91,7 +115,44 @@ public class Tarjeta extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    
+    private void pagarButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pagarButtonActionPerformed
+        try {
+            if (voucherTextField.getText().replace(" ", "").isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Debe ingresar en codigo del Voucher", "Error", JOptionPane.ERROR_MESSAGE);
+        } else {
+            if (estado.equalsIgnoreCase(DefaultValues.PAGO_ALOJAMIENTO)) {
+                limpiar();
+                if (!manejadorReservacion.CheckInConReservacion(reservacionSeleccionada.getIDCliente(), reservacionSeleccionada.getFechaInicial(), reservacionSeleccionada.getFechaFinal(), reservacionSeleccionada.getNoHabitacion(), voucherTextField.getText())) {
+                    JOptionPane.showMessageDialog(this, "Fallo durante el pago", "Error", JOptionPane.ERROR_MESSAGE);
+                } else {
+                    limpiar();
+                    this.setVisible(false);
+                }
+                this.setVisible(false);
+            } else if (estado.equalsIgnoreCase(DefaultValues.PAGO_SIN_RESERVACION)) {
+                limpiar();
+
+                this.setVisible(false);
+            }
+        }
+        } catch (InputsVaciosException | HeadlessException | SQLException e) {
+            JOptionPane.showMessageDialog(this, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }//GEN-LAST:event_pagarButtonActionPerformed
+
+    private void regresarButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_regresarButtonActionPerformed
+        this.setVisible(false);
+        limpiar();
+    }//GEN-LAST:event_regresarButtonActionPerformed
+
+    public void pagar(String total, String estado, Reservacion reservacion) {
+        limpiar();
+        totalTextField.setText(total);
+        totalTextField.setEnabled(false);
+        reservacionSeleccionada = reservacion;
+        this.estado = estado;
+        setVisible(true);
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel jLabel1;
@@ -102,4 +163,9 @@ public class Tarjeta extends javax.swing.JFrame {
     private javax.swing.JTextField totalTextField;
     private javax.swing.JTextField voucherTextField;
     // End of variables declaration//GEN-END:variables
+
+    public void limpiar() {
+        totalTextField.setText("");
+        voucherTextField.setText("");
+    }
 }

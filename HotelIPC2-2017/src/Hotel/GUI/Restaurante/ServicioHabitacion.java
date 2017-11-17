@@ -5,7 +5,21 @@
  */
 package Hotel.GUI.Restaurante;
 
+import Hotel.BackEnd.Excepciones.InputsVaciosException;
+import Hotel.BackEnd.Hotel.Alimento;
+import Hotel.BackEnd.Manejador.AlimentoM;
+import Hotel.BackEnd.Manejador.ConsumoM;
+import RUN.DefaultValues;
+import java.awt.HeadlessException;
 import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JOptionPane;
+import org.jdesktop.observablecollections.ObservableCollections;
+import org.jdesktop.observablecollections.ObservableList;
 
 /**
  *
@@ -13,10 +27,23 @@ import java.sql.Connection;
  */
 public class ServicioHabitacion extends javax.swing.JInternalFrame {
 
-    /**
-     * Creates new form ServicioHabitacion
-     */
+    private List<Alimento> listaAlimentos;
+    private ObservableList<Alimento> listaAlimentosObservable;
+    
+    private Alimento alimentoSeleccionado;
+    
+    private AlimentoM manejadorAlimento;
+    private ConsumoM manejadorConsumo;
+    
     public ServicioHabitacion(Connection conexion) {
+        
+        listaAlimentos = new ArrayList<>();
+        listaAlimentosObservable = ObservableCollections.observableList(listaAlimentos);
+        
+        alimentoSeleccionado = new Alimento();
+        
+        manejadorAlimento = new AlimentoM(conexion);
+        manejadorConsumo = new ConsumoM(conexion);
         initComponents();
     }
 
@@ -28,38 +55,22 @@ public class ServicioHabitacion extends javax.swing.JInternalFrame {
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
+        bindingGroup = new org.jdesktop.beansbinding.BindingGroup();
 
-        jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
         jScrollPane2 = new javax.swing.JScrollPane();
         jTable2 = new javax.swing.JTable();
         jLabel1 = new javax.swing.JLabel();
-        jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         noHabitacionComboBox = new javax.swing.JComboBox<>();
         actualizarButton = new javax.swing.JButton();
-        AgregarlistadoButton = new javax.swing.JButton();
         regresarButton = new javax.swing.JButton();
         agregarCuentaButton = new javax.swing.JButton();
-        jSpinner1 = new javax.swing.JSpinner();
         jLabel4 = new javax.swing.JLabel();
+        cantidadComboBox = new javax.swing.JComboBox<>();
 
-        setClosable(true);
+        setMaximizable(true);
         setResizable(true);
         setTitle("Servicio a la Habitacion");
-
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {},
-                {},
-                {},
-                {}
-            },
-            new String [] {
-
-            }
-        ));
-        jScrollPane1.setViewportView(jTable1);
 
         jTable2.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -72,25 +83,54 @@ public class ServicioHabitacion extends javax.swing.JInternalFrame {
 
             }
         ));
+
+        org.jdesktop.beansbinding.ELProperty eLProperty = org.jdesktop.beansbinding.ELProperty.create("${listaAlimentosObservable}");
+        org.jdesktop.swingbinding.JTableBinding jTableBinding = org.jdesktop.swingbinding.SwingBindings.createJTableBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ_WRITE, this, eLProperty, jTable2);
+        org.jdesktop.swingbinding.JTableBinding.ColumnBinding columnBinding = jTableBinding.addColumnBinding(org.jdesktop.beansbinding.ELProperty.create("${nombre}"));
+        columnBinding.setColumnName("Nombre");
+        columnBinding.setColumnClass(String.class);
+        columnBinding = jTableBinding.addColumnBinding(org.jdesktop.beansbinding.ELProperty.create("${precio}"));
+        columnBinding.setColumnName("Precio");
+        columnBinding.setColumnClass(String.class);
+        columnBinding = jTableBinding.addColumnBinding(org.jdesktop.beansbinding.ELProperty.create("${descripcion}"));
+        columnBinding.setColumnName("Descripcion");
+        columnBinding.setColumnClass(String.class);
+        bindingGroup.addBinding(jTableBinding);
+        jTableBinding.bind();org.jdesktop.beansbinding.Binding binding = org.jdesktop.beansbinding.Bindings.createAutoBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ_WRITE, this, org.jdesktop.beansbinding.ELProperty.create("${alimentoSeleccionado}"), jTable2, org.jdesktop.beansbinding.BeanProperty.create("selectedElement"));
+        bindingGroup.addBinding(binding);
+
         jScrollPane2.setViewportView(jTable2);
 
         jLabel1.setText("Alimentos");
 
-        jLabel2.setText("Listado pedido Cliente");
+        jLabel3.setText("Seleccione la Habitacion donde se entrego el pedido:");
 
-        jLabel3.setText("Seleccione el numero de Habitacion donde se entrego el pedido:");
-
-        noHabitacionComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Habitacion", "101 (Junior)", "102 (Junior)", "103 (Master)", "104 (Deluxe)", "201 (Junior)", "202 (Junior)", "203 (Master)", "204 (Deluxe)", "301 (Junior)", "302 (Junior)", "303 (Master)", "304 (Deluxe)" }));
+        noHabitacionComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Habitacion", "101", "102", "103", "104", "201", "202", "203", "204", "301", "302", "303", "304" }));
 
         actualizarButton.setText("Actualizar");
-
-        AgregarlistadoButton.setText("Agregar al listado");
+        actualizarButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                actualizarButtonActionPerformed(evt);
+            }
+        });
 
         regresarButton.setText("Regresar");
+        regresarButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                regresarButtonActionPerformed(evt);
+            }
+        });
 
         agregarCuentaButton.setText("Agregar a la Cuenta");
+        agregarCuentaButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                agregarCuentaButtonActionPerformed(evt);
+            }
+        });
 
         jLabel4.setText("Cantidad:");
+
+        cantidadComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31", "32", "33", "34", "35", "36", "37", "38", "39", "40", "41", "42", "43", "44", "45", "46", "47", "48", "49", "50" }));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -100,33 +140,27 @@ public class ServicioHabitacion extends javax.swing.JInternalFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addContainerGap()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                            .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
                                 .addComponent(jLabel3)
                                 .addGap(18, 18, 18)
                                 .addComponent(noHabitacionComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                .addGroup(layout.createSequentialGroup()
+                                    .addComponent(actualizarButton)
+                                    .addGap(18, 18, 18)
+                                    .addComponent(regresarButton)
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(agregarCuentaButton))
+                                .addGroup(layout.createSequentialGroup()
                                     .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 447, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addGap(20, 20, 20)
-                                        .addComponent(AgregarlistadoButton))
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addGap(9, 9, 9)
-                                        .addComponent(jLabel4)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(jSpinner1))
-                                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                            .addComponent(regresarButton, javax.swing.GroupLayout.Alignment.TRAILING)
-                                            .addComponent(agregarCuentaButton, javax.swing.GroupLayout.Alignment.TRAILING)
-                                            .addComponent(actualizarButton, javax.swing.GroupLayout.Alignment.TRAILING)))))))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(147, 147, 147)
-                        .addComponent(jLabel2))
+                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addGroup(layout.createSequentialGroup()
+                                            .addGap(9, 9, 9)
+                                            .addComponent(jLabel4))
+                                        .addGroup(layout.createSequentialGroup()
+                                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                            .addComponent(cantidadComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))))))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(194, 194, 194)
                         .addComponent(jLabel1)))
@@ -142,46 +176,100 @@ public class ServicioHabitacion extends javax.swing.JInternalFrame {
                 .addGap(18, 18, 18)
                 .addComponent(jLabel1)
                 .addGap(6, 6, 6)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 260, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jSpinner1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel4))
-                        .addGap(18, 18, 18)
-                        .addComponent(AgregarlistadoButton)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(actualizarButton)))
+                        .addComponent(jLabel4)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(cantidadComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(18, 18, 18)
-                .addComponent(jLabel2)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(agregarCuentaButton)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(regresarButton))
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 250, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(agregarCuentaButton)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(regresarButton)
+                        .addComponent(actualizarButton)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
+
+        bindingGroup.bind();
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void actualizarButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_actualizarButtonActionPerformed
+        try {
+            actualizarBusquedaObservable(manejadorAlimento.busqueda("", DefaultValues.DISPONIBLE_TODO_COMBO_BOX));
+        } catch (InputsVaciosException | SQLException e) {
+            JOptionPane.showMessageDialog(this, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }//GEN-LAST:event_actualizarButtonActionPerformed
 
+    private void regresarButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_regresarButtonActionPerformed
+        if (alimentoSeleccionado != null) {
+            int respuesta = JOptionPane.showConfirmDialog(this, "Desea abandonar sin agregar el consumo?", "Salir", JOptionPane.YES_NO_OPTION);
+            if (respuesta == 0) {
+                this.setVisible(false);
+            }
+        }else{
+            setVisible(false);
+        }
+    }//GEN-LAST:event_regresarButtonActionPerformed
+
+    private void agregarCuentaButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_agregarCuentaButtonActionPerformed
+        try {
+            if (noHabitacionComboBox.getSelectedIndex()<=0) {
+                JOptionPane.showMessageDialog(this,"Debe seleccionar la habitacion", "Error", JOptionPane.ERROR_MESSAGE);
+            }else{
+                if (cantidadComboBox.getSelectedIndex()<=0) {
+                JOptionPane.showMessageDialog(this,"Debe colocar una cantidad mayor a '0'", "Error", JOptionPane.ERROR_MESSAGE);
+            }else{
+                System.out.println("Cosnumo:"+noHabitacionComboBox.getSelectedItem()+", "+alimentoSeleccionado.getNombre()+", "+cantidadComboBox.getSelectedIndex());
+                manejadorConsumo.nuevoConsumosCliente(String.valueOf(noHabitacionComboBox.getSelectedItem()), alimentoSeleccionado.getNombre(), String.valueOf(cantidadComboBox.getSelectedIndex()));
+            }
+            }
+        } catch (HeadlessException | SQLException | InputsVaciosException e) {
+            JOptionPane.showMessageDialog(this, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }//GEN-LAST:event_agregarCuentaButtonActionPerformed
+
+    public void actualizarBusquedaObservable(List<Alimento> listaAlimentos){
+        this.listaAlimentosObservable.clear();
+        this.listaAlimentosObservable.addAll(listaAlimentos);
+    }
+
+    public ObservableList<Alimento> getListaAlimentosObservable() {
+        return listaAlimentosObservable;
+    }
+
+    public void setListaAlimentosObservable(ObservableList<Alimento> listaAlimentosObservable) {
+        this.listaAlimentosObservable = listaAlimentosObservable;
+    }
+
+    public Alimento getAlimentoSeleccionado() {
+        return alimentoSeleccionado;
+    }
+
+    public void setAlimentoSeleccionado(Alimento alimentoSeleccionado) {
+        if (alimentoSeleccionado != null) {
+            this.alimentoSeleccionado = alimentoSeleccionado.clone();
+            agregarCuentaButton.setEnabled(true);
+        }else{
+            agregarCuentaButton.setEnabled(false);
+            this.alimentoSeleccionado=null;
+        }
+    }
+    
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton AgregarlistadoButton;
     private javax.swing.JButton actualizarButton;
     private javax.swing.JButton agregarCuentaButton;
+    private javax.swing.JComboBox<String> cantidadComboBox;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
-    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JSpinner jSpinner1;
-    private javax.swing.JTable jTable1;
     private javax.swing.JTable jTable2;
     private javax.swing.JComboBox<String> noHabitacionComboBox;
     private javax.swing.JButton regresarButton;
+    private org.jdesktop.beansbinding.BindingGroup bindingGroup;
     // End of variables declaration//GEN-END:variables
 }
