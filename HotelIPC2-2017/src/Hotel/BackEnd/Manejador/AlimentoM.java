@@ -35,7 +35,7 @@ public class AlimentoM {
                 throw new InputsVaciosException("Debe llenar todos los campos");
             } else {
                 if (busqueda(nombre, DefaultValues.DISPONIBLE_TODO_COMBO_BOX).isEmpty()) {
-                    PreparedStatement sentencia = conexion.prepareStatement("INSETR INTO ALIMENTOS (Nombre,Precio,Disponible,Descripcion) VALUES (?,?,?,?)");
+                    PreparedStatement sentencia = conexion.prepareStatement("INSERT INTO ALIMENTOS (Nombre,Precio,Disponible,Descripcion) VALUES (?,?,?,?)");
                     sentencia.setString(1, nombre);
                     sentencia.setString(2, precio);
                     sentencia.setString(3, disponible);
@@ -57,16 +57,26 @@ public class AlimentoM {
     }
     
     public boolean actualizar(String nombreOld, String nombreNew, String precio, String disponible, String descripcion)throws SQLException, InputsVaciosException{
+        PreparedStatement sentencia;
+        
         try {
             if (busqueda(nombreOld, DefaultValues.DISPONIBLE_TODO_COMBO_BOX).isEmpty()) {
                 throw new InputsVaciosException("No existe el Alimento que se desea Actualizar");
             }else{
-                PreparedStatement sentencia = conexion.prepareStatement("UPDATE ALIMENTO SET Nombre=? ,Precio=? ,Disponible=? ,Descripcion=? WHERE Nombre=?");
+                if (nombreOld.equalsIgnoreCase(nombreNew)) {
+                    sentencia = conexion.prepareStatement("UPDATE ALIMENTOS SET Precio=? ,Disponible=? ,Descripcion=? WHERE Nombre=?");
+                sentencia.setString(1, precio);
+                sentencia.setString(2, disponible);
+                sentencia.setString(3, descripcion);
+                sentencia.setString(4, nombreOld);
+                }else{
+                    sentencia = conexion.prepareStatement("UPDATE ALIMENTOS SET Nombre=? ,Precio=? ,Disponible=? ,Descripcion=? WHERE Nombre=?");
                 sentencia.setString(1, nombreNew);
                 sentencia.setString(2, precio);
                 sentencia.setString(3, disponible);
                 sentencia.setString(4, descripcion);
                 sentencia.setString(5, nombreOld);
+                }
                 if (sentencia.executeUpdate() == 1) {
                     sentencia.close();
                     return true;
@@ -76,7 +86,7 @@ public class AlimentoM {
                 }
             }
         } catch (InputsVaciosException | SQLException e) {
-            throw new InputsVaciosException("Error en la Base de Datos");
+            throw new InputsVaciosException("Error en la Base de Datos al actualizar");
         }
     }
 
@@ -101,14 +111,17 @@ public class AlimentoM {
             } else {
                 if (disponibleComboBox.equals(DefaultValues.DISPONIBLE_TODO_COMBO_BOX)) {
                     PreparedStatement sentencia = conexion.prepareStatement("SELECT * FROM ALIMENTOS WHERE Nombre LIKE ? ORDER BY Nombre ASC");
+                    sentencia.setString(1, nombre);
                     return ConsultaAlimentos(sentencia);
                 } else if (disponibleComboBox.equals(DefaultValues.DISPONIBLE_SI_COMBO_BOX)) {
                     PreparedStatement sentencia = conexion.prepareStatement("SELECT * FROM ALIMENTOS WHERE Disponible=? AND Nombre LIKE ? ORDER BY Nombre ASC");
                     sentencia.setString(1, DefaultValues.DISPONIBLE_SI);
+                    sentencia.setString(2, nombre);
                     return ConsultaAlimentos(sentencia);
                 } else if (disponibleComboBox.equals(DefaultValues.DISPONIBLE_NO_COMBO_BOX)) {
                     PreparedStatement sentencia = conexion.prepareStatement("SELECT * FROM ALIMENTOS WHERE Disponible=? AND Nombre LIKE ? ORDER BY Nombre ASC");
                     sentencia.setString(1, DefaultValues.DISPONIBLE_NO);
+                    sentencia.setString(2, nombre);
                     return ConsultaAlimentos(sentencia);
                 }
             }
@@ -120,16 +133,21 @@ public class AlimentoM {
 
     private List<Alimento> ConsultaAlimentos(PreparedStatement sentencia) throws SQLException, InputsVaciosException {
         busquedaAlimentos.clear();
-
+        boolean dispo = false;
         try {
             ResultSet resultado = sentencia.executeQuery();
             while (resultado.next()) {
                 String nombre = resultado.getString("Nombre");
                 String precio = resultado.getString("Precio");
                 String disponible = resultado.getString("Disponible");
+                if (disponible.equalsIgnoreCase(DefaultValues.DISPONIBLE_SI)) {
+                    dispo = true;
+                }else{
+                    dispo = false;
+                }
                 String descripcion = resultado.getNString("Descripcion");
                 System.out.println("Alimento: " + nombre + ", Q. " + precio + "," + disponible + "\n" + descripcion);
-                busquedaAlimentos.add(new Alimento(nombre, descripcion, precio, Boolean.parseBoolean(disponible)));
+                busquedaAlimentos.add(new Alimento(nombre, descripcion, precio, dispo));
             }
             sentencia.close();
         } catch (SQLException e) {

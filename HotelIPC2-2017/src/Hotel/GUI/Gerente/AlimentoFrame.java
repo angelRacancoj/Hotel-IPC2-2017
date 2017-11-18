@@ -1,6 +1,17 @@
 package Hotel.GUI.Gerente;
 
+import Hotel.BackEnd.Excepciones.InputsVaciosException;
+import Hotel.BackEnd.Hotel.Alimento;
+import Hotel.BackEnd.Manejador.AlimentoM;
+import RUN.DefaultValues;
+import java.awt.HeadlessException;
 import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+import javax.swing.JOptionPane;
+import org.jdesktop.observablecollections.ObservableCollections;
+import org.jdesktop.observablecollections.ObservableList;
 
 /**
  *
@@ -8,10 +19,21 @@ import java.sql.Connection;
  */
 public class AlimentoFrame extends javax.swing.JInternalFrame {
 
-    /**
-     * Creates new form Alimentos
-     */
+    private Alimento alimentoSeleccionado;
+    private String eleccion;
+
+    private List<Alimento> listaAlimentos;
+    private ObservableList<Alimento> listaObservableAlimento;
+
+    private AlimentoM manejadorAlimento;
+
     public AlimentoFrame(Connection conexion) {
+        alimentoSeleccionado = new Alimento();
+
+        listaAlimentos = new ArrayList<>();
+        listaObservableAlimento = ObservableCollections.observableList(listaAlimentos);
+
+        manejadorAlimento = new AlimentoM(conexion);
         initComponents();
     }
 
@@ -23,25 +45,35 @@ public class AlimentoFrame extends javax.swing.JInternalFrame {
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
+        bindingGroup = new org.jdesktop.beansbinding.BindingGroup();
 
         jLabel1 = new javax.swing.JLabel();
         nombreTextField = new javax.swing.JTextField();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
-        precioTextField = new javax.swing.JTextField();
         guardarButton = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
-        eliminarButton = new javax.swing.JButton();
         actualizarButton = new javax.swing.JButton();
         jScrollPane2 = new javax.swing.JScrollPane();
-        jTextArea1 = new javax.swing.JTextArea();
+        descripcionTextArea = new javax.swing.JTextArea();
         jLabel4 = new javax.swing.JLabel();
+        jLabel6 = new javax.swing.JLabel();
+        limpiarjButton = new javax.swing.JButton();
+        precioFormattedTextField = new javax.swing.JFormattedTextField();
+        disponibleRadioButton = new javax.swing.JRadioButton();
+        regresarButton = new javax.swing.JButton();
+        buscarButton = new javax.swing.JButton();
 
         setTitle("Alimentos");
 
         jLabel1.setText("Nombre:");
 
+        nombreTextField.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                nombreTextFieldFocusLost(evt);
+            }
+        });
         nombreTextField.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyPressed(java.awt.event.KeyEvent evt) {
                 nombreTextFieldKeyPressed(evt);
@@ -52,7 +84,12 @@ public class AlimentoFrame extends javax.swing.JInternalFrame {
 
         jLabel3.setText("Descripcion:");
 
-        guardarButton.setText("Guardar");
+        guardarButton.setText("Guardar ");
+        guardarButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                guardarButtonActionPerformed(evt);
+            }
+        });
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -65,97 +102,297 @@ public class AlimentoFrame extends javax.swing.JInternalFrame {
 
             }
         ));
+
+        org.jdesktop.beansbinding.ELProperty eLProperty = org.jdesktop.beansbinding.ELProperty.create("${listaObservableAlimento}");
+        org.jdesktop.swingbinding.JTableBinding jTableBinding = org.jdesktop.swingbinding.SwingBindings.createJTableBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ_WRITE, this, eLProperty, jTable1);
+        org.jdesktop.swingbinding.JTableBinding.ColumnBinding columnBinding = jTableBinding.addColumnBinding(org.jdesktop.beansbinding.ELProperty.create("${nombre}"));
+        columnBinding.setColumnName("Nombre");
+        columnBinding.setColumnClass(String.class);
+        columnBinding = jTableBinding.addColumnBinding(org.jdesktop.beansbinding.ELProperty.create("${precio}"));
+        columnBinding.setColumnName("Precio");
+        columnBinding.setColumnClass(String.class);
+        columnBinding = jTableBinding.addColumnBinding(org.jdesktop.beansbinding.ELProperty.create("${disponible}"));
+        columnBinding.setColumnName("Disponible");
+        columnBinding.setColumnClass(Boolean.class);
+        columnBinding = jTableBinding.addColumnBinding(org.jdesktop.beansbinding.ELProperty.create("${descripcion}"));
+        columnBinding.setColumnName("Descripcion");
+        columnBinding.setColumnClass(String.class);
+        bindingGroup.addBinding(jTableBinding);
+        jTableBinding.bind();org.jdesktop.beansbinding.Binding binding = org.jdesktop.beansbinding.Bindings.createAutoBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ_WRITE, this, org.jdesktop.beansbinding.ELProperty.create("${alimentoSeleccionado}"), jTable1, org.jdesktop.beansbinding.BeanProperty.create("selectedElement"));
+        bindingGroup.addBinding(binding);
+
         jScrollPane1.setViewportView(jTable1);
 
-        eliminarButton.setText("Eliminar");
+        actualizarButton.setText("Actualizar ");
+        actualizarButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                actualizarButtonActionPerformed(evt);
+            }
+        });
 
-        actualizarButton.setText("Actualizar");
+        descripcionTextArea.setColumns(20);
+        descripcionTextArea.setRows(5);
+        jScrollPane2.setViewportView(descripcionTextArea);
 
-        jTextArea1.setColumns(20);
-        jTextArea1.setRows(5);
-        jScrollPane2.setViewportView(jTextArea1);
+        jLabel4.setText("Alimento (Para editarlos seleccionar y \"Editar\")");
 
-        jLabel4.setText("Alimento");
+        jLabel6.setText("Ingrese el nombre para buscar, para agregar alimentos ingrese los datos y guarde");
+
+        limpiarjButton.setText("Limpiar");
+        limpiarjButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                limpiarjButtonActionPerformed(evt);
+            }
+        });
+
+        precioFormattedTextField.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("#0.00"))));
+
+        disponibleRadioButton.setText("Disponible");
+
+        regresarButton.setText("Regresar");
+        regresarButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                regresarButtonActionPerformed(evt);
+            }
+        });
+
+        buscarButton.setText("Buscar");
+        buscarButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                buscarButtonActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jScrollPane2)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
-                        .addComponent(eliminarButton)
-                        .addGap(147, 147, 147)
-                        .addComponent(actualizarButton)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(guardarButton))
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+            .addGroup(layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addContainerGap()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
-                                .addComponent(jLabel1)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(nombreTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 250, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel1)
+                                    .addComponent(jLabel2))
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addGap(21, 21, 21)
+                                        .addComponent(precioFormattedTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 175, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGap(64, 64, 64)
+                                        .addComponent(disponibleRadioButton))
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addGap(18, 18, 18)
+                                        .addComponent(nombreTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 350, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addGap(0, 0, Short.MAX_VALUE))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(limpiarjButton)
                                 .addGap(18, 18, 18)
-                                .addComponent(jLabel2)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(precioTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(jLabel3))
+                                .addComponent(guardarButton)
+                                .addGap(18, 18, 18)
+                                .addComponent(actualizarButton)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(regresarButton))))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addContainerGap()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addGap(478, 478, 478)
+                                        .addComponent(buscarButton, javax.swing.GroupLayout.PREFERRED_SIZE, 89, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addComponent(jLabel3)
+                                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 567, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 567, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addComponent(jLabel6))
                         .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
             .addGroup(layout.createSequentialGroup()
-                .addGap(223, 223, 223)
+                .addGap(123, 123, 123)
                 .addComponent(jLabel4)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
+                .addComponent(jLabel6)
+                .addGap(9, 9, 9)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel1)
                     .addComponent(nombreTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel1)
+                    .addComponent(buscarButton))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(precioFormattedTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel2)
-                    .addComponent(precioTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                    .addComponent(disponibleRadioButton))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel3)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel4)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 289, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 227, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(35, 35, 35)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(eliminarButton)
                     .addComponent(actualizarButton)
-                    .addComponent(guardarButton))
-                .addContainerGap(31, Short.MAX_VALUE))
+                    .addComponent(limpiarjButton)
+                    .addComponent(guardarButton)
+                    .addComponent(regresarButton))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
+
+        bindingGroup.bind();
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
     private void nombreTextFieldKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_nombreTextFieldKeyPressed
-        // TODO add your handling code here:
+
     }//GEN-LAST:event_nombreTextFieldKeyPressed
 
+    private void actualizarButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_actualizarButtonActionPerformed
+        try {
+            if (nombreTextField.getText().replace(" ", "").isEmpty() || precioFormattedTextField.getText().replace(" ", "").replace(".", "").isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Debe colocar el nombre y precio", "Error", JOptionPane.ERROR_MESSAGE);
+                actualizarButton.setEnabled(false);
+            } else {
+                if (alimentoSeleccionado == null) {
+                    JOptionPane.showMessageDialog(this, "No se ha seleccionado un alimento", "Error", JOptionPane.ERROR_MESSAGE);
+                } else {
+                    if (disponibleRadioButton.isSelected()) {
+                        eleccion = DefaultValues.DISPONIBLE_SI;
+                    } else {
+                        eleccion = DefaultValues.DISPONIBLE_NO;
+                    }
+                    if (manejadorAlimento.actualizar(alimentoSeleccionado.getNombre(), nombreTextField.getText(), precioFormattedTextField.getText(), eleccion, descripcionTextArea.getText())) {
+                        JOptionPane.showMessageDialog(this, "Se ha actualizado exitosamente el Alimento", "Actualizacion", JOptionPane.INFORMATION_MESSAGE);
+                    } else {
+                        JOptionPane.showMessageDialog(this, "No se pudo actualizar", "Error", JOptionPane.ERROR_MESSAGE);
+                    }
+                }
+
+            }
+        } catch (InputsVaciosException | HeadlessException | SQLException e) {
+            JOptionPane.showMessageDialog(this, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }//GEN-LAST:event_actualizarButtonActionPerformed
+
+    private void guardarButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_guardarButtonActionPerformed
+        try {
+            if (nombreTextField.getText().replace(" ", "").isEmpty() || precioFormattedTextField.getText().replace(" ", "").replace(".", "").isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Debe colocar el nombre y precio", "Error", JOptionPane.ERROR_MESSAGE);
+                actualizarButton.setEnabled(false);
+            } else {
+                if (manejadorAlimento.busqueda(nombreTextField.getText(), DefaultValues.DISPONIBLE_TODO_COMBO_BOX).size() > 1) {
+                    JOptionPane.showMessageDialog(this, "Existen alimentos con nombre bastante similar", "Error", JOptionPane.ERROR_MESSAGE);
+                } else {
+                    if (disponibleRadioButton.isSelected()) {
+                        eleccion = DefaultValues.DISPONIBLE_SI;
+                    } else {
+                        eleccion = DefaultValues.DISPONIBLE_NO;
+                    }
+                    if (manejadorAlimento.agregarAlimento(nombreTextField.getText(), precioFormattedTextField.getText(), eleccion, descripcionTextArea.getText())) {
+                        JOptionPane.showMessageDialog(this, "Se ha agregado exitosamente el Alimento", "Agregar", JOptionPane.INFORMATION_MESSAGE);
+                    } else {
+                        JOptionPane.showMessageDialog(this, "No se pudo agregar", "Error", JOptionPane.ERROR_MESSAGE);
+                    }
+                }
+
+            }
+        } catch (InputsVaciosException | HeadlessException | SQLException e) {
+            JOptionPane.showMessageDialog(this, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }//GEN-LAST:event_guardarButtonActionPerformed
+
+    private void nombreTextFieldFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_nombreTextFieldFocusLost
+
+    }//GEN-LAST:event_nombreTextFieldFocusLost
+
+    private void limpiarjButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_limpiarjButtonActionPerformed
+        limpiar();
+    }//GEN-LAST:event_limpiarjButtonActionPerformed
+
+    private void regresarButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_regresarButtonActionPerformed
+        if ((!nombreTextField.getText().replace(" ", "").isEmpty()) || (alimentoSeleccionado != null)) {
+            int respuesta = JOptionPane.showConfirmDialog(this, "Desea terminar el proceso?", "Salir", JOptionPane.YES_NO_OPTION);
+            if (respuesta == 0) {
+                limpiar();
+                this.setVisible(false);
+            }
+        } else {
+            this.setVisible(false);
+        }
+    }//GEN-LAST:event_regresarButtonActionPerformed
+
+    private void buscarButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buscarButtonActionPerformed
+        try {
+            actualizarListaObservable(manejadorAlimento.busqueda(nombreTextField.getText(), DefaultValues.DISPONIBLE_TODO_COMBO_BOX));
+        } catch (InputsVaciosException | SQLException e) {
+            JOptionPane.showMessageDialog(this, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }//GEN-LAST:event_buscarButtonActionPerformed
+
+    public void actualizarListaObservable(List<Alimento> listaAlimentos) {
+        this.listaObservableAlimento.clear();
+        this.listaObservableAlimento.addAll(listaAlimentos);
+    }
+
+    public Alimento getAlimentoSeleccionado() {
+        return alimentoSeleccionado;
+    }
+
+    public void setAlimentoSeleccionado(Alimento alimentoSeleccionado) {
+        if (alimentoSeleccionado != null) {
+            this.alimentoSeleccionado = alimentoSeleccionado.clone();
+            nombreTextField.setText(this.alimentoSeleccionado.getNombre());
+            precioFormattedTextField.setText(this.alimentoSeleccionado.getPrecio());
+            descripcionTextArea.setText(this.alimentoSeleccionado.getDescripcion());
+            actualizarButton.setEnabled(true);
+            disponibleRadioButton.setSelected(this.alimentoSeleccionado.isDisponible());
+
+        } else {
+            actualizarButton.setEnabled(false);
+        }
+    }
+
+    public ObservableList<Alimento> getListaObservableAlimento() {
+        return listaObservableAlimento;
+    }
+
+    public void setListaObservableAlimento(ObservableList<Alimento> listaObservableAlimento) {
+        this.listaObservableAlimento = listaObservableAlimento;
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton actualizarButton;
-    private javax.swing.JButton eliminarButton;
+    private javax.swing.JButton buscarButton;
+    private javax.swing.JTextArea descripcionTextArea;
+    private javax.swing.JRadioButton disponibleRadioButton;
     private javax.swing.JButton guardarButton;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel6;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTable jTable1;
-    private javax.swing.JTextArea jTextArea1;
+    private javax.swing.JButton limpiarjButton;
     private javax.swing.JTextField nombreTextField;
-    private javax.swing.JTextField precioTextField;
+    private javax.swing.JFormattedTextField precioFormattedTextField;
+    private javax.swing.JButton regresarButton;
+    private org.jdesktop.beansbinding.BindingGroup bindingGroup;
     // End of variables declaration//GEN-END:variables
+
+    private void limpiar() {
+        nombreTextField.setText("");
+        descripcionTextArea.setText("");
+        precioFormattedTextField.setText("");
+        disponibleRadioButton.setSelected(true);
+        listaObservableAlimento.clear();
+        alimentoSeleccionado = null;
+    }
 }

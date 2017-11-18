@@ -73,7 +73,7 @@ public class Efectivo extends javax.swing.JFrame {
             }
         });
 
-        montoFormattedTextField.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter()));
+        montoFormattedTextField.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("#0.00"))));
 
         jLabel3.setFont(new java.awt.Font("Noto Sans UI", 0, 10)); // NOI18N
         jLabel3.setText("Ej: 12345.6");
