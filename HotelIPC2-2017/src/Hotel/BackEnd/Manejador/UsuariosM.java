@@ -87,7 +87,7 @@ public class UsuariosM {
     public boolean agregarUsuario(String nombreUser, String constra, String rango) throws SQLException, InputsVaciosException {
         try {
             if (busqueda(nombreUser, "").isEmpty()) {
-                PreparedStatement sentencia = conexion.prepareStatement("INSERTE INTO USER (Nombre,Contrasenia,Rango) VALUES (?,?,?)");
+                PreparedStatement sentencia = conexion.prepareStatement("INSERT INTO USER (Nombre,Contrasenia,Rango) VALUES (?,?,?)");
                 sentencia.setString(1, nombreUser);
                 sentencia.setString(2, constra);
                 sentencia.setString(3, rango);

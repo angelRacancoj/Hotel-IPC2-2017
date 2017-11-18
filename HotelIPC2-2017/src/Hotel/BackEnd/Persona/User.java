@@ -19,6 +19,9 @@ public class User extends Persona implements Serializable {
     public static final String PROP_PASSWORD = "password";
     public static final String PROP_RANK = "rank";
 
+    public User() {
+    }
+
     public User(String nombre, String password, String rank) {
         super(nombre);
         this.password = password;

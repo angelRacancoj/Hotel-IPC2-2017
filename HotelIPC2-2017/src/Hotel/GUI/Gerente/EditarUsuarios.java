@@ -1,6 +1,16 @@
 package Hotel.GUI.Gerente;
 
+import Hotel.BackEnd.Excepciones.InputsVaciosException;
+import Hotel.BackEnd.Manejador.UsuariosM;
+import Hotel.BackEnd.Persona.User;
+import java.awt.HeadlessException;
 import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.LinkedList;
+import java.util.List;
+import javax.swing.JOptionPane;
+import org.jdesktop.observablecollections.ObservableCollections;
+import org.jdesktop.observablecollections.ObservableList;
 
 /**
  *
@@ -8,10 +18,18 @@ import java.sql.Connection;
  */
 public class EditarUsuarios extends javax.swing.JInternalFrame {
 
-    /**
-     * Creates new form EditarUsuarios
-     */
+    private User usuarioSeleccionado;
+
+    private List<User> listaUsuarios;
+    private ObservableList<User> listaUsuariosObservable;
+
+    private UsuariosM manejadorUsuarios;
+
     public EditarUsuarios(Connection conexion) {
+        usuarioSeleccionado = new User();
+        listaUsuarios = new LinkedList<>();
+        listaUsuariosObservable = ObservableCollections.observableList(listaUsuarios);
+        manejadorUsuarios = new UsuariosM(conexion);
         initComponents();
     }
 
@@ -23,6 +41,7 @@ public class EditarUsuarios extends javax.swing.JInternalFrame {
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
+        bindingGroup = new org.jdesktop.beansbinding.BindingGroup();
 
         jButton1 = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
@@ -30,15 +49,17 @@ public class EditarUsuarios extends javax.swing.JInternalFrame {
         jLabel2 = new javax.swing.JLabel();
         cargoComboBox = new javax.swing.JComboBox<>();
         jLabel3 = new javax.swing.JLabel();
-        jPasswordField1 = new javax.swing.JPasswordField();
+        contrasena1PasswordField = new javax.swing.JPasswordField();
         jLabel4 = new javax.swing.JLabel();
-        jPasswordField2 = new javax.swing.JPasswordField();
+        contrasenaPasswordField = new javax.swing.JPasswordField();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
-        jButton2 = new javax.swing.JButton();
-        jButton3 = new javax.swing.JButton();
-        jButton4 = new javax.swing.JButton();
+        guardarButton = new javax.swing.JButton();
+        eliminarButton = new javax.swing.JButton();
+        cancelarButton = new javax.swing.JButton();
         jLabel5 = new javax.swing.JLabel();
+        buscarButton = new javax.swing.JButton();
+        limpiarButton = new javax.swing.JButton();
 
         jButton1.setText("jButton1");
 
@@ -65,16 +86,61 @@ public class EditarUsuarios extends javax.swing.JInternalFrame {
 
             }
         ));
+
+        org.jdesktop.beansbinding.ELProperty eLProperty = org.jdesktop.beansbinding.ELProperty.create("${listaUsuariosObservable}");
+        org.jdesktop.swingbinding.JTableBinding jTableBinding = org.jdesktop.swingbinding.SwingBindings.createJTableBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ_WRITE, this, eLProperty, jTable1);
+        org.jdesktop.swingbinding.JTableBinding.ColumnBinding columnBinding = jTableBinding.addColumnBinding(org.jdesktop.beansbinding.ELProperty.create("${nombre}"));
+        columnBinding.setColumnName("Nombre");
+        columnBinding.setColumnClass(String.class);
+        columnBinding = jTableBinding.addColumnBinding(org.jdesktop.beansbinding.ELProperty.create("${password}"));
+        columnBinding.setColumnName("Password");
+        columnBinding.setColumnClass(String.class);
+        columnBinding = jTableBinding.addColumnBinding(org.jdesktop.beansbinding.ELProperty.create("${rankName}"));
+        columnBinding.setColumnName("Rank Name");
+        columnBinding.setColumnClass(String.class);
+        bindingGroup.addBinding(jTableBinding);
+        jTableBinding.bind();org.jdesktop.beansbinding.Binding binding = org.jdesktop.beansbinding.Bindings.createAutoBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ_WRITE, this, org.jdesktop.beansbinding.ELProperty.create("${usuarioSeleccionado}"), jTable1, org.jdesktop.beansbinding.BeanProperty.create("selectedElement"));
+        bindingGroup.addBinding(binding);
+
         jScrollPane1.setViewportView(jTable1);
 
-        jButton2.setText("Guardar");
+        guardarButton.setText("Guardar");
+        guardarButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                guardarButtonActionPerformed(evt);
+            }
+        });
 
-        jButton3.setText("*Eliminar");
+        eliminarButton.setText("*Eliminar");
+        eliminarButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                eliminarButtonActionPerformed(evt);
+            }
+        });
 
-        jButton4.setText("Cancelar");
+        cancelarButton.setText("Cancelar");
+        cancelarButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cancelarButtonActionPerformed(evt);
+            }
+        });
 
         jLabel5.setFont(new java.awt.Font("Noto Sans UI", 0, 12)); // NOI18N
         jLabel5.setText("*Para eliminar es necesario selecionar al usuario ");
+
+        buscarButton.setText("Buscar");
+        buscarButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                buscarButtonActionPerformed(evt);
+            }
+        });
+
+        limpiarButton.setText("Limpiar");
+        limpiarButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                limpiarButtonActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -89,24 +155,33 @@ public class EditarUsuarios extends javax.swing.JInternalFrame {
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addGroup(layout.createSequentialGroup()
-                                .addComponent(jButton3)
-                                .addGap(177, 177, 177)
-                                .addComponent(jButton2)
+                                .addComponent(limpiarButton)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(eliminarButton)
                                 .addGap(18, 18, 18)
-                                .addComponent(jButton4))
-                            .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel3, javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(guardarButton)
+                                .addGap(18, 18, 18)
+                                .addComponent(cancelarButton))
                             .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(jLabel4)
                                     .addComponent(jLabel2))
                                 .addGap(6, 6, 6)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                    .addComponent(jPasswordField1, javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(nombreUTextField, javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(contrasena1PasswordField, javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(cargoComboBox, javax.swing.GroupLayout.Alignment.LEADING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(jPasswordField2, javax.swing.GroupLayout.Alignment.LEADING)))
-                            .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 418, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addComponent(contrasenaPasswordField, javax.swing.GroupLayout.Alignment.LEADING)))
+                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                                .addComponent(jLabel1)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(nombreUTextField)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(buscarButton))
+                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addComponent(jLabel3, javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 418, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(0, 0, Short.MAX_VALUE)))
                         .addContainerGap())))
         );
         layout.setVerticalGroup(
@@ -115,50 +190,156 @@ public class EditarUsuarios extends javax.swing.JInternalFrame {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
-                    .addComponent(nombreUTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(nombreUTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(buscarButton))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(cargoComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel2))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jPasswordField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(contrasena1PasswordField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel3))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel4)
-                    .addComponent(jPasswordField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(contrasenaPasswordField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 250, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jLabel5)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton3)
-                    .addComponent(jButton2)
-                    .addComponent(jButton4))
+                    .addComponent(eliminarButton)
+                    .addComponent(guardarButton)
+                    .addComponent(cancelarButton)
+                    .addComponent(limpiarButton))
                 .addContainerGap(15, Short.MAX_VALUE))
         );
+
+        bindingGroup.bind();
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void buscarButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buscarButtonActionPerformed
+        try {
+            actualizarListaObservable(manejadorUsuarios.busqueda(nombreUTextField.getText(), ""));
+        } catch (InputsVaciosException | SQLException e) {
+            JOptionPane.showMessageDialog(this, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }//GEN-LAST:event_buscarButtonActionPerformed
+
+    private void eliminarButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_eliminarButtonActionPerformed
+        try {
+            if (usuarioSeleccionado != null) {
+                if (manejadorUsuarios.eliminarUsuario(usuarioSeleccionado.getNombre())) {
+                    JOptionPane.showMessageDialog(this, "Eliminado exitosamente", "Informacion", JOptionPane.INFORMATION_MESSAGE);
+                } else {
+                    JOptionPane.showMessageDialog(this, "No se ha eliminado al usuario", "Error", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        } catch (InputsVaciosException | HeadlessException | SQLException e) {
+            JOptionPane.showMessageDialog(this, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }//GEN-LAST:event_eliminarButtonActionPerformed
+
+    private void guardarButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_guardarButtonActionPerformed
+        try {
+            if (manejadorUsuarios.busqueda(nombreUTextField.getText(), "").size() > 0) {
+                JOptionPane.showMessageDialog(this, "Ya existe el usuario", "Error", JOptionPane.ERROR_MESSAGE);
+            } else {
+                if ((cargoComboBox.getSelectedIndex() == 0) || nombreUTextField.getText().replace(" ", "").isEmpty()
+                        || (new String(contrasena1PasswordField.getPassword())).replace(" ", "").isEmpty() || (new String(contrasenaPasswordField.getPassword())).replace(" ", "").isEmpty()) {
+                    JOptionPane.showMessageDialog(this, "Debe llenar todos los campos", "Error", JOptionPane.ERROR_MESSAGE);
+                } else {
+                    if ((new String(contrasena1PasswordField.getPassword())).equals((new String(contrasenaPasswordField.getPassword())).replace(" ", ""))) {
+                        if (manejadorUsuarios.agregarUsuario(nombreUTextField.getText(), (new String(contrasena1PasswordField.getPassword())), String.valueOf(cargoComboBox.getSelectedIndex()))) {
+                            JOptionPane.showMessageDialog(this, "Agregado exitosamente", "Informacion", JOptionPane.INFORMATION_MESSAGE);
+                            limpiar();
+                        } else {
+                            JOptionPane.showMessageDialog(this, "Error al agregar el usuario", "Error", JOptionPane.ERROR_MESSAGE);
+                        }
+                    } else {
+                        JOptionPane.showMessageDialog(this, "No coinciden las contrasenias", "Error", JOptionPane.ERROR_MESSAGE);
+                    }
+                }
+            }
+        } catch (InputsVaciosException | HeadlessException | SQLException e) {
+            JOptionPane.showMessageDialog(this, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }//GEN-LAST:event_guardarButtonActionPerformed
+
+    private void cancelarButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelarButtonActionPerformed
+        if (!nombreUTextField.getText().replace(" ", "").isEmpty() || (usuarioSeleccionado != null)) {
+            int respuesta = JOptionPane.showConfirmDialog(this, "Desea terminar el proceso?", "Salir", JOptionPane.YES_NO_OPTION);
+            if (respuesta == 0) {
+                limpiar();
+                this.setVisible(false);
+            }
+        } else {
+            this.setVisible(false);
+        }
+    }//GEN-LAST:event_cancelarButtonActionPerformed
+
+    private void limpiarButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_limpiarButtonActionPerformed
+        limpiar();
+    }//GEN-LAST:event_limpiarButtonActionPerformed
+
+    public void actualizarListaObservable(List<User> listausuarios) {
+        this.listaUsuariosObservable.clear();
+        this.listaUsuariosObservable.addAll(listausuarios);
+    }
+
+    public User getUsuarioSeleccionado() {
+        return usuarioSeleccionado;
+    }
+
+    public void setUsuarioSeleccionado(User usuarioSeleccionado) {
+        if (usuarioSeleccionado != null) {
+            this.usuarioSeleccionado = usuarioSeleccionado.clone();
+            eliminarButton.setEnabled(true);
+        } else {
+            this.usuarioSeleccionado = null;
+            eliminarButton.setEnabled(false);
+        }
+    }
+
+    public ObservableList<User> getListaUsuariosObservable() {
+        return listaUsuariosObservable;
+    }
+
+    public void setListaUsuariosObservable(ObservableList<User> listaUsuariosObservable) {
+        this.listaUsuariosObservable = listaUsuariosObservable;
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton buscarButton;
+    private javax.swing.JButton cancelarButton;
     private javax.swing.JComboBox<String> cargoComboBox;
+    private javax.swing.JPasswordField contrasena1PasswordField;
+    private javax.swing.JPasswordField contrasenaPasswordField;
+    private javax.swing.JButton eliminarButton;
+    private javax.swing.JButton guardarButton;
     private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton3;
-    private javax.swing.JButton jButton4;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
-    private javax.swing.JPasswordField jPasswordField1;
-    private javax.swing.JPasswordField jPasswordField2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable jTable1;
+    private javax.swing.JButton limpiarButton;
     private javax.swing.JTextField nombreUTextField;
+    private org.jdesktop.beansbinding.BindingGroup bindingGroup;
     // End of variables declaration//GEN-END:variables
+
+    private void limpiar() {
+        nombreUTextField.setText("");
+        contrasena1PasswordField.setText("");
+        contrasenaPasswordField.setText("");
+        listaUsuariosObservable.clear();
+        eliminarButton.setEnabled(false);
+
+    }
 }
