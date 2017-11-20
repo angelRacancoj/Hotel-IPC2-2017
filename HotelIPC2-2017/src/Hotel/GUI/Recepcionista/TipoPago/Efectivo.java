@@ -144,8 +144,8 @@ public class Efectivo extends javax.swing.JFrame {
                         }
                         this.setVisible(false);
                     } else if (estado.equalsIgnoreCase(DefaultValues.PAGO_SIN_RESERVACION)) {
+                        
                         limpiar();
-
                         this.setVisible(false);
                     }
                 }

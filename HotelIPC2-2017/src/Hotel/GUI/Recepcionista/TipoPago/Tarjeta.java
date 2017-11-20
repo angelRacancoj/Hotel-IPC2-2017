@@ -22,14 +22,14 @@ import javax.swing.JOptionPane;
  * @author angelrg
  */
 public class Tarjeta extends javax.swing.JFrame {
-
+    
     private String voucher;
     private String estado;
-
+    
     private ReservarHabitacionM manejadorReservacion;
-
+    
     private Reservacion reservacionSeleccionada;
-
+    
     public Tarjeta(Connection conexion) {
         initComponents();
     }
@@ -59,7 +59,7 @@ public class Tarjeta extends javax.swing.JFrame {
 
         jLabel2.setText("Total a Pagar:");
 
-        pagarButton.setText("Pagar");
+        pagarButton.setText("Guardar Voucher");
         pagarButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 pagarButtonActionPerformed(evt);
@@ -79,7 +79,7 @@ public class Tarjeta extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel1)
@@ -87,12 +87,13 @@ public class Tarjeta extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(totalTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE)
-                            .addComponent(voucherTextField)))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(pagarButton)
+                            .addComponent(voucherTextField))
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(regresarButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(regresarButton)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addComponent(pagarButton)))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -105,7 +106,7 @@ public class Tarjeta extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
                     .addComponent(voucherTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(pagarButton)
                     .addComponent(regresarButton))
@@ -118,23 +119,30 @@ public class Tarjeta extends javax.swing.JFrame {
     private void pagarButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pagarButtonActionPerformed
         try {
             if (voucherTextField.getText().replace(" ", "").isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Debe ingresar en codigo del Voucher", "Error", JOptionPane.ERROR_MESSAGE);
-        } else {
-            if (estado.equalsIgnoreCase(DefaultValues.PAGO_ALOJAMIENTO)) {
-                limpiar();
-                if (!manejadorReservacion.CheckInConReservacion(reservacionSeleccionada.getIDCliente(), reservacionSeleccionada.getFechaInicial(), reservacionSeleccionada.getFechaFinal(), reservacionSeleccionada.getNoHabitacion(), voucherTextField.getText())) {
-                    JOptionPane.showMessageDialog(this, "Fallo durante el pago", "Error", JOptionPane.ERROR_MESSAGE);
-                } else {
+                JOptionPane.showMessageDialog(this, "Debe ingresar en codigo del Voucher", "Error", JOptionPane.ERROR_MESSAGE);
+            } else {
+                if (estado.equalsIgnoreCase(DefaultValues.PAGO_ALOJAMIENTO)) {
                     limpiar();
+                    if (!manejadorReservacion.CheckInConReservacion(reservacionSeleccionada.getIDCliente(), reservacionSeleccionada.getFechaInicial(), reservacionSeleccionada.getFechaFinal(), reservacionSeleccionada.getNoHabitacion(), voucherTextField.getText())) {
+                        JOptionPane.showMessageDialog(this, "Fallo durante el pago", "Error", JOptionPane.ERROR_MESSAGE);
+                    } else {
+                        limpiar();
+                        this.setVisible(false);
+                    }
                     this.setVisible(false);
+                } else if (estado.equalsIgnoreCase(DefaultValues.PAGO_SIN_RESERVACION)) {
+                    limpiar();
+                    
+                    this.setVisible(false);
+                } else if (estado.equalsIgnoreCase(DefaultValues.PAGO_ALIMENTO)) {
+//                    if (!manejadorReservacion.CheckOut(voucher, voucher, voucher, voucher, voucher)) {
+//                        JOptionPane.showMessageDialog(this, "Fallo durante el pago", "Error", JOptionPane.ERROR_MESSAGE);
+//                    } else {
+//                        limpiar();
+//                        this.setVisible(false);
+//                    }
                 }
-                this.setVisible(false);
-            } else if (estado.equalsIgnoreCase(DefaultValues.PAGO_SIN_RESERVACION)) {
-                limpiar();
-
-                this.setVisible(false);
             }
-        }
         } catch (InputsVaciosException | HeadlessException | SQLException e) {
             JOptionPane.showMessageDialog(this, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
@@ -144,7 +152,7 @@ public class Tarjeta extends javax.swing.JFrame {
         this.setVisible(false);
         limpiar();
     }//GEN-LAST:event_regresarButtonActionPerformed
-
+    
     public void pagar(String total, String estado, Reservacion reservacion) {
         limpiar();
         totalTextField.setText(total);

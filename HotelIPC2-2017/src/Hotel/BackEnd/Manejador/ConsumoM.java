@@ -146,6 +146,17 @@ public class ConsumoM {
         }
     }
 
+    /**
+     * Obtiene el listado de un cliente y una reservacion en especifico
+     *
+     * @param IDCliente
+     * @param fechaInicial
+     * @param fechaFinal
+     * @param noHabitacion
+     * @return
+     * @throws SQLException
+     * @throws InputsVaciosException
+     */
     public List<Consumo> busquedaNoHabitacion(String IDCliente, String fechaInicial, String fechaFinal, String noHabitacion) throws SQLException, InputsVaciosException {
 
         try {
@@ -218,6 +229,17 @@ public class ConsumoM {
         }
     }
 
+    /**
+     * Obtiene el consumo de una reservacion en base a los parametros
+     *
+     * @param IDCliente
+     * @param fechaInicial
+     * @param fechaFinal
+     * @param noHabitacion
+     * @return
+     * @throws SQLException
+     * @throws InputsVaciosException
+     */
     public String totalConsumoNoHabitacion(String IDCliente, String fechaInicial, String fechaFinal, String noHabitacion) throws SQLException, InputsVaciosException {
 
         try {

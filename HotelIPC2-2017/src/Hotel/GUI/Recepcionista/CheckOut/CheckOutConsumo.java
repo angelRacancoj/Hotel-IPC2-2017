@@ -5,7 +5,19 @@
  */
 package Hotel.GUI.Recepcionista.CheckOut;
 
+import Hotel.BackEnd.Excepciones.InputsVaciosException;
+import Hotel.BackEnd.Hotel.Consumo;
+import Hotel.BackEnd.Hotel.Reservacion;
+import Hotel.BackEnd.Manejador.ConsumoM;
+import Hotel.GUI.Recepcionista.TipoPago.Efectivo;
+import Hotel.GUI.Recepcionista.TipoPago.Tarjeta;
 import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+import javax.swing.JOptionPane;
+import org.jdesktop.observablecollections.ObservableCollections;
+import org.jdesktop.observablecollections.ObservableList;
 
 /**
  *
@@ -17,7 +29,24 @@ public class CheckOutConsumo extends javax.swing.JFrame {
     private String fechaInicial;
     private String fechaFinal;
     private String noHabitacion;
+
+    private List<Consumo> listadoConsumo;
+    private List<Consumo> listadoConsumoAux;
+    private ObservableList<Consumo> listaobservableConsumo;
+    private Reservacion reservacionEntrada;
+
+    private ConsumoM manejadorConsumo;
+    private Efectivo pagoEfectivo;
+    private Tarjeta pagoTarjeta;
+
     public CheckOutConsumo(Connection conexion) {
+        reservacionEntrada = new Reservacion();
+        listadoConsumo = new ArrayList<>();
+        listadoConsumoAux = new ArrayList<>();
+        listaobservableConsumo = ObservableCollections.observableList(listadoConsumo);
+        manejadorConsumo = new ConsumoM(conexion);
+        pagoEfectivo = new Efectivo(conexion);
+        pagoTarjeta = new Tarjeta(conexion);
         initComponents();
     }
 
@@ -29,8 +58,9 @@ public class CheckOutConsumo extends javax.swing.JFrame {
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
+        bindingGroup = new org.jdesktop.beansbinding.BindingGroup();
 
-        nombreTextField = new javax.swing.JTextField();
+        noHabTextField = new javax.swing.JTextField();
         jLabel2 = new javax.swing.JLabel();
         IDClienteTextField = new javax.swing.JTextField();
         efectivoButton = new javax.swing.JButton();
@@ -48,10 +78,25 @@ public class CheckOutConsumo extends javax.swing.JFrame {
         jLabel2.setText("ID del Cliente:");
 
         efectivoButton.setText("Efectivo");
+        efectivoButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                efectivoButtonActionPerformed(evt);
+            }
+        });
 
         tarjetaButton.setText("Tarjeta");
+        tarjetaButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                tarjetaButtonActionPerformed(evt);
+            }
+        });
 
         cancelarButton.setText("Cancelar");
+        cancelarButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cancelarButtonActionPerformed(evt);
+            }
+        });
 
         jLabel4.setText("Total a pagar: Q.");
 
@@ -66,6 +111,20 @@ public class CheckOutConsumo extends javax.swing.JFrame {
 
             }
         ));
+
+        org.jdesktop.beansbinding.ELProperty eLProperty = org.jdesktop.beansbinding.ELProperty.create("${listaobservableConsumo}");
+        org.jdesktop.swingbinding.JTableBinding jTableBinding = org.jdesktop.swingbinding.SwingBindings.createJTableBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ_WRITE, this, eLProperty, jTable2);
+        org.jdesktop.swingbinding.JTableBinding.ColumnBinding columnBinding = jTableBinding.addColumnBinding(org.jdesktop.beansbinding.ELProperty.create("${nombreAlimento}"));
+        columnBinding.setColumnName("Nombre Alimento");
+        columnBinding.setColumnClass(String.class);
+        columnBinding = jTableBinding.addColumnBinding(org.jdesktop.beansbinding.ELProperty.create("${cantidad}"));
+        columnBinding.setColumnName("Cantidad");
+        columnBinding.setColumnClass(String.class);
+        columnBinding = jTableBinding.addColumnBinding(org.jdesktop.beansbinding.ELProperty.create("${total}"));
+        columnBinding.setColumnName("Total");
+        columnBinding.setColumnClass(String.class);
+        bindingGroup.addBinding(jTableBinding);
+        jTableBinding.bind();
         jScrollPane2.setViewportView(jTable2);
 
         jLabel1.setText("Numero de Habitacion:");
@@ -80,7 +139,7 @@ public class CheckOutConsumo extends javax.swing.JFrame {
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel1)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(nombreTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(noHabTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addComponent(jLabel2)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -104,7 +163,7 @@ public class CheckOutConsumo extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
-                    .addComponent(nombreTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(noHabTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(IDClienteTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel2))
                 .addGap(18, 18, 18)
@@ -119,16 +178,56 @@ public class CheckOutConsumo extends javax.swing.JFrame {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
+        bindingGroup.bind();
+
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    public void continuarCheckOut(String ID, String fechaInicial, String fechaFinal, String noHabitacion){
-        IDCliente = ID;
-        this.fechaInicial = fechaInicial;
-        this.fechaFinal = fechaFinal;
-        this.noHabitacion = noHabitacion;
+    private void efectivoButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_efectivoButtonActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_efectivoButtonActionPerformed
+
+    private void tarjetaButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tarjetaButtonActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_tarjetaButtonActionPerformed
+
+    private void cancelarButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelarButtonActionPerformed
+        if (reservacionEntrada != null) {
+            int respuesta = JOptionPane.showConfirmDialog(this, "Desea cancelar el CheckOut?", "Salir", JOptionPane.YES_NO_OPTION);
+            if (respuesta == 0) {
+                this.setVisible(false);
+            }
+        } else {
+            this.setVisible(false);
+        }
+    }//GEN-LAST:event_cancelarButtonActionPerformed
+
+    public void continuarCheckOut(Reservacion reservacion) {
+        try {
+            reservacionEntrada = null;
+            reservacionEntrada = reservacion.clone();
+            actualizarListaObservable(manejadorConsumo.busquedaNoHabitacion(reservacionEntrada.getIDCliente(), reservacionEntrada.getFechaInicial(), reservacionEntrada.getFechaFinal(), reservacionEntrada.getNoHabitacion()));
+        IDClienteTextField.setText(reservacionEntrada.getIDCliente());
+        noHabTextField.setText(reservacionEntrada.getNoHabitacion());
+        } catch (InputsVaciosException | SQLException e) {
+            JOptionPane.showMessageDialog(this, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+
     }
 
+    public void actualizarListaObservable(List<Consumo> listaConsu) {
+        listaobservableConsumo.clear();
+        listaobservableConsumo.addAll(listaConsu);
+        
+    }
+
+    public ObservableList<Consumo> getListaobservableConsumo() {
+        return listaobservableConsumo;
+    }
+
+    public void setListaobservableConsumo(ObservableList<Consumo> listaobservableConsumo) {
+        this.listaobservableConsumo = listaobservableConsumo;
+    }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextField IDClienteTextField;
     private javax.swing.JButton cancelarButton;
@@ -138,8 +237,9 @@ public class CheckOutConsumo extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel4;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTable jTable2;
-    private javax.swing.JTextField nombreTextField;
+    private javax.swing.JTextField noHabTextField;
     private javax.swing.JButton tarjetaButton;
     private javax.swing.JTextField totalTextField;
+    private org.jdesktop.beansbinding.BindingGroup bindingGroup;
     // End of variables declaration//GEN-END:variables
 }
