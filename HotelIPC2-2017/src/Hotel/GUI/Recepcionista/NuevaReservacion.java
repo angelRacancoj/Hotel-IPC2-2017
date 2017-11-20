@@ -297,6 +297,8 @@ public class NuevaReservacion extends javax.swing.JInternalFrame {
                         fechaInicial = fechaInicialFormattedTextField.getText();
                         limpiarFechas();
                         JOptionPane.showMessageDialog(this, "Intervalo de tiempo Incorrecto", "Error", JOptionPane.ERROR_MESSAGE);
+                    } else if (manejadorReservacion.cantidadDelDias(fechaInicialFormattedTextField.getText(), fechaFinalFormattedTextField.getText()) == 1) {
+                        actualizarBusquedaObservableEntrada(manejadorHabitacion.habitacionesDisponiblesHoy());
                     } else {
                         actualizarBusquedaObservableEntrada(manejadorHabitacion.habitacionesDisponibles(fechaInicialFormattedTextField.getText(), fechaFinalFormattedTextField.getText()));
                     }
@@ -409,7 +411,6 @@ public class NuevaReservacion extends javax.swing.JInternalFrame {
             agregarButton.setEnabled(false);
             this.habitacionSeleccionada = null;
         }
-        this.habitacionSeleccionada = habitacionSeleccionada;
     }
 
 

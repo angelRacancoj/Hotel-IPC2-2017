@@ -230,7 +230,7 @@ public class DatosClienteReservacion extends javax.swing.JFrame {
                     telefonoTextField.setText(cliente.getPhone());
                     cumpleFormattedTextField.setText(cliente.getCumpleanios());
                     guardarButton.setEnabled(true);
-                }else{
+                } else {
                     guardarButton.setEnabled(true);
                 }
             } else {
@@ -248,37 +248,37 @@ public class DatosClienteReservacion extends javax.swing.JFrame {
 
     private void guardarButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_guardarButtonActionPerformed
         try {
-            if (idClienteTextField.getText().replace(" ","").isEmpty() || nombreTextField.getText().replace(" ","").isEmpty() || NITTextField.getText().replace(" ","").isEmpty()) {
+            if (idClienteTextField.getText().replace(" ", "").isEmpty() || nombreTextField.getText().replace(" ", "").isEmpty() || NITTextField.getText().replace(" ", "").isEmpty()) {
                 JOptionPane.showMessageDialog(this, "Debe llenar los campos obligatorios", "Error", JOptionPane.ERROR_MESSAGE);
-            }else{
-                if ((manejadorCliente.busqueda(idClienteTextField.getText()).size() == 1) || manejadorCliente.agregarCliente(idClienteTextField.getText(), 
-                    NITTextField.getText(), nombreTextField.getText(), direccionTextField.getText(), telefonoTextField.getText(), cumpleFormattedTextField.getText())) {
-                if (estado.equalsIgnoreCase(DefaultValues.CON_RESERVACION)) {
-                    for (int i = 0; i < listadoHabitaciones.size(); i++) {
-                        Habitacion hab = listadoHabitaciones.get(i);
-                        String noHab = hab.getNombre();
-                        System.out.println("Reservacion: " + noHab + ", " + idClienteTextField.getText() + ", " + fechaInicial + ", " + fechaFinal);
-                        if (!manejadorReservaciones.crearReservacion(idClienteTextField.getText(), fechaInicial, fechaFinal, noHab)) {
-                            JOptionPane.showMessageDialog(this, "Error al guardar la reservacion", "Error", JOptionPane.ERROR_MESSAGE);
-                        }else{
-                            JOptionPane.showMessageDialog(this, "Reservacion exitosa", "Operacion exitosa", JOptionPane.INFORMATION_MESSAGE);
-                            this.setVisible(false);
-                            limpiar();
+            } else {
+                if ((manejadorCliente.busqueda(idClienteTextField.getText()).size() == 1) || manejadorCliente.agregarCliente(idClienteTextField.getText(),
+                        NITTextField.getText(), nombreTextField.getText(), direccionTextField.getText(), telefonoTextField.getText(), cumpleFormattedTextField.getText())) {
+                    if (estado.equalsIgnoreCase(DefaultValues.CON_RESERVACION)) {
+                        for (int i = 0; i < listadoHabitaciones.size(); i++) {
+                            Habitacion hab = listadoHabitaciones.get(i);
+                            String noHab = hab.getNombre();
+                            System.out.println("Reservacion: " + noHab + ", " + idClienteTextField.getText() + ", " + fechaInicial + ", " + fechaFinal);
+                            if (!manejadorReservaciones.crearReservacion(idClienteTextField.getText(), fechaInicial, fechaFinal, noHab)) {
+                                JOptionPane.showMessageDialog(this, "Error al guardar la reservacion", "Error", JOptionPane.ERROR_MESSAGE);
+                            } else {
+                                JOptionPane.showMessageDialog(this, "Reservacion exitosa", "Operacion exitosa", JOptionPane.INFORMATION_MESSAGE);
+                                this.setVisible(false);
+                            }
                         }
-                    }
-                }else if(estado.equalsIgnoreCase(DefaultValues.SIN_RESERVACION)){
-                    for (int i = 0; i < listadoHabitaciones.size(); i++) {
-                        Habitacion hab = listadoHabitaciones.get(i);
-                        String noHab = hab.getNombre();
-                        System.out.println("Reservacion: " + noHab + ", " + idClienteTextField.getText() + ", " + fechaInicial + ", " + fechaFinal);
+                        limpiar();
+                    } else if (estado.equalsIgnoreCase(DefaultValues.SIN_RESERVACION)) {
+                        for (int i = 0; i < listadoHabitaciones.size(); i++) {
+                            Habitacion hab = listadoHabitaciones.get(i);
+                            String noHab = hab.getNombre();
+                            System.out.println("Reservacion: " + noHab + ", " + idClienteTextField.getText() + ", " + fechaInicial + ", " + fechaFinal);
 //                        if (!manejadorReservaciones.CheckInSinReservacion(idClienteTextField.getText(), fechaInicial, fechaFinal, noHab,"")) {
 //                            JOptionPane.showMessageDialog(this, "Error al guardar la reservacion", "Error", JOptionPane.ERROR_MESSAGE);
 //                        }
+                        }
                     }
+                } else {
+                    JOptionPane.showMessageDialog(this, "Error al guardar los datos del Cliente", "Error", JOptionPane.ERROR_MESSAGE);
                 }
-            } else {
-                JOptionPane.showMessageDialog(this, "Error al guardar los datos del Cliente", "Error", JOptionPane.ERROR_MESSAGE);
-            }
             }
         } catch (InputsVaciosException | HeadlessException | SQLException e) {
             JOptionPane.showMessageDialog(this, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);

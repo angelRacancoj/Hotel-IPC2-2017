@@ -5,7 +5,17 @@
  */
 package Hotel.GUI.Recepcionista.CheckOut;
 
+import Hotel.BackEnd.Excepciones.InputsVaciosException;
+import Hotel.BackEnd.Hotel.Reservacion;
+import Hotel.BackEnd.Manejador.ReservarHabitacionM;
+import RUN.DefaultValues;
 import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+import javax.swing.JOptionPane;
+import org.jdesktop.observablecollections.ObservableCollections;
+import org.jdesktop.observablecollections.ObservableList;
 
 /**
  *
@@ -13,10 +23,20 @@ import java.sql.Connection;
  */
 public class CheckOut extends javax.swing.JInternalFrame {
 
-    /**
-     * Creates new form CheckOut
-     */
+    private List<Reservacion> listaReservaciones;
+    private ObservableList<Reservacion> listaObservableReservacion;
+
+    private Reservacion reservacionSeleccionada;
+
+    private ReservarHabitacionM manejadorReservacion;
+    private CheckOutConsumo consumo;
+
     public CheckOut(Connection conexion) {
+        listaReservaciones = new ArrayList<>();
+        listaObservableReservacion = ObservableCollections.observableList(listaReservaciones);
+        reservacionSeleccionada = new Reservacion();
+        manejadorReservacion = new ReservarHabitacionM(conexion);
+        consumo = new CheckOutConsumo(conexion);
         initComponents();
     }
 
@@ -35,10 +55,12 @@ public class CheckOut extends javax.swing.JInternalFrame {
         clientesTable = new javax.swing.JTable();
         cargarConsumoButton = new javax.swing.JButton();
         cancelarButton = new javax.swing.JButton();
+        buscarButton = new javax.swing.JButton();
+        limpiarjButton = new javax.swing.JButton();
 
         setTitle("Check-Out");
 
-        jLabel1.setText("Ingrese el ID o nombre del cliente para buscar el consumo:");
+        jLabel1.setText("Ingrese el ID del cliente para buscar el consumo:");
 
         clientesTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -54,28 +76,52 @@ public class CheckOut extends javax.swing.JInternalFrame {
         jScrollPane1.setViewportView(clientesTable);
 
         cargarConsumoButton.setText("Cargar Consumo");
+        cargarConsumoButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cargarConsumoButtonActionPerformed(evt);
+            }
+        });
 
         cancelarButton.setText("Cancelar");
+        cancelarButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cancelarButtonActionPerformed(evt);
+            }
+        });
+
+        buscarButton.setText("Buscar");
+        buscarButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                buscarButtonActionPerformed(evt);
+            }
+        });
+
+        limpiarjButton.setText("Limpiar");
+        limpiarjButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                limpiarjButtonActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 656, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jScrollPane1)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jLabel1)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(idClienteTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 237, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(0, 0, Short.MAX_VALUE))))
+                        .addComponent(jLabel1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(idClienteTextField)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(buscarButton, javax.swing.GroupLayout.PREFERRED_SIZE, 77, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(246, 246, 246)
-                        .addComponent(cargarConsumoButton)
+                        .addComponent(limpiarjButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(cargarConsumoButton)
+                        .addGap(183, 183, 183)
                         .addComponent(cancelarButton)))
                 .addContainerGap())
         );
@@ -85,26 +131,99 @@ public class CheckOut extends javax.swing.JInternalFrame {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
-                    .addComponent(idClienteTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(idClienteTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(buscarButton))
                 .addGap(18, 18, 18)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(cargarConsumoButton)
-                    .addComponent(cancelarButton))
+                    .addComponent(cancelarButton)
+                    .addComponent(limpiarjButton))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void buscarButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buscarButtonActionPerformed
+        try {
+            if (idClienteTextField.getText().replace(" ", "").isEmpty()) {
+                actualizarBusquedaObservable(manejadorReservacion.busquedaPorIDClienteEstadoYFechas("", DefaultValues.HAB_OCUPADA_COD, "", ""));
+            } else {
+                actualizarBusquedaObservable(manejadorReservacion.busquedaPorIDClienteEstadoYFechas(idClienteTextField.getText(), DefaultValues.HAB_OCUPADA_COD, "",""));
+            }
+        } catch (InputsVaciosException | SQLException e) {
+            JOptionPane.showMessageDialog(this, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }//GEN-LAST:event_buscarButtonActionPerformed
+
+    private void cargarConsumoButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cargarConsumoButtonActionPerformed
+        if (reservacionSeleccionada != null) {
+            consumo.continuarCheckOut(reservacionSeleccionada.getIDCliente(), reservacionSeleccionada.getFechaInicial(), reservacionSeleccionada.getFechaFinal(), reservacionSeleccionada.getNoHabitacion());
+        consumo.setVisible(true);
+        }else{
+            JOptionPane.showMessageDialog(this, "Debe seleccionar una reservacion de la Lista", "Error", JOptionPane.ERROR_MESSAGE);
+            cargarConsumoButton.setEnabled(false);
+        }
+    }//GEN-LAST:event_cargarConsumoButtonActionPerformed
+
+    private void cancelarButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelarButtonActionPerformed
+        if (reservacionSeleccionada != null) {
+            int respuesta = JOptionPane.showConfirmDialog(this, "Desea cancelar el Check-In?", "Salir", JOptionPane.YES_NO_OPTION);
+            if (respuesta == 0) {
+                limpiar();
+                this.setVisible(false);
+            }
+        } else {
+            this.setVisible(false);
+        }
+    }//GEN-LAST:event_cancelarButtonActionPerformed
+
+    private void limpiarjButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_limpiarjButtonActionPerformed
+        limpiar();
+    }//GEN-LAST:event_limpiarjButtonActionPerformed
+
+    public void actualizarBusquedaObservable(List<Reservacion> listaReser) {
+        listaObservableReservacion.clear();
+        listaObservableReservacion.addAll(listaReser);
+    }
+
+    public ObservableList<Reservacion> getListaObservableReservacion() {
+        return listaObservableReservacion;
+    }
+
+    public void setListaObservableReservacion(ObservableList<Reservacion> listaObservableReservacion) {
+        this.listaObservableReservacion = listaObservableReservacion;
+    }
+
+    public Reservacion getReservacionSeleccionada() {
+        return reservacionSeleccionada;
+    }
+
+    public void setReservacionSeleccionada(Reservacion reservacionSeleccionada) {
+        if (reservacionSeleccionada != null) {
+            this.reservacionSeleccionada = reservacionSeleccionada.clone();
+            cargarConsumoButton.setEnabled(true);
+        } else {
+            this.reservacionSeleccionada = null;
+            cargarConsumoButton.setEnabled(false);
+        }
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton buscarButton;
     private javax.swing.JButton cancelarButton;
     private javax.swing.JButton cargarConsumoButton;
     private javax.swing.JTable clientesTable;
     private javax.swing.JTextField idClienteTextField;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JButton limpiarjButton;
     // End of variables declaration//GEN-END:variables
+
+    public void limpiar() {
+        idClienteTextField.setText("");
+        listaObservableReservacion.clear();
+    }
 }

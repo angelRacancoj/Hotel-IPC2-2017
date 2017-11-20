@@ -26,7 +26,9 @@ public class HabitacionM {
     }
 
     /**
-     * Devuelve el elemento Habitacion pero con los paramentros numero, cantidad y texto en la ultima casilla
+     * Devuelve el elemento Habitacion pero con los paramentros numero, cantidad
+     * y texto en la ultima casilla
+     *
      * @return
      * @throws SQLException
      * @throws InputsVaciosException
@@ -66,8 +68,8 @@ public class HabitacionM {
         busquedaHabitacion.clear();
         try {
             PreparedStatement sentencia = conexion.prepareStatement("SELECT Categoria,Precio,Numero FROM TIPO_HABITACION,HABITACION WHERE "
-                    + "Categoria=CategoriaTipoHabitacion AND (Numero NOT IN (SELECT Numero_haibtacion FROM RESERVACION WHERE Estado=? AND "
-                    + "Estado =? AND (Fecha_Inicial BETWEEN ? AND ? OR Fecha_Final BETWEEN ? AND ?)))");
+                    + "Categoria=CategoriaTipoHabitacion AND (Numero NOT IN (SELECT Numero_haibtacion FROM RESERVACION WHERE (Estado=? OR "
+                    + "Estado =?) AND ((Fecha_Inicial BETWEEN ? AND ?) OR (Fecha_Final BETWEEN ? AND ?))))");
             sentencia.setString(1, DefaultValues.HAB_RESERVADA_COD);
             sentencia.setString(2, DefaultValues.HAB_OCUPADA_COD);
             sentencia.setString(3, fechaIncial);
@@ -75,11 +77,42 @@ public class HabitacionM {
             sentencia.setString(5, fechaIncial);
             sentencia.setString(6, fechaFinal);
             ResultSet resultado = sentencia.executeQuery();
-            while(resultado.next()){
+            while (resultado.next()) {
                 String numero = resultado.getString("Numero");
                 String categoria = resultado.getString("Categoria");
                 String precio = resultado.getString("Precio");
-                System.out.println("Habitacion Disponible: "+numero+","+categoria+","+precio);
+                System.out.println("Habitacion Disponible: " + numero + "," + categoria + "," + precio);
+                busquedaHabitacion.add(new Habitacion(numero, precio, categoria));
+            }
+            resultado.close();
+            sentencia.close();
+        } catch (SQLException e) {
+            throw new InputsVaciosException("Error al obtener las habitaciones");
+        }
+        return busquedaHabitacion;
+    }
+
+    /**
+     * Obtiene las habitaciones disponible al dia actual
+     *
+     * @return
+     * @throws SQLException
+     * @throws InputsVaciosException
+     */
+    public List<Habitacion> habitacionesDisponiblesHoy() throws SQLException, InputsVaciosException {
+        busquedaHabitacion.clear();
+        try {
+            PreparedStatement sentencia = conexion.prepareStatement("SELECT Categoria,Precio,Numero FROM TIPO_HABITACION,HABITACION WHERE "
+                    + "Categoria=CategoriaTipoHabitacion AND (Numero NOT IN (SELECT Numero_haibtacion FROM RESERVACION WHERE (Estado=? OR "
+                    + "Estado =?) AND ((SELECT CURDATE() FECHA) BETWEEN Fecha_Inicial AND Fecha_Final)))");
+            sentencia.setString(1, DefaultValues.HAB_RESERVADA_COD);
+            sentencia.setString(2, DefaultValues.HAB_OCUPADA_COD);
+            ResultSet resultado = sentencia.executeQuery();
+            while (resultado.next()) {
+                String numero = resultado.getString("Numero");
+                String categoria = resultado.getString("Categoria");
+                String precio = resultado.getString("Precio");
+                System.out.println("Habitacion Disponible: " + numero + "," + categoria + "," + precio);
                 busquedaHabitacion.add(new Habitacion(numero, precio, categoria));
             }
             resultado.close();
@@ -254,6 +287,15 @@ public class HabitacionM {
         return busquedaHabitacion;
     }
 
+    /**
+     * Obtiene el precion de la habitacion al ingresar el numero de habitacion,
+     * este lo obtiene directamente desde la base de datos
+     *
+     * @param noHabitacion
+     * @return
+     * @throws SQLException
+     * @throws InputsVaciosException
+     */
     public double precioHabitacion(String noHabitacion) throws SQLException, InputsVaciosException {
         double precio = 0;
         try {
@@ -316,6 +358,5 @@ public class HabitacionM {
     public void setBusquedaHabitacion(List<Habitacion> busquedaHabitacion) {
         this.busquedaHabitacion = busquedaHabitacion;
     }
-    
-    
+
 }

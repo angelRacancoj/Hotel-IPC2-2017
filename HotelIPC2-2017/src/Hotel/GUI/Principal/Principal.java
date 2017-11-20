@@ -403,7 +403,7 @@ public class Principal extends javax.swing.JFrame {
     private void actualizarButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_actualizarButtonActionPerformed
         try {
             actualizarBusquedaOservableHab1(manejadorHabitacion.busquedaPrecioHabitacion());
-            actualizarBusquedaOservableHab2(manejadorHabitacion.habitacionesDisponibles(manejadorReservacion.fecha(), manejadorReservacion.fecha()));
+            actualizarBusquedaOservableHab2(manejadorHabitacion.habitacionesDisponiblesHoy());
             actualizarBusquedaObservableAlimentos(manejadorAlimento.busqueda("", DefaultValues.DISPONIBLE_TODO_COMBO_BOX));
         } catch (InputsVaciosException | SQLException e) {
             JOptionPane.showMessageDialog(this, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);

@@ -76,8 +76,8 @@ public class ConsumoM {
                 sentencia.setString(3, DefaultValues.DISPONIBLE_SI);
                 sentencia.setString(4, nombreAlimento);
                 sentencia.setString(5, cantidad);
-                sentencia.setString(1, DefaultValues.HAB_OCUPADA_COD);
-                sentencia.setString(1, noHabitacion);
+                sentencia.setString(6, DefaultValues.HAB_OCUPADA_COD);
+                sentencia.setString(7, noHabitacion);
                 if (sentencia.executeUpdate() == 1) {
                     sentencia.close();
                     return true;
@@ -87,7 +87,7 @@ public class ConsumoM {
                 }
             }
         } catch (InputsVaciosException | SQLException e) {
-            throw new InputsVaciosException("Error en la base de datos");
+            throw new InputsVaciosException("Error al agregar el consumo");
         }
     }
 
@@ -222,7 +222,7 @@ public class ConsumoM {
 
         try {
             PreparedStatement sentencia = conexion.prepareStatement("SELECT SUM(Total) as total FROM CONSUMO,RESERVACION "
-                    + "WHERE RESERVACION.ID = ID_Reservacion AND (Fecha_Inicial BETWEEN ? AND ? AND Fecha_Final BETWEEN ? AND ?) "
+                    + "WHERE RESERVACION.ID = ID_Reservacion AND ((Fecha_Inicial BETWEEN ? AND ?) AND (Fecha_Final BETWEEN ? AND ?)) "
                     + "AND ID_Cliente=? AND Estado=? AND Numero_Haibtacion=?");
             sentencia.setString(1, fechaInicial);
             sentencia.setString(2, fechaFinal);
