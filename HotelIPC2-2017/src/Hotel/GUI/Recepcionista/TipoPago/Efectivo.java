@@ -137,16 +137,30 @@ public class Efectivo extends javax.swing.JFrame {
                         if (manejadorReservacion.CheckInConReservacion(reservacionSeleccionada.getIDCliente(), reservacionSeleccionada.getFechaInicial(),
                                 reservacionSeleccionada.getFechaFinal(), reservacionSeleccionada.getNoHabitacion(), "Efectivo")) {
                             JOptionPane.showMessageDialog(this, "Fallo durante el pago", "Error", JOptionPane.ERROR_MESSAGE);
+                            this.setVisible(false);
                         } else {
-                            JOptionPane.showMessageDialog(this, "Pago exitoso"+(Double.parseDouble(montoFormattedTextField.getText())-Double.parseDouble(totalTextField.getText())), "Informacion", JOptionPane.INFORMATION_MESSAGE);
+                            JOptionPane.showMessageDialog(this, "Pago exitoso" + (Double.parseDouble(montoFormattedTextField.getText()) - Double.parseDouble(totalTextField.getText())), 
+                                    "Informacion", JOptionPane.INFORMATION_MESSAGE);
                             limpiar();
                             this.setVisible(false);
                         }
                         this.setVisible(false);
-                    } else if (estado.equalsIgnoreCase(DefaultValues.PAGO_SIN_RESERVACION)) {
-                        
+//                    } else if (estado.equalsIgnoreCase(DefaultValues.PAGO_SIN_RESERVACION)) {
+//                        
+//                        limpiar();
+//                        this.setVisible(false);
+                    } else if (estado.equalsIgnoreCase(DefaultValues.PAGO_ALIMENTO)) {
                         limpiar();
-                        this.setVisible(false);
+                        if (manejadorReservacion.CheckOut(reservacionSeleccionada.getIDCliente(), reservacionSeleccionada.getFechaInicial(), 
+                                reservacionSeleccionada.getFechaFinal(), reservacionSeleccionada.getNoHabitacion(), "")) {
+                            JOptionPane.showMessageDialog(this, "Pago exitoso" + (Double.parseDouble(montoFormattedTextField.getText()) - Double.parseDouble(totalTextField.getText())), "Informacion", JOptionPane.INFORMATION_MESSAGE);
+                            limpiar();
+                            this.setVisible(false);
+                        } else {
+                            JOptionPane.showMessageDialog(this, "Fallo durante el pago", "Error", JOptionPane.ERROR_MESSAGE);
+                            this.setVisible(false);
+                        }
+
                     }
                 }
             }

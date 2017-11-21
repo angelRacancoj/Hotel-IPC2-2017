@@ -5,7 +5,20 @@
  */
 package Hotel.GUI.Recepcionista;
 
+import Hotel.BackEnd.Excepciones.InputsVaciosException;
+import Hotel.BackEnd.Hotel.Habitacion;
+import Hotel.BackEnd.Hotel.Reservacion;
+import Hotel.BackEnd.Manejador.HabitacionM;
+import Hotel.BackEnd.Manejador.ReservarHabitacionM;
+import RUN.DefaultValues;
+import java.awt.HeadlessException;
 import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+import javax.swing.JOptionPane;
+import org.jdesktop.observablecollections.ObservableCollections;
+import org.jdesktop.observablecollections.ObservableList;
 
 /**
  *
@@ -13,10 +26,37 @@ import java.sql.Connection;
  */
 public class ModificarReservacion extends javax.swing.JInternalFrame {
 
-    /**
-     * Creates new form ModificarReservacion
-     */
+    private ReservarHabitacionM manejadorReservacion;
+    private HabitacionM manejadorHabitaciones;
+
+    private List<Reservacion> listaReservaciones;
+    private List<Habitacion> listaHabitaciones;
+
+    private ObservableList<Reservacion> listaReservacionObservable;
+    private ObservableList<Habitacion> listaHabitacionObservable;
+
+    private Reservacion reservacionSeleccionada;
+    private Habitacion habitacionSeleccionada;
+
+    private DefaultValues valoresPredef;
+
+    private String fechaIni = "";
+    private String fechaFin = "";
+
     public ModificarReservacion(Connection conexion) {
+        manejadorReservacion = new ReservarHabitacionM(conexion);
+        manejadorHabitaciones = new HabitacionM(conexion);
+
+        listaHabitaciones = new ArrayList<>();
+        listaReservaciones = new ArrayList<>();
+
+        listaHabitacionObservable = ObservableCollections.observableList(listaHabitaciones);
+        listaReservacionObservable = ObservableCollections.observableList(listaReservaciones);
+
+        reservacionSeleccionada = new Reservacion();
+        habitacionSeleccionada = new Habitacion();
+
+        valoresPredef = new DefaultValues();
         initComponents();
     }
 
@@ -29,11 +69,10 @@ public class ModificarReservacion extends javax.swing.JInternalFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jLabel7 = new javax.swing.JLabel();
         jLabel1 = new javax.swing.JLabel();
         idTextField = new javax.swing.JTextField();
         buscarButton = new javax.swing.JButton();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        reservacionesTable = new javax.swing.JTable();
         limpiarButton = new javax.swing.JButton();
         modificarButton = new javax.swing.JButton();
         cancelarButton = new javax.swing.JButton();
@@ -44,38 +83,56 @@ public class ModificarReservacion extends javax.swing.JInternalFrame {
         fechaFinalFormattedTextField = new javax.swing.JFormattedTextField();
         jLabel4 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
-        buscarButton1 = new javax.swing.JButton();
+        disponibleButton = new javax.swing.JButton();
         jScrollPane2 = new javax.swing.JScrollPane();
         reservacionesTable1 = new javax.swing.JTable();
+        jLabel8 = new javax.swing.JLabel();
+        guardarModifButton = new javax.swing.JButton();
         jLabel6 = new javax.swing.JLabel();
-        jLabel7 = new javax.swing.JLabel();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        reservacionesTable2 = new javax.swing.JTable();
+        jLabel9 = new javax.swing.JLabel();
+
+        jLabel7.setText("jLabel7");
 
         setTitle("Editar Reservacion");
 
         jLabel1.setText("Indique el ID del cliente :");
 
         buscarButton.setText("Buscar reservacion");
-
-        reservacionesTable.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {},
-                {},
-                {},
-                {}
-            },
-            new String [] {
-
+        buscarButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                buscarButtonActionPerformed(evt);
             }
-        ));
-        jScrollPane1.setViewportView(reservacionesTable);
+        });
 
         limpiarButton.setText("Limpiar");
+        limpiarButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                limpiarButtonActionPerformed(evt);
+            }
+        });
 
         modificarButton.setText("Modificar");
+        modificarButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                modificarButtonActionPerformed(evt);
+            }
+        });
 
         cancelarButton.setText("Cancelar");
+        cancelarButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cancelarButtonActionPerformed(evt);
+            }
+        });
 
         eliminarButton.setText("Eliminar");
+        eliminarButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                eliminarButtonActionPerformed(evt);
+            }
+        });
 
         jLabel2.setText("Fecha inicial:");
 
@@ -84,6 +141,11 @@ public class ModificarReservacion extends javax.swing.JInternalFrame {
         } catch (java.text.ParseException ex) {
             ex.printStackTrace();
         }
+        fechaInicialFormattedTextField.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                fechaInicialFormattedTextFieldFocusLost(evt);
+            }
+        });
 
         jLabel3.setText("Fecha final:");
 
@@ -92,6 +154,11 @@ public class ModificarReservacion extends javax.swing.JInternalFrame {
         } catch (java.text.ParseException ex) {
             ex.printStackTrace();
         }
+        fechaFinalFormattedTextField.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                fechaFinalFormattedTextFieldFocusLost(evt);
+            }
+        });
 
         jLabel4.setFont(new java.awt.Font("Noto Sans UI", 0, 10)); // NOI18N
         jLabel4.setText("Ej: 2017-02-30");
@@ -99,7 +166,12 @@ public class ModificarReservacion extends javax.swing.JInternalFrame {
         jLabel5.setFont(new java.awt.Font("Noto Sans UI", 0, 10)); // NOI18N
         jLabel5.setText("Ej: 2017-02-30");
 
-        buscarButton1.setText("Buscar habitacion");
+        disponibleButton.setText("Disponibilidad");
+        disponibleButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                disponibleButtonActionPerformed(evt);
+            }
+        });
 
         reservacionesTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -114,9 +186,33 @@ public class ModificarReservacion extends javax.swing.JInternalFrame {
         ));
         jScrollPane2.setViewportView(reservacionesTable1);
 
-        jLabel6.setText("RESERVACION");
+        jLabel8.setText("NUEVOS DATOS DE LA RESERVACION");
 
-        jLabel7.setText("NUEVA HABITACION");
+        guardarModifButton.setText("Guardar Modificacion");
+        guardarModifButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                guardarModifButtonActionPerformed(evt);
+            }
+        });
+
+        jLabel6.setFont(new java.awt.Font("Noto Sans UI", 0, 12)); // NOI18N
+        jLabel6.setText("Seleccione la reservacion de la tabla, luego presione en \"Eliminar\" o \"Modificar\" para continua con el proceso");
+
+        reservacionesTable2.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {},
+                {},
+                {},
+                {}
+            },
+            new String [] {
+
+            }
+        ));
+        jScrollPane3.setViewportView(reservacionesTable2);
+
+        jLabel9.setFont(new java.awt.Font("Noto Sans UI", 0, 12)); // NOI18N
+        jLabel9.setText("Seleccione la habitacion que se aducua a lo pedido por el cliente, luego presione \"Guardar Modificacion\"");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -126,52 +222,55 @@ public class ModificarReservacion extends javax.swing.JInternalFrame {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jScrollPane2)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(jLabel1)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(idTextField)
                                 .addGap(18, 18, 18)
                                 .addComponent(buscarButton))
-                            .addGroup(layout.createSequentialGroup()
+                            .addComponent(jScrollPane3, javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel6, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel2)
+                                    .addComponent(eliminarButton))
+                                .addGap(18, 18, 18)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addGroup(layout.createSequentialGroup()
-                                        .addComponent(jLabel2)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                            .addComponent(jLabel4)
                                             .addGroup(layout.createSequentialGroup()
                                                 .addComponent(fechaInicialFormattedTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 114, javax.swing.GroupLayout.PREFERRED_SIZE)
                                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                                .addComponent(jLabel3))))
+                                                .addComponent(jLabel3))
+                                            .addGroup(layout.createSequentialGroup()
+                                                .addComponent(jLabel4)
+                                                .addGap(147, 147, 147)
+                                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                    .addComponent(jLabel5)
+                                                    .addComponent(fechaFinalFormattedTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                                        .addGap(0, 0, Short.MAX_VALUE))
                                     .addGroup(layout.createSequentialGroup()
-                                        .addComponent(limpiarButton)
-                                        .addGap(18, 18, 18)
-                                        .addComponent(eliminarButton)))
-                                .addGap(18, 18, 18)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jLabel5)
-                                    .addComponent(fechaFinalFormattedTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 12, Short.MAX_VALUE)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                        .addComponent(cancelarButton)
-                                        .addGap(12, 12, 12))
-                                    .addComponent(buscarButton1, javax.swing.GroupLayout.Alignment.TRAILING)))
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                        .addGap(63, 63, 63)
+                                        .addComponent(jLabel8)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(modificarButton))))
+                            .addGroup(layout.createSequentialGroup()
                                 .addGap(0, 0, Short.MAX_VALUE)
-                                .addComponent(jLabel7)
-                                .addGap(120, 120, 120)
-                                .addComponent(modificarButton)))
-                        .addContainerGap())
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(jLabel6)
-                        .addGap(238, 238, 238))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(jScrollPane1)
-                        .addContainerGap())))
+                                .addComponent(disponibleButton)))
+                        .addGap(0, 1, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(limpiarButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(guardarModifButton)
+                        .addGap(147, 147, 147)
+                        .addComponent(cancelarButton)))
+                .addContainerGap())
+            .addGroup(layout.createSequentialGroup()
+                .addGap(22, 22, 22)
+                .addComponent(jLabel9)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -184,45 +283,270 @@ public class ModificarReservacion extends javax.swing.JInternalFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel6)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(modificarButton))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(28, 28, 28)
-                        .addComponent(jLabel7)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel2)
+                    .addComponent(eliminarButton)
+                    .addComponent(modificarButton)
+                    .addComponent(jLabel8))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(fechaInicialFormattedTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel2)
                     .addComponent(jLabel3)
                     .addComponent(fechaFinalFormattedTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(buscarButton1))
+                    .addComponent(disponibleButton))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel4)
                     .addComponent(jLabel5))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel9)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(eliminarButton)
-                    .addComponent(cancelarButton)
-                    .addComponent(limpiarButton)))
+                    .addComponent(limpiarButton)
+                    .addComponent(guardarModifButton)
+                    .addComponent(cancelarButton))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void buscarButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buscarButtonActionPerformed
+        try {
+            if (idTextField.getText().replace(" ", "").isEmpty()) {
+                actualizarListaObsReservacion(manejadorReservacion.busquedaPorIDClienteEstadoYFechas("", DefaultValues.HAB_RESERVADA_COD, "", ""));
+            } else {
+                actualizarListaObsReservacion(manejadorReservacion.busquedaPorIDClienteEstadoYFechas(idTextField.getText(), DefaultValues.HAB_RESERVADA_COD, "", ""));
+            }
+        } catch (InputsVaciosException | SQLException e) {
+            JOptionPane.showMessageDialog(this, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }//GEN-LAST:event_buscarButtonActionPerformed
+
+    private void eliminarButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_eliminarButtonActionPerformed
+        try {
+            if (reservacionSeleccionada != null) {
+                int respuesta = JOptionPane.showConfirmDialog(this, "Desea eliminar la reservacion?", "Salir", JOptionPane.YES_NO_OPTION);
+                if (respuesta == 0) {
+                    if (manejadorReservacion.deshabilitarReservacion(reservacionSeleccionada.getIDCliente(), reservacionSeleccionada.getFechaInicial(),
+                            reservacionSeleccionada.getFechaFinal(), reservacionSeleccionada.getNoHabitacion())) {
+                        JOptionPane.showMessageDialog(this, "Eliminado exitosamente", "Informacion", JOptionPane.INFORMATION_MESSAGE);
+                        limpiarTodo();
+                        this.setVisible(false);
+                    } else {
+                        JOptionPane.showMessageDialog(this, "No se pudo eliminar la reservacion", "Error", JOptionPane.ERROR_MESSAGE);
+                    }
+                }
+            } else {
+                JOptionPane.showMessageDialog(this, "Debe elegir una de las reservaciones", "Error", JOptionPane.ERROR_MESSAGE);
+                iniciar();
+            }
+        } catch (InputsVaciosException | HeadlessException | SQLException e) {
+            JOptionPane.showMessageDialog(this, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }//GEN-LAST:event_eliminarButtonActionPerformed
+
+    private void modificarButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_modificarButtonActionPerformed
+        try {
+            if (reservacionSeleccionada != null) {
+                habilitarModifiacion();
+            } else {
+                JOptionPane.showMessageDialog(this, "Debe elegir una de las reservaciones", "Error", JOptionPane.ERROR_MESSAGE);
+                limpiarTodo();
+            }
+        } catch (HeadlessException e) {
+            JOptionPane.showMessageDialog(this, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }//GEN-LAST:event_modificarButtonActionPerformed
+
+    private void disponibleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_disponibleButtonActionPerformed
+        try {
+            if (reservacionSeleccionada != null) {
+                if (fechaFinalFormattedTextField.getText().replace(" ", "").replace("-", "").isEmpty() || fechaInicialFormattedTextField.getText().replace(" ", "").replace("-", "").isEmpty()) {
+                    JOptionPane.showMessageDialog(this, "Debe indicar las fechas", "Error", JOptionPane.ERROR_MESSAGE);
+                } else {
+                    if (!valoresPredef.validarFecha(fechaFinalFormattedTextField.getText()) || !valoresPredef.validarFecha(fechaInicialFormattedTextField.getText())) {
+                        JOptionPane.showMessageDialog(this, "Formato de fechas invalido", "Error", JOptionPane.ERROR_MESSAGE);
+                        fechaFinalFormattedTextField.setText("");
+                        fechaInicialFormattedTextField.setText("");
+                    } else {
+                        if (!(manejadorReservacion.cantidadDelDias(fechaInicialFormattedTextField.getText(), fechaFinalFormattedTextField.getText()) > 0)) {
+                            JOptionPane.showMessageDialog(this, "Cantidad de dias inferior a un dia", "Error", JOptionPane.ERROR_MESSAGE);
+                        } else {
+                            actualizarListaobsHabitaciones(manejadorHabitaciones.HabitacionesDisponibleModificacion(fechaInicialFormattedTextField.getText(), fechaFinalFormattedTextField.getText(),
+                                    reservacionSeleccionada.getNoHabitacion(), reservacionSeleccionada.getFechaInicial(), reservacionSeleccionada.getFechaFinal()));
+                            guardarModifButton.setEnabled(false);
+                            fechaFin = fechaFinalFormattedTextField.getText();
+                            fechaIni = fechaInicialFormattedTextField.getText();
+                        }
+                    }
+                }
+            } else {
+                JOptionPane.showMessageDialog(this, "Debe elegirse una reservacion", "Error", JOptionPane.ERROR_MESSAGE);
+                limpiarParcial();
+            }
+        } catch (InputsVaciosException | HeadlessException | SQLException e) {
+            JOptionPane.showMessageDialog(this, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }//GEN-LAST:event_disponibleButtonActionPerformed
+
+    private void limpiarButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_limpiarButtonActionPerformed
+        limpiarTodo();
+    }//GEN-LAST:event_limpiarButtonActionPerformed
+
+    private void guardarModifButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_guardarModifButtonActionPerformed
+        try {
+            if (reservacionSeleccionada != null) {
+                if ((fechaFin != null) && (fechaIni != null)) {
+                    if (valoresPredef.validarFecha(fechaIni) && valoresPredef.validarFecha(fechaFin)) {
+                        if (manejadorReservacion.cantidadDelDias(fechaIni, fechaFin) > 0) {
+                            if (habitacionSeleccionada != null) {
+                                int respuesta = JOptionPane.showConfirmDialog(this, "Desea modificar la reservacion?", "Modificar", JOptionPane.YES_NO_OPTION);
+                                if (respuesta == 0) {
+                                    if (manejadorReservacion.modificarReservacion(reservacionSeleccionada.getIDCliente(), reservacionSeleccionada.getFechaInicial(),
+                                            reservacionSeleccionada.getFechaFinal(), fechaIni, fechaFin, reservacionSeleccionada.getNoHabitacion(), habitacionSeleccionada.getNombre())) {
+                                        JOptionPane.showMessageDialog(this, "Modificado exitosamente", "Informacion", JOptionPane.INFORMATION_MESSAGE);
+                                    } else {
+                                        JOptionPane.showMessageDialog(this, "No se ha modificado la reservacion", "Error", JOptionPane.ERROR_MESSAGE);
+                                    }
+                                }
+                            } else {
+                                JOptionPane.showMessageDialog(this, "Debe elegir una de las habitaciones", "Error", JOptionPane.ERROR_MESSAGE);
+                                guardarModifButton.setEnabled(false);
+                            }
+                        } else {
+                            JOptionPane.showMessageDialog(this, "intervalo de tiempo mal colocado", "Error", JOptionPane.ERROR_MESSAGE);
+                            listaHabitacionObservable.clear();
+                            guardarModifButton.setEnabled(false);
+                            fechaFinalFormattedTextField.setText("");
+                            fechaInicialFormattedTextField.setText("");
+                        }
+                    } else {
+                        JOptionPane.showMessageDialog(this, "Formato de fecha invalido", "Error", JOptionPane.ERROR_MESSAGE);
+                        listaHabitacionObservable.clear();
+                        guardarModifButton.setEnabled(false);
+                        fechaFinalFormattedTextField.setText("");
+                        fechaInicialFormattedTextField.setText("");
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(this, "Debe colocarse el rango de fechas", "Error", JOptionPane.ERROR_MESSAGE);
+                    listaHabitacionObservable.clear();
+                    guardarModifButton.setEnabled(false);
+                    fechaFinalFormattedTextField.setText("");
+                    fechaInicialFormattedTextField.setText("");
+                }
+            } else {
+                JOptionPane.showMessageDialog(this, "Debe elegirse una reservacion", "Error", JOptionPane.ERROR_MESSAGE);
+                limpiarParcial();
+
+            }
+        } catch (Exception e) {
+        }
+    }//GEN-LAST:event_guardarModifButtonActionPerformed
+
+    private void cancelarButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelarButtonActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_cancelarButtonActionPerformed
+
+    private void fechaInicialFormattedTextFieldFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_fechaInicialFormattedTextFieldFocusLost
+        if (!fechaInicialFormattedTextField.getText().replace(" ", "").replace("-", "").isEmpty()) {
+            if (!valoresPredef.validarFecha(fechaInicialFormattedTextField.getText())) {
+                JOptionPane.showMessageDialog(this, "Fecha inicial invalida", "Error", JOptionPane.ERROR_MESSAGE);
+                fechaInicialFormattedTextField.setText("");
+            }
+        }
+    }//GEN-LAST:event_fechaInicialFormattedTextFieldFocusLost
+
+    private void fechaFinalFormattedTextFieldFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_fechaFinalFormattedTextFieldFocusLost
+        if (!fechaFinalFormattedTextField.getText().replace(" ", "").replace("-", "").isEmpty()) {
+            if (!valoresPredef.validarFecha(fechaFinalFormattedTextField.getText())) {
+                JOptionPane.showMessageDialog(this, "Fecha final invalida", "Error", JOptionPane.ERROR_MESSAGE);
+                fechaFinalFormattedTextField.setText("");
+            }
+        }
+    }//GEN-LAST:event_fechaFinalFormattedTextFieldFocusLost
+
+    public void actualizarListaObsReservacion(List<Reservacion> listReservacion) {
+        listaReservacionObservable.clear();
+        listaReservacionObservable.addAll(listReservacion);
+    }
+
+    public void actualizarListaobsHabitaciones(List<Habitacion> listHabitacion) {
+        listaHabitacionObservable.clear();
+        listaHabitacionObservable.addAll(listHabitacion);
+    }
+
+    public ObservableList<Reservacion> getListaReservacionObservable() {
+        return listaReservacionObservable;
+    }
+
+    public void setListaReservacionObservable(ObservableList<Reservacion> listaReservacionObservable) {
+        this.listaReservacionObservable = listaReservacionObservable;
+    }
+
+    public ObservableList<Habitacion> getListaHabitacionObservable() {
+        return listaHabitacionObservable;
+    }
+
+    public void setListaHabitacionObservable(ObservableList<Habitacion> listaHabitacionObservable) {
+        this.listaHabitacionObservable = listaHabitacionObservable;
+    }
+
+    public Reservacion getReservacionSeleccionada() {
+        return reservacionSeleccionada;
+    }
+
+    public void setReservacionSeleccionada(Reservacion reservacionSeleccionada) {
+        if (reservacionSeleccionada != null) {
+            this.reservacionSeleccionada = reservacionSeleccionada.clone();
+            limpiarParcial();
+        } else {
+            this.reservacionSeleccionada = null;
+            iniciar();
+        }
+    }
+
+    public Habitacion getHabitacionSeleccionada() {
+        return habitacionSeleccionada;
+    }
+
+    public void setHabitacionSeleccionada(Habitacion habitacionSeleccionada) {
+        if (habitacionSeleccionada != null) {
+            this.habitacionSeleccionada = habitacionSeleccionada.clone();
+            guardarModifButton.setEnabled(true);
+        } else {
+            this.habitacionSeleccionada = null;
+            guardarModifButton.setEnabled(false);
+        }
+    }
+
+    public void iniciar() {
+        eliminarButton.setEnabled(false);
+        modificarButton.setEnabled(false);
+        fechaFinalFormattedTextField.setEnabled(false);
+        fechaInicialFormattedTextField.setEnabled(false);
+        disponibleButton.setEnabled(false);
+        guardarModifButton.setEnabled(false);
+    }
+
+    public void habilitarModifiacion() {
+        fechaFinalFormattedTextField.setEnabled(true);
+        fechaInicialFormattedTextField.setEnabled(true);
+        disponibleButton.setEnabled(true);
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton buscarButton;
-    private javax.swing.JButton buscarButton1;
     private javax.swing.JButton cancelarButton;
+    private javax.swing.JButton disponibleButton;
     private javax.swing.JButton eliminarButton;
     private javax.swing.JFormattedTextField fechaFinalFormattedTextField;
     private javax.swing.JFormattedTextField fechaInicialFormattedTextField;
+    private javax.swing.JButton guardarModifButton;
     private javax.swing.JTextField idTextField;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
@@ -231,11 +555,34 @@ public class ModificarReservacion extends javax.swing.JInternalFrame {
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
-    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JLabel jLabel8;
+    private javax.swing.JLabel jLabel9;
     private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JButton limpiarButton;
     private javax.swing.JButton modificarButton;
-    private javax.swing.JTable reservacionesTable;
     private javax.swing.JTable reservacionesTable1;
+    private javax.swing.JTable reservacionesTable2;
     // End of variables declaration//GEN-END:variables
+
+    public void limpiarTodo() {
+        fechaFinalFormattedTextField.setText("");
+        fechaInicialFormattedTextField.setText("");
+        idTextField.setText("");
+        listaHabitacionObservable.clear();
+        listaReservacionObservable.clear();
+        iniciar();
+    }
+
+    public void limpiarParcial() {
+        eliminarButton.setEnabled(true);
+        modificarButton.setEnabled(true);
+        fechaFinalFormattedTextField.setText("");
+        fechaInicialFormattedTextField.setText("");
+        disponibleButton.setEnabled(false);
+        guardarModifButton.setEnabled(false);
+        listaHabitacionObservable.clear();
+        fechaFinalFormattedTextField.setEnabled(false);
+        fechaInicialFormattedTextField.setEnabled(false);
+    }
 }

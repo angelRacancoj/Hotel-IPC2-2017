@@ -369,6 +369,7 @@ public class Principal extends javax.swing.JFrame {
     }//GEN-LAST:event_NewReserMenuItemActionPerformed
 
     private void nuevoReserMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nuevoReserMenuItemActionPerformed
+        modificarReservacion.iniciar();
         modificarReservacion.setVisible(true);
     }//GEN-LAST:event_nuevoReserMenuItemActionPerformed
 

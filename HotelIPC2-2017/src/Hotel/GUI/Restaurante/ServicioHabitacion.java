@@ -106,7 +106,7 @@ public class ServicioHabitacion extends javax.swing.JInternalFrame {
 
         jLabel3.setText("Seleccione la Habitacion:");
 
-        noHabitacionComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Habitacion", "101", "102", "103", "104", "201", "202", "203", "204", "301", "302", "303", "304" }));
+        noHabitacionComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Habitacion", "101", "102", "103", "104", "201", "202", "203", "204", "301", "302", "303", "304", "401", "402", "403", "404" }));
 
         actualizarButton.setText("Actualizar");
         actualizarButton.addActionListener(new java.awt.event.ActionListener() {

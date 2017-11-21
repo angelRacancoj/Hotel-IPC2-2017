@@ -22,14 +22,14 @@ import javax.swing.JOptionPane;
  * @author angelrg
  */
 public class Tarjeta extends javax.swing.JFrame {
-    
+
     private String voucher;
     private String estado;
-    
+
     private ReservarHabitacionM manejadorReservacion;
-    
+
     private Reservacion reservacionSeleccionada;
-    
+
     public Tarjeta(Connection conexion) {
         initComponents();
     }
@@ -130,17 +130,20 @@ public class Tarjeta extends javax.swing.JFrame {
                         this.setVisible(false);
                     }
                     this.setVisible(false);
-                } else if (estado.equalsIgnoreCase(DefaultValues.PAGO_SIN_RESERVACION)) {
-                    limpiar();
-                    
-                    this.setVisible(false);
+//                } else if (estado.equalsIgnoreCase(DefaultValues.PAGO_SIN_RESERVACION)) {
+//                    limpiar();
+//
+//                    this.setVisible(false);
                 } else if (estado.equalsIgnoreCase(DefaultValues.PAGO_ALIMENTO)) {
-//                    if (!manejadorReservacion.CheckOut(voucher, voucher, voucher, voucher, voucher)) {
-//                        JOptionPane.showMessageDialog(this, "Fallo durante el pago", "Error", JOptionPane.ERROR_MESSAGE);
-//                    } else {
-//                        limpiar();
-//                        this.setVisible(false);
-//                    }
+                    if (!manejadorReservacion.CheckOut(reservacionSeleccionada.getIDCliente(), reservacionSeleccionada.getFechaInicial(),reservacionSeleccionada.getFechaFinal(),reservacionSeleccionada.getNoHabitacion(), voucherTextField.getText())) {
+                        JOptionPane.showMessageDialog(this, "Fallo durante el pago", "Error", JOptionPane.ERROR_MESSAGE);
+                        limpiar();
+                        this.setVisible(false);
+                    } else {
+                        JOptionPane.showMessageDialog(this, "Pago exitoso", "Informacion", JOptionPane.INFORMATION_MESSAGE);
+                        limpiar();
+                        this.setVisible(false);
+                    }
                 }
             }
         } catch (InputsVaciosException | HeadlessException | SQLException e) {
@@ -152,12 +155,12 @@ public class Tarjeta extends javax.swing.JFrame {
         this.setVisible(false);
         limpiar();
     }//GEN-LAST:event_regresarButtonActionPerformed
-    
+
     public void pagar(String total, String estado, Reservacion reservacion) {
         limpiar();
         totalTextField.setText(total);
         totalTextField.setEnabled(false);
-        reservacionSeleccionada = reservacion;
+        reservacionSeleccionada = reservacion.clone();
         this.estado = estado;
         setVisible(true);
     }

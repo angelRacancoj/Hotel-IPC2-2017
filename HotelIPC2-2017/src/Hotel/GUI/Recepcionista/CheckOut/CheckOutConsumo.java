@@ -11,6 +11,7 @@ import Hotel.BackEnd.Hotel.Reservacion;
 import Hotel.BackEnd.Manejador.ConsumoM;
 import Hotel.GUI.Recepcionista.TipoPago.Efectivo;
 import Hotel.GUI.Recepcionista.TipoPago.Tarjeta;
+import RUN.DefaultValues;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -184,7 +185,17 @@ public class CheckOutConsumo extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void efectivoButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_efectivoButtonActionPerformed
-        // TODO add your handling code here:
+        try {
+            if (reservacionEntrada != null) {
+                pagoEfectivo.pagar(manejadorConsumo.totalConsumoNoHabitacion(reservacionEntrada.getIDCliente(), reservacionEntrada.getFechaInicial(), reservacionEntrada.getFechaFinal(), reservacionEntrada.getNoHabitacion()),DefaultValues.PAGO_ALIMENTO, reservacionEntrada);
+                this.setVisible(false);
+            }else{
+                JOptionPane.showMessageDialog(this,"No se tiene una reservacion elegida", "Error", JOptionPane.ERROR_MESSAGE);
+                setVisible(false);
+            }
+        } catch (InputsVaciosException | SQLException e) {
+            JOptionPane.showMessageDialog(this, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
     }//GEN-LAST:event_efectivoButtonActionPerformed
 
     private void tarjetaButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tarjetaButtonActionPerformed

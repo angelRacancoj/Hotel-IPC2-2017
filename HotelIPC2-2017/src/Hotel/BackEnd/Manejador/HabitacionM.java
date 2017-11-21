@@ -69,19 +69,66 @@ public class HabitacionM {
         try {
             PreparedStatement sentencia = conexion.prepareStatement("SELECT Categoria,Precio,Numero FROM TIPO_HABITACION,HABITACION WHERE "
                     + "Categoria=CategoriaTipoHabitacion AND (Numero NOT IN (SELECT Numero_haibtacion FROM RESERVACION WHERE (Estado=? OR "
-                    + "Estado =?) AND ((Fecha_Inicial BETWEEN ? AND ?) OR (Fecha_Final BETWEEN ? AND ?))))");
+                    + "Estado =? OR Estado =?) AND ((Fecha_Inicial BETWEEN ? AND ?) OR (Fecha_Final BETWEEN ? AND ?))))");
             sentencia.setString(1, DefaultValues.HAB_RESERVADA_COD);
             sentencia.setString(2, DefaultValues.HAB_OCUPADA_COD);
-            sentencia.setString(3, fechaIncial);
-            sentencia.setString(4, fechaFinal);
-            sentencia.setString(5, fechaIncial);
-            sentencia.setString(6, fechaFinal);
+            sentencia.setString(3, DefaultValues.HAB_CHECK_OUT_COD);
+            sentencia.setString(4, fechaIncial);
+            sentencia.setString(5, fechaFinal);
+            sentencia.setString(6, fechaIncial);
+            sentencia.setString(7, fechaFinal);
             ResultSet resultado = sentencia.executeQuery();
             while (resultado.next()) {
                 String numero = resultado.getString("Numero");
                 String categoria = resultado.getString("Categoria");
                 String precio = resultado.getString("Precio");
                 System.out.println("Habitacion Disponible: " + numero + "," + categoria + "," + precio);
+                busquedaHabitacion.add(new Habitacion(numero, precio, categoria));
+            }
+            resultado.close();
+            sentencia.close();
+        } catch (SQLException e) {
+            throw new InputsVaciosException("Error al obtener las habitaciones");
+        }
+        return busquedaHabitacion;
+    }
+
+    public List<Habitacion> HabitacionesDisponibleModificacion(String nuevaFechaInicial, String nuevaFechaFinal, String noHabitacion, String fechaInicialOriginal, String fechaFinalOriginal)
+            throws SQLException, InputsVaciosException {
+        busquedaHabitacion.clear();
+        /**
+         * SELECT Categoria,Precio,Numero FROM TIPO_HABITACION,HABITACION WHERE
+         * Categoria=CategoriaTipoHabitacion AND (Numero NOT IN (SELECT
+         * Numero_haibtacion FROM RESERVACION WHERE (Estado='1' OR Estado ='2'
+         * OR Estado = '4') AND ((Fecha_Inicial BETWEEN '2017-11-18' AND
+         * '2017-12-12') OR (Fecha_Final BETWEEN '2017-11-18' AND '2017-12-12'))
+         * AND ID <> (SELECT ID FROM RESERVACION WHERE Estado ='1' AND
+         * Numero_Haibtacion = '104' AND Fecha_Inicial ='2017-11-19' AND
+         * Fecha_Final='2017-11-30')));
+         *
+         */
+        try {
+            PreparedStatement sentencia = conexion.prepareStatement("SELECT Categoria,Precio,Numero FROM TIPO_HABITACION,HABITACION "
+                    + "WHERE Categoria=CategoriaTipoHabitacion AND (Numero NOT IN (SELECT Numero_haibtacion FROM RESERVACION WHERE "
+                    + "(Estado=? OR Estado =? OR Estado =?) AND ((Fecha_Inicial BETWEEN ? AND ?) OR (Fecha_Final BETWEEN ? AND ?)) "
+                    + "AND ID <> (SELECT ID FROM RESERVACION WHERE Estado =? AND Numero_Haibtacion = ? AND Fecha_Inicial =? AND Fecha_Final=?)))");
+            sentencia.setString(1, DefaultValues.HAB_RESERVADA_COD);
+            sentencia.setString(2, DefaultValues.HAB_OCUPADA_COD);
+            sentencia.setString(3, DefaultValues.HAB_CHECK_OUT_COD);
+            sentencia.setString(4, nuevaFechaInicial);
+            sentencia.setString(5, nuevaFechaFinal);
+            sentencia.setString(6, nuevaFechaInicial);
+            sentencia.setString(7, nuevaFechaFinal);
+            sentencia.setString(8, DefaultValues.HAB_RESERVADA_COD);
+            sentencia.setString(9, noHabitacion);
+            sentencia.setString(10, fechaInicialOriginal);
+            sentencia.setString(11, fechaFinalOriginal);
+            ResultSet resultado = sentencia.executeQuery();
+            while (resultado.next()) {
+                String numero = resultado.getString("Numero");
+                String categoria = resultado.getString("Categoria");
+                String precio = resultado.getString("Precio");
+                System.out.println("Habitacion Disponible Modificacion: " + numero + "," + categoria + "," + precio);
                 busquedaHabitacion.add(new Habitacion(numero, precio, categoria));
             }
             resultado.close();
@@ -104,9 +151,10 @@ public class HabitacionM {
         try {
             PreparedStatement sentencia = conexion.prepareStatement("SELECT Categoria,Precio,Numero FROM TIPO_HABITACION,HABITACION WHERE "
                     + "Categoria=CategoriaTipoHabitacion AND (Numero NOT IN (SELECT Numero_haibtacion FROM RESERVACION WHERE (Estado=? OR "
-                    + "Estado =?) AND ((SELECT CURDATE() FECHA) BETWEEN Fecha_Inicial AND Fecha_Final)))");
+                    + "Estado =? OR Estado =?) AND ((SELECT CURDATE() FECHA) BETWEEN Fecha_Inicial AND Fecha_Final)))");
             sentencia.setString(1, DefaultValues.HAB_RESERVADA_COD);
             sentencia.setString(2, DefaultValues.HAB_OCUPADA_COD);
+            sentencia.setString(3, DefaultValues.HAB_CHECK_OUT_COD);
             ResultSet resultado = sentencia.executeQuery();
             while (resultado.next()) {
                 String numero = resultado.getString("Numero");
