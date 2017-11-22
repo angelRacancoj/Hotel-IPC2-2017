@@ -197,7 +197,7 @@ public class CheckInConReservacion extends javax.swing.JInternalFrame {
     private void buscarButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buscarButtonActionPerformed
         try {
             if (IDClienteTextField.getText().replace(" ", "").isEmpty()) {
-                actualizarListaObservable(manejadorReservacion.busquedaPorIDClienteEstadoYFechas("", DefaultValues.HAB_TODO_COMBO_BOX, "", ""));
+                actualizarListaObservable(manejadorReservacion.busquedaPorIDClienteEstadoYFechas("", DefaultValues.HAB_RESERVADA_COD, "", ""));
             } else {
                 actualizarListaObservable(manejadorReservacion.busquedaPorIDClienteEstadoYFechas(IDClienteTextField.getText(), DefaultValues.HAB_RESERVADA_COD, "", ""));
             }
@@ -223,7 +223,8 @@ public class CheckInConReservacion extends javax.swing.JInternalFrame {
 
     private void tarjetaButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tarjetaButtonActionPerformed
         try {
-            pagoTrajeta.pagar(manejadorReservacion.totalPago(reservacionSeleccionada.getFechaInicial(), reservacionSeleccionada.getFechaFinal(), reservacionSeleccionada.getNoHabitacion()), DefaultValues.PAGO_ALOJAMIENTO, reservacionSeleccionada);
+            pagoTrajeta.pagar(manejadorReservacion.totalPago(reservacionSeleccionada.getFechaInicial(), reservacionSeleccionada.getFechaFinal(), 
+                    reservacionSeleccionada.getNoHabitacion()), DefaultValues.PAGO_ALOJAMIENTO, reservacionSeleccionada);
         } catch (InputsVaciosException | SQLException e) {
             JOptionPane.showMessageDialog(this, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }

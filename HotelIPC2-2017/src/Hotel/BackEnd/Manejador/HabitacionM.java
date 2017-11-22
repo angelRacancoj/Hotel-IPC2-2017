@@ -16,7 +16,6 @@ import java.util.List;
  */
 public class HabitacionM {
 
-    private DefaultValues valoresPre;
     private Connection conexion;
 
     List<Habitacion> busquedaHabitacion = new ArrayList<>();
@@ -93,6 +92,17 @@ public class HabitacionM {
         return busquedaHabitacion;
     }
 
+    /**
+     * Nos devuelve las habitaciones con las que podemos remplazar nuestra habitacion actualemente 
+     * @param nuevaFechaInicial
+     * @param nuevaFechaFinal
+     * @param noHabitacion
+     * @param fechaInicialOriginal
+     * @param fechaFinalOriginal
+     * @return
+     * @throws SQLException
+     * @throws InputsVaciosException
+     */
     public List<Habitacion> HabitacionesDisponibleModificacion(String nuevaFechaInicial, String nuevaFechaFinal, String noHabitacion, String fechaInicialOriginal, String fechaFinalOriginal)
             throws SQLException, InputsVaciosException {
         busquedaHabitacion.clear();

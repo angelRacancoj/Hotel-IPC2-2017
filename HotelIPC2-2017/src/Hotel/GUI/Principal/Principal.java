@@ -14,6 +14,8 @@ import Hotel.GUI.Recepcionista.CheckIn.SinReservacion;
 import Hotel.GUI.Recepcionista.CheckOut.CheckOut;
 import Hotel.GUI.Recepcionista.ModificarReservacion;
 import Hotel.GUI.Recepcionista.NuevaReservacion;
+import Hotel.GUI.Reportes.ListadoIngresosHotel;
+import Hotel.GUI.Reportes.TotalIngresosHotel;
 import Hotel.GUI.Restaurante.ServicioHabitacion;
 import RUN.DefaultValues;
 import java.sql.Connection;
@@ -32,8 +34,11 @@ public class Principal extends javax.swing.JFrame {
 
     private List<Habitacion> listadoHabitacion1;
     private List<Habitacion> listadoHabitacion2;
+    private List<Habitacion> listadoHabitacion3;
+    private List<Habitacion> listadoHabitacionAux;
     private ObservableList<Habitacion> listaHabitacionObservable1;
     private ObservableList<Habitacion> listaHabitacionObservable2;
+    private ObservableList<Habitacion> listaHabitacionObservable3;
     private List<Alimento> listaAlimento;
     private ObservableList<Alimento> listaAlimentoObservable;
 
@@ -50,6 +55,8 @@ public class Principal extends javax.swing.JFrame {
     private AlimentoFrame alimentoFrame;
     private EditarUsuarios editarUsuario;
     private ModificarPrecioHab modificarPrecioHab;
+    private TotalIngresosHotel totalIngresosHotel;
+    private ListadoIngresosHotel listadoIngesos;
 
     public Principal(Connection conexion) {
         this.manejadorReservacion = new ReservarHabitacionM(conexion);
@@ -57,9 +64,12 @@ public class Principal extends javax.swing.JFrame {
         this.manejadorHabitacion = new HabitacionM(conexion);
         listadoHabitacion1 = new ArrayList<>();
         listadoHabitacion2 = new ArrayList<>();
+        listadoHabitacion3 = new ArrayList<>();
+        listadoHabitacionAux = new ArrayList<>();
         listaAlimento = new ArrayList<>();
         listaHabitacionObservable1 = ObservableCollections.observableList(listadoHabitacion1);
         listaHabitacionObservable2 = ObservableCollections.observableList(listadoHabitacion2);
+        listaHabitacionObservable3 = ObservableCollections.observableList(listadoHabitacion3);
         listaAlimentoObservable = ObservableCollections.observableList(listaAlimento);
 
         modificarReservacion = new ModificarReservacion(conexion);
@@ -71,6 +81,8 @@ public class Principal extends javax.swing.JFrame {
         alimentoFrame = new AlimentoFrame(conexion);
         editarUsuario = new EditarUsuarios(conexion);
         modificarPrecioHab = new ModificarPrecioHab(conexion);
+        totalIngresosHotel = new TotalIngresosHotel(conexion);
+        listadoIngesos = new ListadoIngresosHotel(conexion);
 
         initComponents();
         this.DesktopPane.add(modificarReservacion);
@@ -82,6 +94,8 @@ public class Principal extends javax.swing.JFrame {
         this.DesktopPane.add(alimentoFrame);
         this.DesktopPane.add(editarUsuario);
         this.DesktopPane.add(modificarPrecioHab);
+        this.DesktopPane.add(totalIngresosHotel);
+        this.DesktopPane.add(listadoIngesos);
     }
 
     /**
@@ -107,6 +121,9 @@ public class Principal extends javax.swing.JFrame {
         jTable4 = new javax.swing.JTable();
         actualizarButton = new javax.swing.JButton();
         DesktopPane = new javax.swing.JDesktopPane();
+        jScrollPane5 = new javax.swing.JScrollPane();
+        jTable5 = new javax.swing.JTable();
+        jLabel2 = new javax.swing.JLabel();
         jMenuBar1 = new javax.swing.JMenuBar();
         reservacionMenu = new javax.swing.JMenu();
         NewReserMenuItem = new javax.swing.JMenuItem();
@@ -124,6 +141,9 @@ public class Principal extends javax.swing.JFrame {
         modHabitacionesMenuItem = new javax.swing.JMenuItem();
         adminUsuariosMenuItem = new javax.swing.JMenuItem();
         informacionMenu = new javax.swing.JMenu();
+        jMenu1 = new javax.swing.JMenu();
+        totalIngresosMenuItem = new javax.swing.JMenuItem();
+        listadoIngresosMenuItem = new javax.swing.JMenuItem();
         acercaDeMenuItem = new javax.swing.JMenuItem();
 
         jMenuItem1.setText("jMenuItem1");
@@ -192,6 +212,22 @@ public class Principal extends javax.swing.JFrame {
                 actualizarButtonActionPerformed(evt);
             }
         });
+
+        eLProperty = org.jdesktop.beansbinding.ELProperty.create("${listaHabitacionObservable3}");
+        jTableBinding = org.jdesktop.swingbinding.SwingBindings.createJTableBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ_WRITE, this, eLProperty, jTable5);
+        columnBinding = jTableBinding.addColumnBinding(org.jdesktop.beansbinding.ELProperty.create("${nombre}"));
+        columnBinding.setColumnName("Nombre");
+        columnBinding.setColumnClass(String.class);
+        columnBinding.setEditable(false);
+        columnBinding = jTableBinding.addColumnBinding(org.jdesktop.beansbinding.ELProperty.create("${precio}"));
+        columnBinding.setColumnName("Veces ocupada");
+        columnBinding.setColumnClass(String.class);
+        columnBinding.setEditable(false);
+        bindingGroup.addBinding(jTableBinding);
+        jTableBinding.bind();
+        jScrollPane5.setViewportView(jTable5);
+
+        jLabel2.setText("Habitacion Popular");
 
         reservacionMenu.setText("Reservacion ");
 
@@ -291,7 +327,32 @@ public class Principal extends javax.swing.JFrame {
 
         informacionMenu.setText(" Informacion ");
 
+        jMenu1.setText("Reportes");
+
+        totalIngresosMenuItem.setText("Total Ingresos");
+        totalIngresosMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                totalIngresosMenuItemActionPerformed(evt);
+            }
+        });
+        jMenu1.add(totalIngresosMenuItem);
+
+        listadoIngresosMenuItem.setText("Listado Ingresos");
+        listadoIngresosMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                listadoIngresosMenuItemActionPerformed(evt);
+            }
+        });
+        jMenu1.add(listadoIngresosMenuItem);
+
+        informacionMenu.add(jMenu1);
+
         acercaDeMenuItem.setText("Acerca de ");
+        acercaDeMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                acercaDeMenuItemActionPerformed(evt);
+            }
+        });
         informacionMenu.add(acercaDeMenuItem);
 
         jMenuBar1.add(informacionMenu);
@@ -311,49 +372,59 @@ public class Principal extends javax.swing.JFrame {
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 259, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 259, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 259, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                        .addComponent(jLabel1)
-                                        .addGap(58, 58, 58))
-                                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                        .addComponent(jLabel3)
-                                        .addGap(32, 32, 32)))
+                                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 259, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 259, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 259, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, 259, javax.swing.GroupLayout.PREFERRED_SIZE))
                                 .addGap(23, 23, 23))
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                                 .addComponent(actualizarButton)
                                 .addGap(97, 97, 97))))
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(72, 72, 72)
+                        .addGap(73, 73, 73)
                         .addComponent(jLabel4))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addGap(68, 68, 68)
-                        .addComponent(jLabel5)
-                        .addGap(83, 83, 83))))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                .addComponent(jLabel1)
+                                .addGap(82, 82, 82))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                .addComponent(jLabel3)
+                                .addGap(54, 54, 54))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                .addComponent(jLabel2)
+                                .addGap(82, 82, 82))))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(87, 87, 87)
+                        .addComponent(jLabel5))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(DesktopPane)
+                    .addGroup(layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(DesktopPane))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel1)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jLabel3)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jLabel4)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 190, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
+                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 188, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jLabel5)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 197, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
+                        .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jLabel2)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(actualizarButton)
                         .addGap(0, 5, Short.MAX_VALUE)))
                 .addContainerGap())
@@ -405,21 +476,41 @@ public class Principal extends javax.swing.JFrame {
         try {
             actualizarBusquedaOservableHab1(manejadorHabitacion.busquedaPrecioHabitacion());
             actualizarBusquedaOservableHab2(manejadorHabitacion.habitacionesDisponiblesHoy());
-            actualizarBusquedaObservableAlimentos(manejadorAlimento.busqueda("", DefaultValues.DISPONIBLE_TODO_COMBO_BOX));
+            actualizarBusquedaObservableAlimentos(manejadorAlimento.busqueda("", DefaultValues.DISPONIBLE_SI));
+            listadoHabitacionAux.clear();
+            listadoHabitacionAux.add(manejadorHabitacion.habitacionPopular());
+            actualizarBusquedaOservableHab3(listadoHabitacionAux);
         } catch (InputsVaciosException | SQLException e) {
             JOptionPane.showMessageDialog(this, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
     }//GEN-LAST:event_actualizarButtonActionPerformed
 
+    private void acercaDeMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_acercaDeMenuItemActionPerformed
+        JOptionPane.showMessageDialog(this, "Desarrollado por: \nAngel O. Racancoj G. \nCarne: 201631547  \n2do Semestre 2017 \nVersion 1.0 (Beta)", "Acerca de", JOptionPane.INFORMATION_MESSAGE);
+    }//GEN-LAST:event_acercaDeMenuItemActionPerformed
+
+    private void totalIngresosMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_totalIngresosMenuItemActionPerformed
+        totalIngresosHotel.setVisible(true);
+    }//GEN-LAST:event_totalIngresosMenuItemActionPerformed
+
+    private void listadoIngresosMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_listadoIngresosMenuItemActionPerformed
+        listadoIngesos.setVisible(true);
+    }//GEN-LAST:event_listadoIngresosMenuItemActionPerformed
+
     public void iniciar(String rango) {
-        if (rango.equals(DefaultValues.CARGO_RECEPCION_ID)) {
-            validarBotones(true, true, true, false, false);
-        } else if (rango.equals(DefaultValues.CARGO_RESTAURANTE_ID)) {
-            validarBotones(false, false, false, true, false);
-        } else if (rango.equals(DefaultValues.CARGO_GERENTE_ID)) {
-            validarBotones(false, false, false, false, true);
-        } else {
-            JOptionPane.showMessageDialog(this, "Error", "Error", JOptionPane.ERROR_MESSAGE);
+        switch (rango) {
+            case DefaultValues.CARGO_RECEPCION_ID:
+                validarBotones(true, true, true, false, false);
+                break;
+            case DefaultValues.CARGO_RESTAURANTE_ID:
+                validarBotones(false, false, false, true, false);
+                break;
+            case DefaultValues.CARGO_GERENTE_ID:
+                validarBotones(false, false, false, false, true);
+                break;
+            default:
+                JOptionPane.showMessageDialog(this, "Error", "Error", JOptionPane.ERROR_MESSAGE);
+                break;
         }
     }
 
@@ -431,6 +522,10 @@ public class Principal extends javax.swing.JFrame {
     public void actualizarBusquedaOservableHab2(List<Habitacion> listaHabitaciones) {
         this.listaHabitacionObservable2.clear();
         this.listaHabitacionObservable2.addAll(listaHabitaciones);
+    }
+    public void actualizarBusquedaOservableHab3(List<Habitacion> listaHabitaciones) {
+        this.listaHabitacionObservable3.clear();
+        this.listaHabitacionObservable3.addAll(listaHabitaciones);
     }
 
     public void actualizarBusquedaObservableAlimentos(List<Alimento> listaAli) {
@@ -462,6 +557,14 @@ public class Principal extends javax.swing.JFrame {
         this.listaAlimentoObservable = listaAlimentoObservable;
     }
 
+    public ObservableList<Habitacion> getListaHabitacionObservable3() {
+        return listaHabitacionObservable3;
+    }
+
+    public void setListaHabitacionObservable3(ObservableList<Habitacion> listaHabitacionObservable3) {
+        this.listaHabitacionObservable3 = listaHabitacionObservable3;
+    }
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenu CheckInMenu;
@@ -477,17 +580,22 @@ public class Principal extends javax.swing.JFrame {
     private javax.swing.JMenu gerenciaMenu;
     private javax.swing.JMenu informacionMenu;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
+    private javax.swing.JMenu jMenu1;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;
+    private javax.swing.JScrollPane jScrollPane5;
     private javax.swing.JTable jTable2;
     private javax.swing.JTable jTable3;
     private javax.swing.JTable jTable4;
+    private javax.swing.JTable jTable5;
+    private javax.swing.JMenuItem listadoIngresosMenuItem;
     private javax.swing.JMenuItem modHabitacionesMenuItem;
     private javax.swing.JMenu modificarPreciocsMenu;
     private javax.swing.JMenuItem nuevoReserMenuItem;
@@ -495,6 +603,7 @@ public class Principal extends javax.swing.JFrame {
     private javax.swing.JMenu reservacionMenu;
     private javax.swing.JMenuItem servicioHabMenuItem;
     private javax.swing.JMenuItem sinReservacionMenuItem;
+    private javax.swing.JMenuItem totalIngresosMenuItem;
     private org.jdesktop.beansbinding.BindingGroup bindingGroup;
     // End of variables declaration//GEN-END:variables
 

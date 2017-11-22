@@ -187,7 +187,9 @@ public class CheckOutConsumo extends javax.swing.JFrame {
     private void efectivoButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_efectivoButtonActionPerformed
         try {
             if (reservacionEntrada != null) {
-                pagoEfectivo.pagar(manejadorConsumo.totalConsumoNoHabitacion(reservacionEntrada.getIDCliente(), reservacionEntrada.getFechaInicial(), reservacionEntrada.getFechaFinal(), reservacionEntrada.getNoHabitacion()),DefaultValues.PAGO_ALIMENTO, reservacionEntrada);
+                pagoEfectivo.pagar(manejadorConsumo.totalConsumoNoHabitacion(reservacionEntrada.getIDCliente(), 
+                        reservacionEntrada.getFechaInicial(), reservacionEntrada.getFechaFinal(),
+                        reservacionEntrada.getNoHabitacion()),DefaultValues.PAGO_ALIMENTO, reservacionEntrada);
                 this.setVisible(false);
             }else{
                 JOptionPane.showMessageDialog(this,"No se tiene una reservacion elegida", "Error", JOptionPane.ERROR_MESSAGE);
@@ -220,6 +222,8 @@ public class CheckOutConsumo extends javax.swing.JFrame {
             actualizarListaObservable(manejadorConsumo.busquedaNoHabitacion(reservacionEntrada.getIDCliente(), reservacionEntrada.getFechaInicial(), reservacionEntrada.getFechaFinal(), reservacionEntrada.getNoHabitacion()));
         IDClienteTextField.setText(reservacionEntrada.getIDCliente());
         noHabTextField.setText(reservacionEntrada.getNoHabitacion());
+        
+        totalTextField.setText(manejadorConsumo.totalConsumoNoHabitacion(reservacionEntrada.getIDCliente(), reservacionEntrada.getFechaInicial(), reservacionEntrada.getFechaFinal(),reservacionEntrada.getNoHabitacion()));
         } catch (InputsVaciosException | SQLException e) {
             JOptionPane.showMessageDialog(this, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }

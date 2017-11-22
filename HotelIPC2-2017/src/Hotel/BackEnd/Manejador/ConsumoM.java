@@ -16,7 +16,6 @@ import java.util.List;
  */
 public class ConsumoM {
 
-    private DefaultValues valoresPre;
     private Connection conexion;
     private HabitacionM manejadorHabitacion;
     private AlimentoM manejadorAlimentos;
@@ -87,7 +86,7 @@ public class ConsumoM {
                 }
             }
         } catch (InputsVaciosException | SQLException e) {
-            throw new InputsVaciosException("Error al agregar el consumo");
+            throw new InputsVaciosException("La habitacion no esta ocupada");
         }
     }
 
@@ -128,6 +127,14 @@ public class ConsumoM {
                 sentencia.setString(5, DefaultValues.HAB_OCUPADA_COD);
                 sentencia.setString(6, DefaultValues.HAB_CHECK_OUT_COD);
                 return consultaConsumo(sentencia);
+            } else if (!IDtry && (fechaFinalTry && fechaInicialTry)) {
+                PreparedStatement sentencia = conexion.prepareStatement("SELECT Nombre_Alimento, Cantidad,"
+                        + "Total, ID_Cliente, Numero_Haibtacion FROM CONSUMO,RESERVACION WHERE RESERVACION.ID = ID_Reservacion AND ID_Cliente=?"
+                        + "AND (Estado=? OR Estado=?)");
+                sentencia.setString(1, DefaultValues.HAB_OCUPADA_COD);
+                sentencia.setString(2, DefaultValues.HAB_CHECK_OUT_COD);
+                sentencia.setString(3, IDCliente);
+                return consultaConsumo(sentencia);
             } else {
                 PreparedStatement sentencia = conexion.prepareStatement("SELECT Nombre_Alimento, Cantidad,"
                         + "Total, ID_Cliente, Numero_Haibtacion FROM CONSUMO,RESERVACION WHERE RESERVACION.ID = ID_Reservacion"
@@ -147,6 +154,112 @@ public class ConsumoM {
     }
 
     /**
+     * crea la lista en base a los para mentros de entrada, con todas sus
+     * posibles combinaciones
+     *
+     * @param IDCliente
+     * @param fechaInicial
+     * @param fechaFinal
+     * @param noHabitacion
+     * @return
+     * @throws SQLException
+     * @throws InputsVaciosException
+     */
+    public List<Consumo> busquedaReportes(String IDCliente, String fechaInicial, String fechaFinal, String noHabitacion) throws SQLException, InputsVaciosException {
+        boolean IDtry = IDCliente.replace(" ", "").isEmpty();
+        boolean fechaInicialTry = fechaInicial.replace(" ", "").replace("-", "").isEmpty();
+        boolean fechaFinalTry = fechaFinal.replace(" ", "").replace("-", "").isEmpty();
+
+        try {
+            if (IDtry && (fechaFinalTry || fechaInicialTry) && (noHabitacion.equalsIgnoreCase("Habitacion"))) {
+                PreparedStatement sentencia = conexion.prepareStatement("SELECT Nombre_Alimento, Cantidad,"
+                        + "Total, ID_Cliente, Numero_Haibtacion FROM CONSUMO,RESERVACION WHERE RESERVACION.ID = ID_Reservacion "
+                        + "AND (Estado=? OR Estado=?)");
+                sentencia.setString(1, DefaultValues.HAB_OCUPADA_COD);
+                sentencia.setString(2, DefaultValues.HAB_CHECK_OUT_COD);
+                return consultaConsumo(sentencia);
+            } else if (IDtry && !(fechaFinalTry && fechaInicialTry) && (noHabitacion.equalsIgnoreCase("Habitacion"))) {
+                PreparedStatement sentencia = conexion.prepareStatement("SELECT Nombre_Alimento, Cantidad,"
+                        + "Total, ID_Cliente, Numero_Haibtacion FROM CONSUMO,RESERVACION WHERE RESERVACION.ID = ID_Reservacion "
+                        + "AND (Fecha_Inicial BETWEEN ? AND ? AND Fecha_Final BETWEEN ? AND ?) AND (Estado=? OR Estado=?)");
+                sentencia.setString(1, fechaInicial);
+                sentencia.setString(2, fechaFinal);
+                sentencia.setString(3, fechaInicial);
+                sentencia.setString(4, fechaFinal);
+                sentencia.setString(5, DefaultValues.HAB_OCUPADA_COD);
+                sentencia.setString(6, DefaultValues.HAB_CHECK_OUT_COD);
+                return consultaConsumo(sentencia);
+            } else if (!IDtry && (fechaFinalTry && fechaInicialTry) && (noHabitacion.equalsIgnoreCase("Habitacion"))) {
+                PreparedStatement sentencia = conexion.prepareStatement("SELECT Nombre_Alimento, Cantidad,"
+                        + "Total, ID_Cliente, Numero_Haibtacion FROM CONSUMO,RESERVACION WHERE RESERVACION.ID = ID_Reservacion AND ID_Cliente=? "
+                        + "AND (Estado=? OR Estado=?)");
+                sentencia.setString(1, DefaultValues.HAB_OCUPADA_COD);
+                sentencia.setString(2, DefaultValues.HAB_CHECK_OUT_COD);
+                sentencia.setString(3, IDCliente);
+                return consultaConsumo(sentencia);
+            } else if (!IDtry && !(fechaFinalTry && fechaInicialTry) && (noHabitacion.equalsIgnoreCase("Habitacion"))) {
+                PreparedStatement sentencia = conexion.prepareStatement("SELECT Nombre_Alimento, Cantidad,"
+                        + "Total, ID_Cliente, Numero_Haibtacion FROM CONSUMO,RESERVACION WHERE RESERVACION.ID = ID_Reservacion "
+                        + "AND (Fecha_Inicial BETWEEN ? AND ? AND Fecha_Final BETWEEN ? AND ?) AND ID_Cliente=? AND (Estado=? OR Estado=?)");
+                sentencia.setString(1, fechaInicial);
+                sentencia.setString(2, fechaFinal);
+                sentencia.setString(3, fechaInicial);
+                sentencia.setString(4, fechaFinal);
+                sentencia.setString(5, IDCliente);
+                sentencia.setString(6, DefaultValues.HAB_OCUPADA_COD);
+                sentencia.setString(6, DefaultValues.HAB_CHECK_OUT_COD);
+                return consultaConsumo(sentencia);
+            } else if (IDtry && (fechaFinalTry || fechaInicialTry) && !(noHabitacion.equalsIgnoreCase("Habitacion"))) {
+                PreparedStatement sentencia = conexion.prepareStatement("SELECT Nombre_Alimento, Cantidad,"
+                        + "Total, ID_Cliente, Numero_Haibtacion FROM CONSUMO,RESERVACION WHERE RESERVACION.ID = ID_Reservacion "
+                        + "AND (Estado=? OR Estado=?) AND Numero_Haibtacion =?");
+                sentencia.setString(1, DefaultValues.HAB_OCUPADA_COD);
+                sentencia.setString(2, DefaultValues.HAB_CHECK_OUT_COD);
+                sentencia.setString(3, noHabitacion);
+                return consultaConsumo(sentencia);
+            } else if (IDtry && !(fechaFinalTry && fechaInicialTry) && !(noHabitacion.equalsIgnoreCase("Habitacion"))) {
+                PreparedStatement sentencia = conexion.prepareStatement("SELECT Nombre_Alimento, Cantidad,"
+                        + "Total, ID_Cliente, Numero_Haibtacion FROM CONSUMO,RESERVACION WHERE RESERVACION.ID = ID_Reservacion "
+                        + "AND (Fecha_Inicial BETWEEN ? AND ? AND Fecha_Final BETWEEN ? AND ?) AND (Estado=? OR Estado=?) AND Numero_Haibtacion =?");
+                sentencia.setString(1, fechaInicial);
+                sentencia.setString(2, fechaFinal);
+                sentencia.setString(3, fechaInicial);
+                sentencia.setString(4, fechaFinal);
+                sentencia.setString(5, DefaultValues.HAB_OCUPADA_COD);
+                sentencia.setString(6, DefaultValues.HAB_CHECK_OUT_COD);
+                sentencia.setString(7, noHabitacion);
+                return consultaConsumo(sentencia);
+            } else if (!IDtry && (fechaFinalTry && fechaInicialTry) && !(noHabitacion.equalsIgnoreCase("Habitacion"))) {
+                PreparedStatement sentencia = conexion.prepareStatement("SELECT Nombre_Alimento, Cantidad,"
+                        + "Total, ID_Cliente, Numero_Haibtacion FROM CONSUMO,RESERVACION WHERE RESERVACION.ID = ID_Reservacion AND ID_Cliente=? "
+                        + "AND (Estado=? OR Estado=?) AND Numero_Haibtacion =?");
+                sentencia.setString(1, DefaultValues.HAB_OCUPADA_COD);
+                sentencia.setString(2, DefaultValues.HAB_CHECK_OUT_COD);
+                sentencia.setString(3, IDCliente);
+                sentencia.setString(4, noHabitacion);
+                return consultaConsumo(sentencia);
+            } else if (!IDtry && !(fechaFinalTry && fechaInicialTry) && !(noHabitacion.equalsIgnoreCase("Habitacion"))) {
+                PreparedStatement sentencia = conexion.prepareStatement("SELECT Nombre_Alimento, Cantidad,"
+                        + "Total, ID_Cliente, Numero_Haibtacion FROM CONSUMO,RESERVACION WHERE RESERVACION.ID = ID_Reservacion "
+                        + "AND (Fecha_Inicial BETWEEN ? AND ? AND Fecha_Final BETWEEN ? AND ?) AND ID_Cliente=? AND (Estado=? OR Estado=?) AND Numero_Haibtacion =?");
+                sentencia.setString(1, fechaInicial);
+                sentencia.setString(2, fechaFinal);
+                sentencia.setString(3, fechaInicial);
+                sentencia.setString(4, fechaFinal);
+                sentencia.setString(5, IDCliente);
+                sentencia.setString(6, DefaultValues.HAB_OCUPADA_COD);
+                sentencia.setString(6, DefaultValues.HAB_CHECK_OUT_COD);
+                sentencia.setString(7, noHabitacion);
+                return consultaConsumo(sentencia);
+            } else {
+                throw new InputsVaciosException("Error al cargar el listado");
+            }
+        } catch (InputsVaciosException | SQLException e) {
+            throw new InputsVaciosException("Error con los listados");
+        }
+    }
+
+    /**
      * Obtiene el listado de un cliente y una reservacion en especifico
      *
      * @param IDCliente
@@ -161,19 +274,17 @@ public class ConsumoM {
 
         try {
             PreparedStatement sentencia = conexion.prepareStatement("SELECT Nombre_Alimento, Cantidad,"
-                    + "Total, ID_Cliente, Numero_Haibtacion FROM CONSUMO,RESERVACION WHERE RESERVACION.ID = ID_Reservacion"
-                    + "AND (Fecha_Inicial BETWEEN ? AND ? AND Fecha_Final BETWEEN ? AND ?) AND ID_Cliente=? AND Estado=? AND Numero_Haibtacion=?");
+                    + "Total, ID_Cliente, Numero_Haibtacion FROM CONSUMO,RESERVACION WHERE RESERVACION.ID = ID_Reservacion "
+                    + "AND Fecha_Inicial= ? AND Fecha_Final = ? AND ID_Cliente=? AND Estado=? AND Numero_Haibtacion=?");
             sentencia.setString(1, fechaInicial);
             sentencia.setString(2, fechaFinal);
-            sentencia.setString(3, fechaInicial);
-            sentencia.setString(4, fechaFinal);
-            sentencia.setString(5, IDCliente);
-            sentencia.setString(6, DefaultValues.HAB_OCUPADA_COD);
-            sentencia.setString(7, noHabitacion);
+            sentencia.setString(3, IDCliente);
+            sentencia.setString(4, DefaultValues.HAB_OCUPADA_COD);
+            sentencia.setString(5, noHabitacion);
             return consultaConsumo(sentencia);
 
         } catch (InputsVaciosException | SQLException e) {
-            throw new InputsVaciosException("Error en la base de datos");
+            throw new InputsVaciosException("Error al cargar los consumos");
         }
     }
 

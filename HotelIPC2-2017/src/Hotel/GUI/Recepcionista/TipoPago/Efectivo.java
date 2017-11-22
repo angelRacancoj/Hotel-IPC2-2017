@@ -134,7 +134,7 @@ public class Efectivo extends javax.swing.JFrame {
                 } else {
                     if (estado.equalsIgnoreCase(DefaultValues.PAGO_ALOJAMIENTO)) {
                         limpiar();
-                        if (manejadorReservacion.CheckInConReservacion(reservacionSeleccionada.getIDCliente(), reservacionSeleccionada.getFechaInicial(),
+                        if (!manejadorReservacion.CheckInConReservacion(reservacionSeleccionada.getIDCliente(), reservacionSeleccionada.getFechaInicial(),
                                 reservacionSeleccionada.getFechaFinal(), reservacionSeleccionada.getNoHabitacion(), "Efectivo")) {
                             JOptionPane.showMessageDialog(this, "Fallo durante el pago", "Error", JOptionPane.ERROR_MESSAGE);
                             this.setVisible(false);

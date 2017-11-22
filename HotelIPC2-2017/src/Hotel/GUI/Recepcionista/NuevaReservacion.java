@@ -4,7 +4,6 @@ import Hotel.BackEnd.Excepciones.InputsVaciosException;
 import Hotel.BackEnd.Hotel.Habitacion;
 import Hotel.BackEnd.Manejador.HabitacionM;
 import Hotel.BackEnd.Manejador.ReservarHabitacionM;
-import Hotel.GUI.Principal.Principal;
 import RUN.DefaultValues;
 import java.awt.HeadlessException;
 import java.sql.Connection;
@@ -351,6 +350,12 @@ public class NuevaReservacion extends javax.swing.JInternalFrame {
             JOptionPane.showMessageDialog(this, "Ya exiten usuarios con similar ID", "Error", JOptionPane.ERROR_MESSAGE);
         } else {
             datosCliente.guardarReservacion(listadoHabSalida, DefaultValues.CON_RESERVACION, fechaInicialFormattedTextField.getText(), fechaFinalFormattedTextField.getText());
+            limpiarFechas();
+            limpiarTablas();
+            listaObservableHabSalida.clear();
+            listaObservableHabEstrada.clear();
+            agregarButton.setEnabled(false);
+            guardarButton.setEnabled(false);
         }
     }//GEN-LAST:event_guardarButtonActionPerformed
 

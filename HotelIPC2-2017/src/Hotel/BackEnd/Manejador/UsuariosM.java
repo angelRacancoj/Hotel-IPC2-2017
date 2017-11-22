@@ -16,7 +16,6 @@ import java.util.List;
  */
 public class UsuariosM {
 
-    private DefaultValues valoresPre;
     private Connection conexion;
 
     List<User> busquedaUsuarios = new ArrayList<>();

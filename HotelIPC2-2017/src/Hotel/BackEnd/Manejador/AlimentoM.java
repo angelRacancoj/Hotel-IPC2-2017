@@ -16,7 +16,6 @@ import java.util.List;
  */
 public class AlimentoM {
 
-    private DefaultValues valoresPre;
     private Connection conexion;
 
     List<Alimento> busquedaAlimentos = new LinkedList<>();
@@ -25,6 +24,17 @@ public class AlimentoM {
         this.conexion = conexion;
     }
 
+    /**
+     * Nos permite agregar nuevos alimentos a nuestra base de datos.
+     *
+     * @param nombre
+     * @param precio
+     * @param disponible
+     * @param descripcion
+     * @return
+     * @throws SQLException
+     * @throws InputsVaciosException
+     */
     public boolean agregarAlimento(String nombre, String precio, String disponible, String descripcion) throws SQLException, InputsVaciosException {
         boolean nombreTry = nombre.replace(" ", "").isEmpty();
         boolean precioTry = precio.replace(" ", "").isEmpty();
@@ -55,27 +65,40 @@ public class AlimentoM {
         }
         return false;
     }
-    
-    public boolean actualizar(String nombreOld, String nombreNew, String precio, String disponible, String descripcion)throws SQLException, InputsVaciosException{
+
+    /**
+     * Se realizan cambios menores en el alimentos, de igual manera se verifica
+     * la disponibilidad de estos
+     *
+     * @param nombreOld
+     * @param nombreNew
+     * @param precio
+     * @param disponible
+     * @param descripcion
+     * @return
+     * @throws SQLException
+     * @throws InputsVaciosException
+     */
+    public boolean actualizar(String nombreOld, String nombreNew, String precio, String disponible, String descripcion) throws SQLException, InputsVaciosException {
         PreparedStatement sentencia;
-        
+
         try {
             if (busqueda(nombreOld, DefaultValues.DISPONIBLE_TODO_COMBO_BOX).isEmpty()) {
                 throw new InputsVaciosException("No existe el Alimento que se desea Actualizar");
-            }else{
+            } else {
                 if (nombreOld.equalsIgnoreCase(nombreNew)) {
                     sentencia = conexion.prepareStatement("UPDATE ALIMENTOS SET Precio=? ,Disponible=? ,Descripcion=? WHERE Nombre=?");
-                sentencia.setString(1, precio);
-                sentencia.setString(2, disponible);
-                sentencia.setString(3, descripcion);
-                sentencia.setString(4, nombreOld);
-                }else{
+                    sentencia.setString(1, precio);
+                    sentencia.setString(2, disponible);
+                    sentencia.setString(3, descripcion);
+                    sentencia.setString(4, nombreOld);
+                } else {
                     sentencia = conexion.prepareStatement("UPDATE ALIMENTOS SET Nombre=? ,Precio=? ,Disponible=? ,Descripcion=? WHERE Nombre=?");
-                sentencia.setString(1, nombreNew);
-                sentencia.setString(2, precio);
-                sentencia.setString(3, disponible);
-                sentencia.setString(4, descripcion);
-                sentencia.setString(5, nombreOld);
+                    sentencia.setString(1, nombreNew);
+                    sentencia.setString(2, precio);
+                    sentencia.setString(3, disponible);
+                    sentencia.setString(4, descripcion);
+                    sentencia.setString(5, nombreOld);
                 }
                 if (sentencia.executeUpdate() == 1) {
                     sentencia.close();
@@ -90,6 +113,15 @@ public class AlimentoM {
         }
     }
 
+    /**
+     * Nos permite generar listados en base a los dos paramentros utilizados
+     *
+     * @param nombre
+     * @param disponibleComboBox
+     * @return
+     * @throws SQLException
+     * @throws InputsVaciosException
+     */
     public List<Alimento> busqueda(String nombre, String disponibleComboBox) throws SQLException, InputsVaciosException {
         busquedaAlimentos.clear();
         boolean nombreTry = nombre.replace(" ", "").isEmpty();
@@ -142,7 +174,7 @@ public class AlimentoM {
                 String disponible = resultado.getString("Disponible");
                 if (disponible.equalsIgnoreCase(DefaultValues.DISPONIBLE_SI)) {
                     dispo = true;
-                }else{
+                } else {
                     dispo = false;
                 }
                 String descripcion = resultado.getNString("Descripcion");

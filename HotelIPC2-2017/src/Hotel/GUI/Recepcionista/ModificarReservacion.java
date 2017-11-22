@@ -68,6 +68,7 @@ public class ModificarReservacion extends javax.swing.JInternalFrame {
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
+        bindingGroup = new org.jdesktop.beansbinding.BindingGroup();
 
         jLabel7 = new javax.swing.JLabel();
         jLabel1 = new javax.swing.JLabel();
@@ -184,6 +185,19 @@ public class ModificarReservacion extends javax.swing.JInternalFrame {
 
             }
         ));
+
+        org.jdesktop.beansbinding.ELProperty eLProperty = org.jdesktop.beansbinding.ELProperty.create("${listaHabitacionObservable}");
+        org.jdesktop.swingbinding.JTableBinding jTableBinding = org.jdesktop.swingbinding.SwingBindings.createJTableBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ_WRITE, this, eLProperty, reservacionesTable1);
+        org.jdesktop.swingbinding.JTableBinding.ColumnBinding columnBinding = jTableBinding.addColumnBinding(org.jdesktop.beansbinding.ELProperty.create("${nombre}"));
+        columnBinding.setColumnName("Nombre");
+        columnBinding.setColumnClass(String.class);
+        columnBinding = jTableBinding.addColumnBinding(org.jdesktop.beansbinding.ELProperty.create("${precio}"));
+        columnBinding.setColumnName("Precio");
+        columnBinding.setColumnClass(String.class);
+        bindingGroup.addBinding(jTableBinding);
+        jTableBinding.bind();org.jdesktop.beansbinding.Binding binding = org.jdesktop.beansbinding.Bindings.createAutoBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ_WRITE, this, org.jdesktop.beansbinding.ELProperty.create("${habitacionSeleccionada}"), reservacionesTable1, org.jdesktop.beansbinding.BeanProperty.create("selectedElement"));
+        bindingGroup.addBinding(binding);
+
         jScrollPane2.setViewportView(reservacionesTable1);
 
         jLabel8.setText("NUEVOS DATOS DE LA RESERVACION");
@@ -209,6 +223,25 @@ public class ModificarReservacion extends javax.swing.JInternalFrame {
 
             }
         ));
+
+        eLProperty = org.jdesktop.beansbinding.ELProperty.create("${listaReservacionObservable}");
+        jTableBinding = org.jdesktop.swingbinding.SwingBindings.createJTableBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ_WRITE, this, eLProperty, reservacionesTable2);
+        columnBinding = jTableBinding.addColumnBinding(org.jdesktop.beansbinding.ELProperty.create("${IDCliente}"));
+        columnBinding.setColumnName("IDCliente");
+        columnBinding.setColumnClass(String.class);
+        columnBinding = jTableBinding.addColumnBinding(org.jdesktop.beansbinding.ELProperty.create("${fechaInicial}"));
+        columnBinding.setColumnName("Fecha Inicial");
+        columnBinding.setColumnClass(String.class);
+        columnBinding = jTableBinding.addColumnBinding(org.jdesktop.beansbinding.ELProperty.create("${fechaFinal}"));
+        columnBinding.setColumnName("Fecha Final");
+        columnBinding.setColumnClass(String.class);
+        columnBinding = jTableBinding.addColumnBinding(org.jdesktop.beansbinding.ELProperty.create("${noHabitacion}"));
+        columnBinding.setColumnName("No Habitacion");
+        columnBinding.setColumnClass(String.class);
+        bindingGroup.addBinding(jTableBinding);
+        jTableBinding.bind();binding = org.jdesktop.beansbinding.Bindings.createAutoBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ_WRITE, this, org.jdesktop.beansbinding.ELProperty.create("${reservacionSeleccionada}"), reservacionesTable2, org.jdesktop.beansbinding.BeanProperty.create("selectedElement"));
+        bindingGroup.addBinding(binding);
+
         jScrollPane3.setViewportView(reservacionesTable2);
 
         jLabel9.setFont(new java.awt.Font("Noto Sans UI", 0, 12)); // NOI18N
@@ -311,6 +344,8 @@ public class ModificarReservacion extends javax.swing.JInternalFrame {
                     .addComponent(cancelarButton))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
+
+        bindingGroup.bind();
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -449,7 +484,16 @@ public class ModificarReservacion extends javax.swing.JInternalFrame {
     }//GEN-LAST:event_guardarModifButtonActionPerformed
 
     private void cancelarButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelarButtonActionPerformed
-        // TODO add your handling code here:
+        if ((habitacionSeleccionada != null) || (reservacionSeleccionada !=null)) {
+            int respuesta = JOptionPane.showConfirmDialog(this, "Desea cancelar el proceso", "Cancelar", JOptionPane.YES_NO_OPTION);
+            if (respuesta == 0) {
+                limpiarTodo();
+                this.setVisible(false);
+            }
+        }else{
+            limpiarTodo();
+            setVisible(false);
+        }
     }//GEN-LAST:event_cancelarButtonActionPerformed
 
     private void fechaInicialFormattedTextFieldFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_fechaInicialFormattedTextFieldFocusLost
@@ -563,6 +607,7 @@ public class ModificarReservacion extends javax.swing.JInternalFrame {
     private javax.swing.JButton modificarButton;
     private javax.swing.JTable reservacionesTable1;
     private javax.swing.JTable reservacionesTable2;
+    private org.jdesktop.beansbinding.BindingGroup bindingGroup;
     // End of variables declaration//GEN-END:variables
 
     public void limpiarTodo() {

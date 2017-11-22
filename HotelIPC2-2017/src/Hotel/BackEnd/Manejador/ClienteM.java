@@ -16,7 +16,6 @@ import java.util.List;
  */
 public class ClienteM {
 
-    private DefaultValues valoresPre;
     private Connection conexion;
 
     List<Cliente> busquedaCllientes = new ArrayList<>();
@@ -25,6 +24,19 @@ public class ClienteM {
         this.conexion = conexion;
     }
 
+    /**
+     * Permite modificar al cliente de ser necesarion (Funcion sin uso actual)
+     * @param IDOriginal
+     * @param ID
+     * @param NIT
+     * @param nombre
+     * @param direccion
+     * @param phone
+     * @param cumpleanios
+     * @return
+     * @throws SQLException
+     * @throws InputsVaciosException
+     */
     public boolean modificarCliente(String IDOriginal, String ID, String NIT, String nombre, String direccion, String phone, String cumpleanios)throws SQLException, InputsVaciosException{
         try {
             if (busqueda(IDOriginal).isEmpty()) {
@@ -51,6 +63,18 @@ public class ClienteM {
         }
     }
 
+    /**
+     * Debuelve true si el porceso de agregar al cliente es correcto
+     * @param ID
+     * @param NIT
+     * @param nombre
+     * @param direccion
+     * @param phone
+     * @param cumpleanios
+     * @return
+     * @throws InputsVaciosException
+     * @throws SQLException
+     */
     public boolean agregarCliente(String ID, String NIT, String nombre, String direccion, String phone, String cumpleanios) throws InputsVaciosException, SQLException {
         try {
             if (busqueda(ID).isEmpty()) {
@@ -81,6 +105,13 @@ public class ClienteM {
         }
     }
 
+    /**
+     * Busca al cliente en base a su ID
+     * @param ID
+     * @return
+     * @throws InputsVaciosException
+     * @throws SQLException
+     */
     public List<Cliente> busqueda(String ID) throws InputsVaciosException, SQLException {
         boolean IDtry = ID.replace(" ", "").isEmpty();
         try {

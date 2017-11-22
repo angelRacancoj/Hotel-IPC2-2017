@@ -31,6 +31,8 @@ public class Tarjeta extends javax.swing.JFrame {
     private Reservacion reservacionSeleccionada;
 
     public Tarjeta(Connection conexion) {
+        manejadorReservacion = new ReservarHabitacionM(conexion);
+        reservacionSeleccionada = new Reservacion();
         initComponents();
     }
 
@@ -122,20 +124,21 @@ public class Tarjeta extends javax.swing.JFrame {
                 JOptionPane.showMessageDialog(this, "Debe ingresar en codigo del Voucher", "Error", JOptionPane.ERROR_MESSAGE);
             } else {
                 if (estado.equalsIgnoreCase(DefaultValues.PAGO_ALOJAMIENTO)) {
-                    limpiar();
-                    if (!manejadorReservacion.CheckInConReservacion(reservacionSeleccionada.getIDCliente(), reservacionSeleccionada.getFechaInicial(), reservacionSeleccionada.getFechaFinal(), reservacionSeleccionada.getNoHabitacion(), voucherTextField.getText())) {
+                    if (!manejadorReservacion.CheckInConReservacion(reservacionSeleccionada.getIDCliente(), reservacionSeleccionada.getFechaInicial(),
+                            reservacionSeleccionada.getFechaFinal(), reservacionSeleccionada.getNoHabitacion(), voucherTextField.getText())) {
                         JOptionPane.showMessageDialog(this, "Fallo durante el pago", "Error", JOptionPane.ERROR_MESSAGE);
+                        limpiar();
                     } else {
+                        JOptionPane.showMessageDialog(this, "Pago exitoso", "Informacion", JOptionPane.INFORMATION_MESSAGE);
                         limpiar();
                         this.setVisible(false);
                     }
-                    this.setVisible(false);
 //                } else if (estado.equalsIgnoreCase(DefaultValues.PAGO_SIN_RESERVACION)) {
 //                    limpiar();
 //
 //                    this.setVisible(false);
                 } else if (estado.equalsIgnoreCase(DefaultValues.PAGO_ALIMENTO)) {
-                    if (!manejadorReservacion.CheckOut(reservacionSeleccionada.getIDCliente(), reservacionSeleccionada.getFechaInicial(),reservacionSeleccionada.getFechaFinal(),reservacionSeleccionada.getNoHabitacion(), voucherTextField.getText())) {
+                    if (!manejadorReservacion.CheckOut(reservacionSeleccionada.getIDCliente(), reservacionSeleccionada.getFechaInicial(), reservacionSeleccionada.getFechaFinal(), reservacionSeleccionada.getNoHabitacion(), voucherTextField.getText())) {
                         JOptionPane.showMessageDialog(this, "Fallo durante el pago", "Error", JOptionPane.ERROR_MESSAGE);
                         limpiar();
                         this.setVisible(false);
@@ -161,6 +164,7 @@ public class Tarjeta extends javax.swing.JFrame {
         totalTextField.setText(total);
         totalTextField.setEnabled(false);
         reservacionSeleccionada = reservacion.clone();
+        System.out.println("Reservacion: "+reservacionSeleccionada.getIDCliente()+", "+reservacionSeleccionada.getNoHabitacion());
         this.estado = estado;
         setVisible(true);
     }
